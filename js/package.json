@@ -1,0 +1,62 @@
+{
+  "name": "@runapi.ai/core",
+  "version": "0.2.1",
+  "description": "RunAPI core SDK for JavaScript, Ruby, and Go",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./internal": {
+      "types": "./dist/polling.d.ts",
+      "import": "./dist/polling.mjs",
+      "require": "./dist/polling.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "msw": "^2.3.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "runapi",
+    "runapi-ai",
+    "core",
+    "api",
+    "sdk",
+    "typescript",
+    "ruby",
+    "golang"
+  ],
+  "author": "RunAPI",
+  "license": "Apache-2.0",
+  "homepage": "https://runapi.ai/docs#runapi-sdks",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/runapi-ai/core-sdk.git"
+  }
+}
