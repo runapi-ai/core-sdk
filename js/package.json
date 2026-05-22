@@ -1,6 +1,6 @@
 {
   "name": "@runapi.ai/core",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "RunAPI core SDK for JavaScript, Ruby, and Go",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
