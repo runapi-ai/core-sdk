@@ -1,6 +1,6 @@
 {
   "name": "@runapi.ai/core",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "RunAPI core SDK for JavaScript, Ruby, and Go",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -54,7 +54,7 @@
   ],
   "author": "RunAPI",
   "license": "Apache-2.0",
-  "homepage": "https://runapi.ai/docs#runapi-sdks",
+  "homepage": "https://runapi.ai/models",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/runapi-ai/core-sdk.git"

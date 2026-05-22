@@ -11,14 +11,15 @@ Dir.chdir(__dir__) do
 
     spec.summary = "Shared SDK primitives for RunAPI JavaScript, Ruby, and Go SDKs."
     spec.description = "RunAPI core SDK for JavaScript, Ruby, and Go"
-    spec.homepage = "https://runapi.ai/docs#runapi-sdks"
+    spec.homepage = "https://runapi.ai/models"
     spec.license = "Apache-2.0"
     spec.required_ruby_version = ">= 3.1.0"
-
-    spec.metadata["homepage_uri"] = "https://runapi.ai/docs#runapi-sdks"
-    spec.metadata["documentation_uri"] = "https://runapi.ai/docs#runapi-sdks"
+    spec.metadata["homepage_uri"] = "https://runapi.ai/models"
+    spec.metadata["documentation_uri"] = "https://github.com/runapi-ai/core-sdk/blob/main/README.md"
     spec.metadata["source_code_uri"] = "https://github.com/runapi-ai/core-sdk"
     spec.metadata["changelog_uri"] = "https://github.com/runapi-ai/core-sdk/blob/main/CHANGELOG.md"
+
+
 
     spec.files = Dir.glob("lib/**/*") + %w[LICENSE]
     spec.require_paths = [ "lib" ]
