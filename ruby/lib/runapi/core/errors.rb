@@ -39,15 +39,12 @@ module RunApi
         409 => "ConflictError",
         422 => "ValidationError",
         429 => "RateLimitError",
-        451 => "ValidationError",
-        455 => "ServiceUnavailableError",
         500 => "ServerError",
         501 => "ServerError",
         502 => "ServerError",
         503 => "ServiceUnavailableError",
         504 => "ServerError",
-        505 => "ServerError",
-        531 => "ServerError"
+        505 => "ServerError"
       }.freeze
 
       DEFAULT_MESSAGES = {
@@ -61,8 +58,6 @@ module RunApi
         415 => "Unsupported media type",
         422 => "Validation failed",
         429 => "Too many requests",
-        451 => "Failed to fetch image",
-        455 => "Service unavailable (maintenance)",
         503 => "Service unavailable"
       }.freeze
 

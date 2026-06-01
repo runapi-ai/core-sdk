@@ -21,7 +21,7 @@ module RunApi
 
       IDEMPOTENT_METHODS = %w[GET HEAD PUT DELETE OPTIONS].freeze
 
-      RETRYABLE_STATUS_CODES = [ 429, 500, 502, 503, 504 ].freeze
+      RETRYABLE_STATUS_CODES = [429, 500, 502, 503, 504].freeze
     end
   end
 end

@@ -15,7 +15,7 @@ module RunApi
             @http.request(method, path)
           end
         else
-          kwargs = { body: body }
+          kwargs = {body: body}
           kwargs[:options] = options if options
           @http.request(method, path, **kwargs)
         end

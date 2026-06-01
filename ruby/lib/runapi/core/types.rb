@@ -107,8 +107,6 @@ module RunApi
     #   @return [String, nil] Current task status.
     # @!attribute [r] error
     #   @return [String, nil] Error message if task failed.
-    # @!attribute [r] data
-    #   @return [RunApi::Core::DynamicModel, nil] Task-specific result data.
     class TaskResponse < BaseModel
       module Status
         PENDING = "pending"
@@ -116,13 +114,12 @@ module RunApi
         COMPLETED = "completed"
         FAILED = "failed"
 
-        ALL = [ PENDING, PROCESSING, COMPLETED, FAILED ].freeze
+        ALL = [PENDING, PROCESSING, COMPLETED, FAILED].freeze
       end
 
       optional :id, String
       optional :status, String
       optional :error, String
-      optional :data, -> { DynamicModel }
     end
   end
 end

@@ -16,8 +16,8 @@ func TestWithAPIKey(t *testing.T) {
 }
 
 func TestWithBaseURL(t *testing.T) {
-	cfg, _ := ResolveClientOptions(WithBaseURL("https://custom.api"))
-	if cfg.BaseURL != "https://custom.api" {
+	cfg, _ := ResolveClientOptions(WithBaseURL("https://api.example.com"))
+	if cfg.BaseURL != "https://api.example.com" {
 		t.Fatalf("expected custom URL, got %s", cfg.BaseURL)
 	}
 }

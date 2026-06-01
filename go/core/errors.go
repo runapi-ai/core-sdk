@@ -28,7 +28,7 @@ const (
 	ErrConflict ErrorCode = "conflict"
 	// ErrRateLimit indicates the rate limit was exceeded (HTTP 429).
 	ErrRateLimit ErrorCode = "rate_limit"
-	// ErrServiceUnavailable indicates the service is temporarily unavailable (HTTP 455, 503).
+	// ErrServiceUnavailable indicates the service is temporarily unavailable (HTTP 503).
 	ErrServiceUnavailable ErrorCode = "service_unavailable"
 	// ErrServer indicates an internal server error (HTTP 5xx).
 	ErrServer ErrorCode = "server"
@@ -143,7 +143,7 @@ func ErrorFromResponse(response *http.Response, body []byte) error {
 
 func codeForStatus(status int) ErrorCode {
 	switch {
-	case status == 400 || status == 422 || status == 451:
+	case status == 400 || status == 422:
 		return ErrValidation
 	case status == 401:
 		return ErrAuthentication
@@ -155,9 +155,9 @@ func codeForStatus(status int) ErrorCode {
 		return ErrConflict
 	case status == 429:
 		return ErrRateLimit
-	case status == 455 || status == 503:
+	case status == 503:
 		return ErrServiceUnavailable
-	case status == 531 || (status >= 500 && status <= 505):
+	case status >= 500 && status <= 505:
 		return ErrServer
 	default:
 		return ErrServer
@@ -180,9 +180,7 @@ func defaultMessageForStatus(status int) string {
 		return "Validation failed"
 	case 429:
 		return "Too many requests"
-	case 451:
-		return "Request rejected"
-	case 455, 503:
+	case 503:
 		return "Service unavailable"
 	default:
 		if status >= 500 {

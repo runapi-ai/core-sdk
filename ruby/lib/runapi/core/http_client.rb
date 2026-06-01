@@ -3,7 +3,7 @@
 module RunApi
   module Core
     class HttpClient
-      STALE_CONNECTION_ERRORS = [ Errno::EPIPE, EOFError, IOError, OpenSSL::SSL::SSLError ].freeze
+      STALE_CONNECTION_ERRORS = [Errno::EPIPE, EOFError, IOError, OpenSSL::SSL::SSLError].freeze
 
       def initialize(options)
         @options = options
@@ -91,7 +91,7 @@ module RunApi
 
         base = @options.retry_base_delay * (2**(attempt - 1))
         jitter = rand * base * 0.5
-        [ base + jitter, @options.retry_max_delay ].min
+        [base + jitter, @options.retry_max_delay].min
       end
 
       def parse_body(body)
