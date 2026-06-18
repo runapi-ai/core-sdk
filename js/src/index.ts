@@ -49,6 +49,17 @@ export type { RetryOptions } from './retry';
 // Params
 export { compactParams } from './params';
 
+// Files
+export { Files } from './files';
+export type { FileCreateParams, FileSource, FileUploadResponse } from './files';
+
+// Account
+export { Account } from './account';
+export type { AccountInfoResponse, AccountBalanceResponse } from './account';
+
+// Base client
+export { BaseClient } from './base-client';
+
 // Version
 export const version = '0.1.0';
 

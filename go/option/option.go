@@ -35,6 +35,8 @@ type httpClientOption struct{ client *http.Client }
 func (o httpClientOption) applyClient(cfg *core.ClientOptions) { cfg.HTTPClient = o.client }
 
 // WithHTTPClient provides a custom *http.Client for the SDK to use.
+// When set, the client's own transport and timeout govern requests;
+// the SDK's WithTimeout setting is ignored.
 func WithHTTPClient(client *http.Client) ClientOption { return httpClientOption{client: client} }
 
 type userAgentOption string
@@ -50,6 +52,8 @@ func (o timeoutOption) applyClient(cfg *core.ClientOptions) { cfg.Timeout = time
 func (o timeoutOption) ApplyCall(cfg *core.CallConfig)      { cfg.Request.Timeout = time.Duration(o) }
 
 // WithTimeout sets the request timeout. Applies at both client and per-request level.
+// Defaults to 15 minutes, which accommodates long-running generation tasks.
+// Ignored when a custom *http.Client is provided via WithHTTPClient.
 func WithTimeout(d time.Duration) timeoutOption { return timeoutOption(d) }
 
 type maxRetriesOption int
@@ -60,7 +64,9 @@ func (o maxRetriesOption) ApplyCall(cfg *core.CallConfig) {
 	cfg.Request.MaxRetries = &value
 }
 
-// WithMaxRetries sets the maximum retry attempts. Applies at both client and per-request level.
+// WithMaxRetries sets the maximum retry attempts for transient failures (429 and 5xx).
+// Retries use exponential backoff with jitter. Applies at both client and per-request level.
+// Defaults to 2.
 func WithMaxRetries(n int) maxRetriesOption { return maxRetriesOption(n) }
 
 type retryBaseDelayOption time.Duration
@@ -69,7 +75,8 @@ func (o retryBaseDelayOption) applyClient(cfg *core.ClientOptions) {
 	cfg.RetryBaseDelay = time.Duration(o)
 }
 
-// WithRetryBaseDelay sets the base delay between retries. Defaults to 500ms.
+// WithRetryBaseDelay sets the initial backoff interval before the first retry.
+// Subsequent retries double exponentially from this base, with jitter. Defaults to 500ms.
 func WithRetryBaseDelay(d time.Duration) ClientOption { return retryBaseDelayOption(d) }
 
 type retryMaxDelayOption time.Duration
@@ -78,7 +85,8 @@ func (o retryMaxDelayOption) applyClient(cfg *core.ClientOptions) {
 	cfg.RetryMaxDelay = time.Duration(o)
 }
 
-// WithRetryMaxDelay sets the maximum delay between retries. Defaults to 5s.
+// WithRetryMaxDelay caps the exponential backoff so individual retry delays never
+// exceed this duration. Defaults to 5s.
 func WithRetryMaxDelay(d time.Duration) ClientOption { return retryMaxDelayOption(d) }
 
 type headerOption struct{ key, value string }
@@ -119,17 +127,21 @@ func (o pollIntervalOption) ApplyCall(cfg *core.CallConfig) {
 	cfg.Polling.PollInterval = time.Duration(o)
 }
 
-// WithPollInterval sets the delay between poll requests for async operations. Defaults to 2s.
+// WithPollInterval sets the delay between status checks when polling an async task
+// to completion. Defaults to 2s.
 func WithPollInterval(d time.Duration) RequestOption { return pollIntervalOption(d) }
 
 type maxWaitOption time.Duration
 
 func (o maxWaitOption) ApplyCall(cfg *core.CallConfig) { cfg.Polling.MaxWait = time.Duration(o) }
 
-// WithMaxWait sets the maximum total wait time for async polling. Defaults to 15 minutes.
+// WithMaxWait sets the maximum total time the SDK will poll an async task before
+// returning a timeout error. Defaults to 15 minutes.
 func WithMaxWait(d time.Duration) RequestOption { return maxWaitOption(d) }
 
-// ResolveClientOptions applies client options to a set of production defaults.
+// ResolveClientOptions merges the given options over production defaults and returns
+// the final ClientOptions. This is used internally by service client constructors;
+// most callers should pass options to the client constructor instead.
 func ResolveClientOptions(options ...ClientOption) (core.ClientOptions, error) {
 	cfg := core.DefaultClientOptions()
 	for _, option := range options {
@@ -140,7 +152,9 @@ func ResolveClientOptions(options ...ClientOption) (core.ClientOptions, error) {
 	return cfg, nil
 }
 
-// ResolveRequestOptions applies request options and returns separate request and polling configs.
+// ResolveRequestOptions resolves per-call options into separate request and polling
+// configurations. This is used internally by service methods; most callers should
+// pass options directly to the API method instead.
 func ResolveRequestOptions(options ...RequestOption) (core.RequestOptions, core.PollingOptions) {
 	cfg := core.ResolveCallOptions(options...)
 	return cfg.Request, cfg.Polling

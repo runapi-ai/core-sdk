@@ -7,9 +7,13 @@ import (
 )
 
 // TaskResponse is implemented by async task result types.
+// The poller uses these methods to detect completion, failure, or in-progress states.
 type TaskResponse interface {
+	// GetID returns the server-assigned task identifier.
 	GetID() string
+	// GetStatus returns the current task status (e.g. "completed", "failed", "processing").
 	GetStatus() string
+	// GetError returns a human-readable failure reason, or empty if the task has not failed.
 	GetError() string
 }
 

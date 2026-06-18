@@ -7,19 +7,26 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net"
 	"net/http"
+	"net/textproto"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
 
 // HTTPRequestOptions holds options for a single HTTP request.
 type HTTPRequestOptions struct {
-	Body    any
-	Query   map[string]string
+	// Body is the request payload, encoded as JSON or multipart depending on type.
+	Body any
+	// Query contains URL query parameters appended to the request path.
+	Query map[string]string
+	// Headers are extra HTTP headers merged with client-level defaults.
 	Headers map[string]string
+	// Request carries per-call overrides for timeout and retry behavior.
 	Request RequestOptions
 }
 
@@ -150,23 +157,40 @@ func (c *defaultHTTPClient) do(ctx context.Context, method, path string, query, 
 		return nil, nil, NewError(ErrValidation, err.Error(), http.StatusUnprocessableEntity, "", nil, err)
 	}
 	var requestBody io.Reader
+	contentType := ""
 	if body != nil {
-		data, err := json.Marshal(body)
-		if err != nil {
-			return nil, nil, NewError(ErrValidation, "request body must be valid JSON", http.StatusUnprocessableEntity, "", nil, err)
+		if multipartBody, ok := asMultipartBody(body); ok {
+			body, multipartContentType, err := newMultipartRequestBody(multipartBody)
+			if err != nil {
+				return nil, nil, err
+			}
+			requestBody = body
+			contentType = multipartContentType
+		} else {
+			data, err := json.Marshal(body)
+			if err != nil {
+				return nil, nil, NewError(ErrValidation, "request body must be valid JSON", http.StatusUnprocessableEntity, "", nil, err)
+			}
+			requestBody = bytes.NewReader(data)
+			contentType = "application/json"
 		}
-		requestBody = bytes.NewReader(data)
 	}
 
 	req, err := http.NewRequestWithContext(ctx, method, fullURL, requestBody)
 	if err != nil {
+		if closer, ok := requestBody.(io.Closer); ok {
+			_ = closer.Close()
+		}
 		return nil, nil, NewError(ErrNetwork, "failed to create request", 0, "", nil, err)
+	}
+	if req.Body != nil {
+		defer req.Body.Close()
 	}
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", c.userAgent)
-	if body != nil {
-		req.Header.Set("Content-Type", "application/json")
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
 	}
 	for key, value := range c.headers {
 		req.Header.Set(key, value)
@@ -197,6 +221,90 @@ func (c *defaultHTTPClient) do(ctx context.Context, method, path string, query, 
 	}
 
 	return json.RawMessage(responseBody), resp, nil
+}
+
+func newMultipartRequestBody(body MultipartBody) (io.Reader, string, error) {
+	if err := validateMultipartBody(body); err != nil {
+		return nil, "", err
+	}
+
+	reader, writer := io.Pipe()
+	multipartWriter := multipart.NewWriter(writer)
+	contentType := multipartWriter.FormDataContentType()
+
+	go func() {
+		err := writeMultipartBody(multipartWriter, body)
+		if closeErr := multipartWriter.Close(); err == nil {
+			err = closeErr
+		}
+		_ = writer.CloseWithError(err)
+	}()
+
+	return reader, contentType, nil
+}
+
+func validateMultipartBody(body MultipartBody) error {
+	for _, file := range body.Files {
+		if file.Path == "" {
+			return NewError(ErrValidation, "multipart file path is required", http.StatusUnprocessableEntity, "", nil, nil)
+		}
+	}
+	return nil
+}
+
+func asMultipartBody(body any) (MultipartBody, bool) {
+	switch value := body.(type) {
+	case MultipartBody:
+		return value, true
+	case *MultipartBody:
+		if value == nil {
+			return MultipartBody{}, false
+		}
+		return *value, true
+	default:
+		return MultipartBody{}, false
+	}
+}
+
+func writeMultipartBody(writer *multipart.Writer, body MultipartBody) error {
+	for key, value := range body.Fields {
+		if err := writer.WriteField(key, value); err != nil {
+			return NewError(ErrValidation, "failed to write multipart field", http.StatusUnprocessableEntity, "", nil, err)
+		}
+	}
+	for key, file := range body.Files {
+		name := file.FileName
+		if name == "" {
+			name = filepath.Base(file.Path)
+		}
+		partHeader := make(textproto.MIMEHeader)
+		partHeader.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, escapeQuotes(key), escapeQuotes(name)))
+		if file.ContentType != "" {
+			partHeader.Set("Content-Type", file.ContentType)
+		}
+		part, err := writer.CreatePart(partHeader)
+		if err != nil {
+			return NewError(ErrValidation, "failed to create multipart file part", http.StatusUnprocessableEntity, "", nil, err)
+		}
+		handle, err := os.Open(file.Path)
+		if err != nil {
+			return NewError(ErrValidation, "failed to open multipart file", http.StatusUnprocessableEntity, "", nil, err)
+		}
+		_, copyErr := io.Copy(part, handle)
+		closeErr := handle.Close()
+		if copyErr != nil {
+			return NewError(ErrValidation, "failed to read multipart file", http.StatusUnprocessableEntity, "", nil, copyErr)
+		}
+		if closeErr != nil {
+			return NewError(ErrValidation, "failed to close multipart file", http.StatusUnprocessableEntity, "", nil, closeErr)
+		}
+	}
+	return nil
+}
+
+func escapeQuotes(value string) string {
+	value = strings.ReplaceAll(value, `\`, `\\`)
+	return strings.ReplaceAll(value, `"`, `\"`)
 }
 
 func (c *defaultHTTPClient) shouldRetry(method string, attempt, maxRetries int, err error) bool {

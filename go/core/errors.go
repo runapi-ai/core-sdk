@@ -43,15 +43,23 @@ const (
 )
 
 // Error is the base error type for all RunAPI SDK errors.
-// It includes HTTP status, request ID, and response details.
+// Use the Is* helpers (e.g. IsRateLimit, IsInsufficientCredits) rather than
+// switching on Code directly, so your checks survive future error code additions.
 type Error struct {
-	Message    string
-	Code       ErrorCode
-	Status     int
-	RequestID  string
-	Details    any
+	// Message is a human-readable description of the failure.
+	Message string
+	// Code classifies the error into a category such as rate_limit or validation.
+	Code ErrorCode
+	// Status is the HTTP status code, or 0 for non-HTTP errors (network, task timeout).
+	Status int
+	// RequestID is the server-assigned correlation ID from the x-request-id header.
+	RequestID string
+	// Details holds the parsed response body (typically map[string]any), if available.
+	Details any
+	// RetryAfter is the server-suggested wait duration before retrying, populated on 429 responses.
 	RetryAfter time.Duration
-	Err        error
+	// Err is the underlying error, if any, for use with errors.Unwrap.
+	Err error
 }
 
 func (e *Error) Error() string {
@@ -61,6 +69,7 @@ func (e *Error) Error() string {
 	return e.Message
 }
 
+// Unwrap returns the underlying error, supporting errors.Is and errors.As.
 func (e *Error) Unwrap() error {
 	if e == nil {
 		return nil

@@ -50,6 +50,8 @@ module RunApi
 
           raise error
         end
+      ensure
+        close_multipart_files(req)
       end
 
       private
@@ -69,14 +71,43 @@ module RunApi
         req = klass.new(uri.request_uri)
 
         req["Authorization"] = "Bearer #{@options.api_key}"
-        req["Content-Type"] = "application/json"
         req["Accept"] = "application/json"
         req["User-Agent"] = Constants::SDK_USER_AGENT
 
         options&.headers&.each { |k, v| req[k.to_s] = v }
 
-        req.body = JSON.generate(body) if body
+        if body.is_a?(MultipartBody)
+          req.set_form(multipart_parts(body), "multipart/form-data")
+        elsif body
+          req["Content-Type"] = "application/json"
+          req.body = JSON.generate(body)
+        end
         req
+      end
+
+      def multipart_parts(body)
+        opened_files = []
+        field_parts = body.fields.map { |key, value| [key, value.to_s] }
+        file_parts = body.files.map do |key, file|
+          options = {filename: file.filename}
+          options[:content_type] = file.content_type if file.content_type
+          opened_files << File.open(file.path, "rb")
+          [key, opened_files.last, options]
+        end
+        field_parts + file_parts
+      rescue
+        opened_files.each { |file| file.close unless file.closed? }
+        raise
+      end
+
+      def close_multipart_files(request)
+        body_data = request&.instance_variable_get(:@body_data)
+        return unless body_data
+
+        body_data.each do |part|
+          file = part[1]
+          file.close if file.is_a?(File) && !file.closed?
+        end
       end
 
       def retryable?(method, status)

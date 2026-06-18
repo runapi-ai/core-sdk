@@ -46,8 +46,11 @@ type PollingOptions struct {
 }
 
 // CallConfig holds resolved request and polling options for a single API call.
+// Service methods build one via ResolveCallOptions before issuing the request.
 type CallConfig struct {
+	// Request holds per-call HTTP overrides (timeout, retries, extra headers).
 	Request RequestOptions
+	// Polling controls async task polling intervals and maximum wait time.
 	Polling PollingOptions
 }
 

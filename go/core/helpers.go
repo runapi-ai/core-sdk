@@ -13,9 +13,14 @@ type TaskCreateResponse struct {
 	Status string `json:"status,omitempty"`
 }
 
-func (r TaskCreateResponse) GetID() string     { return r.ID }
+// GetID returns the task ID assigned by the server.
+func (r TaskCreateResponse) GetID() string { return r.ID }
+
+// GetStatus returns the initial task status.
 func (r TaskCreateResponse) GetStatus() string { return r.Status }
-func (r TaskCreateResponse) GetError() string  { return "" }
+
+// GetError always returns empty; creation responses do not carry error details.
+func (r TaskCreateResponse) GetError() string { return "" }
 
 // PostJSON sends a POST request with a JSON body and decodes the response into T.
 func PostJSON[T any](ctx context.Context, httpClient HTTPClient, path string, body any, requestOptions RequestOptions) (*T, error) {
