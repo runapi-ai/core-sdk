@@ -49,6 +49,10 @@ export type { RetryOptions } from './retry';
 // Params
 export { compactParams } from './params';
 
+// Contract validation
+export { validateParams } from './validate';
+export type { ActionSchema } from './validate';
+
 // Files
 export { Files } from './files';
 export type { FileCreateParams, FileSource, FileUploadResponse } from './files';

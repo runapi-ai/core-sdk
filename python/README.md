@@ -23,6 +23,8 @@ from runapi.core import FilesClient
 
 files = FilesClient()  # reads RUNAPI_API_KEY, or pass api_key="sk-..."
 uploaded = files.create(file="./input.png")
+remote = files.create(source="https://example.com/input.png")
+inline = files.create(source="iVBORw0KGgo...")
 print(uploaded.url)
 ```
 

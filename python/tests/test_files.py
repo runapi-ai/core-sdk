@@ -36,7 +36,7 @@ def test_requires_exactly_one_source():
         client.create(file="x", source="y")
 
 
-def test_create_with_remote_source_sends_compact_params():
+def test_create_with_remote_source_sends_url_source_object():
     fake = FakeHttp(UPLOAD)
     client = FilesClient(api_key="k", http_client=fake)
     result = client.create(source="https://example.com/in.png")
@@ -44,9 +44,43 @@ def test_create_with_remote_source_sends_compact_params():
     method, path, body = fake.calls[0]
     assert method == "post"
     assert path == "/api/v1/files"
-    assert body == {"source": "https://example.com/in.png"}
+    assert body == {"source": {"type": "url", "url": "https://example.com/in.png"}}
     assert result.url == UPLOAD["url"]
     assert result.size_bytes == 3
+
+
+def test_create_with_uppercase_url_scheme_sends_url_source_object():
+    fake = FakeHttp(UPLOAD)
+    client = FilesClient(api_key="k", http_client=fake)
+
+    client.create(source="HTTPS://example.com/in.png")
+
+    _, _, body = fake.calls[0]
+    assert body == {"source": {"type": "url", "url": "HTTPS://example.com/in.png"}}
+
+
+def test_create_with_base64_source_sends_base64_source_object():
+    fake = FakeHttp(UPLOAD)
+    client = FilesClient(api_key="k", http_client=fake)
+    source = "cG5n"
+
+    client.create(source=source, file_name="image.png")
+
+    _, _, body = fake.calls[0]
+    assert body == {
+        "source": {"type": "base64", "data": source},
+        "file_name": "image.png",
+    }
+
+
+def test_create_with_source_object_sends_canonical_source_object():
+    fake = FakeHttp(UPLOAD)
+    client = FilesClient(api_key="k", http_client=fake)
+
+    client.create(source={"type": "url", "url": "https://example.com/in.png"})
+
+    _, _, body = fake.calls[0]
+    assert body == {"source": {"type": "url", "url": "https://example.com/in.png"}}
 
 
 def test_create_with_local_file_builds_multipart():

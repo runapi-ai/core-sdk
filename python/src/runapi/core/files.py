@@ -7,7 +7,7 @@ local file or register a remote URL and receive a usable file reference.
 from __future__ import annotations
 
 import os
-from typing import Any, Optional
+from typing import Any, Mapping, Optional, Union
 
 from . import auth
 from .http_client import HttpClient
@@ -40,7 +40,7 @@ class FilesClient(Resource):
     def create(
         self,
         file: Any = None,
-        source: Optional[str] = None,
+        source: Optional[Union[str, Mapping[str, Any]]] = None,
         file_name: Optional[str] = None,
         options: Optional[RequestOptions] = None,
     ) -> Any:
@@ -50,7 +50,8 @@ class FilesClient(Resource):
 
         Args:
             file: Local file path or file-like object to upload.
-            source: Remote URL to register instead of uploading a local file.
+            source: Remote URL, base64 data, or canonical source object to
+                register instead of uploading a local file.
             file_name: Optional name to record for the uploaded file.
             options: Optional per-request options.
 
@@ -62,12 +63,14 @@ class FilesClient(Resource):
         if file is not None:
             body: Any = self._multipart_body(file, file_name)
         else:
-            body = self._compact_params({"source": source, "file_name": file_name})
+            body = self._compact_params(
+                {"source": self._source_object(source), "file_name": file_name}
+            )
 
         return self._request("post", self.ENDPOINT, body=body, options=options)
 
     @staticmethod
-    def _validate_source(file: Any, source: Optional[str]) -> None:
+    def _validate_source(file: Any, source: Optional[Union[str, Mapping[str, Any]]]) -> None:
         def present(value: Any) -> bool:
             if value is None:
                 return False
@@ -78,6 +81,19 @@ class FilesClient(Resource):
         provided = sum(1 for value in (file, source) if present(value))
         if provided != 1:
             raise ValueError("Exactly one source is required: file or source")
+
+    @staticmethod
+    def _source_object(source: Optional[Union[str, Mapping[str, Any]]]) -> Any:
+        if isinstance(source, Mapping):
+            return dict(source)
+
+        if isinstance(source, str):
+            value = source.strip()
+            if value.lower().startswith(("http://", "https://")):
+                return {"type": "url", "url": value}
+            return {"type": "base64", "data": value}
+
+        return source
 
     def _multipart_body(self, file: Any, file_name: Optional[str]) -> MultipartBody:
         path = self._file_path(file)

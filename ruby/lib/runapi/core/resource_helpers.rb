@@ -41,6 +41,151 @@ module RunApi
         end
       end
 
+      # ---- Contract validation ------------------------------------------
+      # Validates request params against the generated contract: model
+      # membership, then per-field required/enum/integer/min/max/length, then
+      # declared cross-field rules. `schema` is one action entry from the generated
+      # per-package CONTRACT (CONTRACT["<action>"]).
+
+      def validate_contract!(schema, params)
+        model = param_value(params, "model")
+        models = schema["models"] || []
+        unless models.include?(model)
+          raise Core::ValidationError, "model must be one of: #{models.sort.join(", ")}"
+        end
+
+        fields = schema.dig("fields_by_model", model) || {}
+        fields.each do |field, rules|
+          validate_schema_field!(params, field, rules)
+        end
+
+        Array(schema["rules"]).each { |rule| enforce_contract_rule!(params, rule) }
+      end
+
+      def validate_schema_field!(params, field, rules)
+        present = field_present?(params, field)
+        raise Core::ValidationError, "#{field} is required" if rules["required"] && !present
+        return unless present
+
+        value = param_value(params, field)
+        if (enum = rules["enum"]) && !enum_value_allowed?(enum, value)
+          raise Core::ValidationError, "#{field} must be one of: #{enum.join(", ")}"
+        end
+
+        validate_schema_integer!(field, value, rules) if rules["type"] == "integer"
+        validate_schema_range!(field, value, rules) if rules.key?("min") || rules.key?("max")
+      end
+
+      # Mirrors GatewayEntry#validate_schema_integer!: a type: integer field
+      # rejects non-integer numbers (e.g. 11.5), which min/max alone admit.
+      def validate_schema_integer!(field, value, rules)
+        return if value.is_a?(Integer)
+
+        min = rules["min"]
+        max = rules["max"]
+        detail = (min && max) ? " between #{min} and #{max}" : ""
+        raise Core::ValidationError, "#{field} must be an integer#{detail}"
+      end
+
+      def validate_schema_range!(field, value, rules)
+        if rules["length"]
+          measured = value.to_s.length
+          unit = "characters"
+        else
+          raise Core::ValidationError, "#{field} must be a number" unless value.is_a?(Numeric)
+
+          measured = value
+          unit = nil
+        end
+
+        min = rules["min"]
+        max = rules["max"]
+        return if (min.nil? || measured >= min) && (max.nil? || measured <= max)
+
+        raise Core::ValidationError, schema_range_message(field, min, max, unit)
+      end
+
+      def schema_range_message(field, min, max, unit)
+        suffix = unit ? " #{unit}" : ""
+        if min && max
+          "#{field} must be between #{min} and #{max}#{suffix}"
+        elsif min
+          "#{field} must be at least #{min}#{suffix}"
+        else
+          "#{field} must be at most #{max}#{suffix}"
+        end
+      end
+
+      def enum_value_allowed?(enum, value)
+        enum.any? do |allowed|
+          if allowed.is_a?(Numeric)
+            value.is_a?(Numeric) && value == allowed
+          elsif value.is_a?(Numeric)
+            allowed == value
+          else
+            allowed.to_s == value.to_s
+          end
+        end
+      end
+
+      def enforce_contract_rule!(params, rule)
+        conditions = rule["when"] || {}
+        return unless conditions.all? { |field, value| rule_condition_met?(params, field, value) }
+
+        context = conditions.map { |field, value| "#{field} is #{value}" }.join(" and ")
+        Array(rule["required"]).each do |field|
+          next if field_present?(params, field)
+
+          raise Core::ValidationError, "#{field} is required when #{context}"
+        end
+        Array(rule["forbidden"]).each do |field|
+          next unless field_present?(params, field)
+
+          raise Core::ValidationError, "#{field} is not allowed when #{context}"
+        end
+      end
+
+      def rule_condition_met?(params, field, value)
+        return false unless param_key?(params, field)
+
+        param_value(params, field).to_s == value.to_s
+      end
+
+      def field_present?(params, field)
+        return false unless param_key?(params, field)
+
+        value = param_value(params, field)
+        case value
+        when false then true
+        when Array then value.any? { |item| present_value?(item) }
+        else present_value?(value)
+        end
+      end
+
+      def param_key?(params, field)
+        params.key?(field.to_sym) || params.key?(field.to_s)
+      end
+
+      # Indifferent value lookup for a string-or-symbol field across params that
+      # may be keyed either way.
+      def param_value(params, field)
+        if params.key?(field.to_sym)
+          params[field.to_sym]
+        elsif params.key?(field.to_s)
+          params[field.to_s]
+        end
+      end
+
+      def present_value?(value)
+        case value
+        when nil, false then false
+        when true then true
+        when String then !value.strip.empty?
+        when Array, Hash then !value.empty?
+        else true
+        end
+      end
+
       def default_response_class
         if self.class.const_defined?(:RESPONSE_CLASS, false)
           self.class::RESPONSE_CLASS

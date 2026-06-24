@@ -6,6 +6,7 @@ Dir.chdir(__dir__) do
   Gem::Specification.new do |spec|
     spec.name = "runapi-core"
     spec.version = RunApi::Core::VERSION
+    spec.metadata["runapi_slug"] = "core"
     spec.authors = ["RunAPI"]
     spec.email = ["contact@runapi.ai"]
 
@@ -18,7 +19,6 @@ Dir.chdir(__dir__) do
     spec.metadata["documentation_uri"] = "https://github.com/runapi-ai/core-sdk/blob/main/ruby/README.md"
     spec.metadata["source_code_uri"] = "https://github.com/runapi-ai/core-sdk"
     spec.metadata["changelog_uri"] = "https://github.com/runapi-ai/core-sdk/blob/main/CHANGELOG.md"
-
 
 
     spec.files = Dir.glob("lib/**/*") + %w[LICENSE README.md]

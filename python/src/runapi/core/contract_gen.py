@@ -148,6 +148,9 @@ CONTRACT = {
         "models": ["gpt-image-2"],
         "fields_by_model": {
             "gpt-image-2": {
+                "aspect_ratio": {
+                    "enum": ["auto", "1:1", "3:2", "2:3", "4:3", "3:4", "5:4", "4:5", "16:9", "9:16", "2:1", "1:2", "3:1", "1:3", "21:9", "9:21"]
+                },
                 "output_resolution": {
                     "enum": ["1k", "2k", "4k"]
                 }
@@ -158,6 +161,9 @@ CONTRACT = {
         "models": ["gpt-image-2"],
         "fields_by_model": {
             "gpt-image-2": {
+                "aspect_ratio": {
+                    "enum": ["auto", "1:1", "3:2", "2:3", "4:3", "3:4", "5:4", "4:5", "16:9", "9:16", "2:1", "1:2", "3:1", "1:3", "21:9", "9:21"]
+                },
                 "output_resolution": {
                     "enum": ["1k", "2k", "4k"]
                 }
@@ -167,13 +173,27 @@ CONTRACT = {
     "gpt-image/edit-image": {
         "models": ["gpt-image-1.5"],
         "fields_by_model": {
-            "gpt-image-1.5": {}
+            "gpt-image-1.5": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "2:3", "3:2"]
+                },
+                "quality": {
+                    "enum": ["medium", "high"]
+                }
+            }
         }
     },
     "gpt-image/text-to-image": {
         "models": ["gpt-image-1.5"],
         "fields_by_model": {
-            "gpt-image-1.5": {}
+            "gpt-image-1.5": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "2:3", "3:2"]
+                },
+                "quality": {
+                    "enum": ["medium", "high"]
+                }
+            }
         }
     },
     "grok-imagine/edit-image": {
@@ -712,9 +732,6 @@ CONTRACT = {
             "seedance-1.5-pro": {
                 "aspect_ratio": {
                     "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "21:9"]
-                },
-                "duration_seconds": {
-                    "enum": [4, 8, 12]
                 },
                 "output_resolution": {
                     "enum": ["480p", "720p", "1080p"]
