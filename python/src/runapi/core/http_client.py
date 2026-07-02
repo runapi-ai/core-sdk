@@ -37,6 +37,9 @@ class HttpClient:
                 "User-Agent": constants.SDK_USER_AGENT,
             },
         )
+        # A bare client for direct uploads: the pre-authorized upload URL lives
+        # outside the API host and must not receive the API key.
+        self._upload_client = httpx.Client(timeout=options.timeout, transport=transport)
 
     def request(
         self,
@@ -87,8 +90,23 @@ class HttpClient:
             for handle in opened:
                 handle.close()
 
+    def upload(self, url: str, headers: Dict[str, str], body: bytes) -> None:
+        """PUT bytes straight to a pre-authorized upload URL with the exact headers
+        issued for it. No auth, no retries: the URL is single-use and the body is
+        not safe to replay."""
+        try:
+            response = self._upload_client.put(url, content=body, headers=headers)
+        except httpx.TimeoutException as exc:
+            raise TimeoutError(str(exc))
+        except httpx.TransportError as exc:
+            raise NetworkError(str(exc))
+
+        if not response.is_success:
+            raise error_from_response(response)
+
     def close(self) -> None:
         self._client.close()
+        self._upload_client.close()
 
     def _build_payload(
         self, body: Any

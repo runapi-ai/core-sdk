@@ -54,6 +54,30 @@ module RunApi
         close_multipart_files(req)
       end
 
+      # PUT bytes straight to a pre-authorized upload URL with the exact headers
+      # issued for it. Skips the base URL, auth, and retries: the URL is single-use
+      # and the body is not safe to replay.
+      def upload(url, headers:, body:)
+        uri = URI.parse(url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = (uri.scheme == "https")
+        http.open_timeout = @options.timeout
+        http.read_timeout = @options.timeout
+
+        req = Net::HTTP::Put.new(uri.request_uri)
+        headers.each { |key, value| req[key.to_s] = value }
+        req.body = body
+
+        response = http.start { |connection| connection.request(req) }
+        return if response.is_a?(Net::HTTPSuccess)
+
+        raise Error.from_response(response, response.body)
+      rescue ::Net::OpenTimeout, ::Net::ReadTimeout => e
+        raise TimeoutError, e.message
+      rescue ::SocketError, ::Errno::ECONNREFUSED, ::Errno::ECONNRESET => e
+        raise NetworkError, e.message
+      end
+
       private
 
       def build_connection

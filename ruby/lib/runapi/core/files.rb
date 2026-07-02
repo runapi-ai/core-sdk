@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
+require "digest"
+
 module RunApi
   module Core
     class Files
       include RunApi::Core::ResourceHelpers
 
       ENDPOINT = "/api/v1/files"
+      PREPARE_ENDPOINT = "#{ENDPOINT}/prepare"
+      CONFIRM_ENDPOINT = "#{ENDPOINT}/confirm"
 
       class UploadResponse < RunApi::Core::BaseModel
         required :file_name, String
@@ -25,13 +29,9 @@ module RunApi
       def create(file: nil, source: nil, file_name: nil, options: nil)
         validate_source!(file:, source:)
 
-        body = if file
-          multipart_body(file, file_name:)
-        else
-          compact_params(source:, file_name:)
-        end
+        return upload_direct(file, file_name:, options:) if file
 
-        request(:post, ENDPOINT, body:, options:)
+        request(:post, ENDPOINT, body: compact_params(source:, file_name:), options:)
       end
 
       private
@@ -43,15 +43,26 @@ module RunApi
         raise ArgumentError, "Exactly one source is required: file or source"
       end
 
-      def multipart_body(file, file_name:)
+      # Local files upload straight to storage: ask for a pre-authorized target,
+      # PUT the bytes there (never through the API), then confirm. The caller still
+      # makes a single create call.
+      def upload_direct(file, file_name:, options:)
         path = file_path(file)
-        filename = file_name || File.basename(path)
-        Core::MultipartBody.new(
-          fields: compact_params(file_name: file_name),
-          files: {
-            file: Core::MultipartFile.new(path:, filename:)
-          }
+        bytes = File.binread(path)
+        prepared = @http.request(
+          :post,
+          PREPARE_ENDPOINT,
+          body: compact_params(
+            filename: file_name || File.basename(path),
+            byte_size: bytes.bytesize,
+            checksum: Digest::MD5.base64digest(bytes)
+          ),
+          options:
         )
+
+        @http.upload(prepared["upload_url"], headers: prepared["headers"], body: bytes)
+
+        request(:post, CONFIRM_ENDPOINT, body: {signed_id: prepared["signed_id"]}, options:)
       end
 
       def file_path(file)

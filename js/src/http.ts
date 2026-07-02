@@ -30,6 +30,15 @@ export interface HttpClient {
     path: string,
     options?: HttpRequestOptions
   ): Promise<T>;
+  /**
+   * PUT bytes straight to an absolute upload URL with the exact headers issued
+   * for it. Skips the base URL, auth, and retries — the URL is single-use and
+   * pre-authorized, and the body is not safe to replay.
+   */
+  upload(
+    url: string,
+    options: { headers: Record<string, string>; body: BodyInit; timeoutMs?: number; signal?: AbortSignal }
+  ): Promise<void>;
 }
 
 function buildUrl(baseUrl: string, path: string, query?: QueryParams): string {
@@ -265,6 +274,36 @@ export function createHttpClient(options: ClientOptions): HttpClient {
 
       // Unreachable at runtime, but required for TypeScript return type inference
       throw new NetworkError('Network error');
+    },
+
+    async upload(url, uploadOptions) {
+      const timeoutMs = uploadOptions.timeoutMs ?? clientTimeoutMs ?? TIMEOUTS.HTTP_REQUEST;
+      const { controller, cleanup, timedOut } = createAbortController(timeoutMs, uploadOptions.signal);
+
+      try {
+        const response = await fetchImpl(url, {
+          ...clientFetchOptions,
+          method: 'PUT',
+          headers: uploadOptions.headers,
+          body: uploadOptions.body,
+          signal: controller.signal,
+        });
+        cleanup();
+
+        if (!response.ok) {
+          const text = await response.text().catch(() => '');
+          throw new RunApiError(`Direct upload failed with status ${response.status}${text ? `: ${text}` : ''}`);
+        }
+      } catch (error) {
+        cleanup();
+        if (timedOut()) {
+          throw new TimeoutError('Direct upload timed out');
+        }
+        if (error instanceof RunApiError) {
+          throw error;
+        }
+        throw new NetworkError('Direct upload network error', { cause: error as Error });
+      }
     },
   };
 }

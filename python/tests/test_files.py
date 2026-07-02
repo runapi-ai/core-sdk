@@ -1,20 +1,34 @@
+import base64
+import hashlib
 import os
 import tempfile
 
 import pytest
 
 from runapi.core import FilesClient
-from runapi.core.multipart import MultipartBody
+
+
+PREPARED = {
+    "signed_id": "signed-blob-id",
+    "upload_url": "https://file.runapi.ai/temp/user-uploads/key",
+    "headers": {"Content-Type": "application/octet-stream"},
+}
 
 
 class FakeHttp:
     def __init__(self, response):
         self._response = response
         self.calls = []
+        self.uploads = []
 
     def request(self, method, path, body=None, options=None):
         self.calls.append((method, path, body))
+        if path.endswith("/prepare"):
+            return PREPARED
         return self._response
+
+    def upload(self, url, headers, body):
+        self.uploads.append((url, headers, body))
 
 
 UPLOAD = {
@@ -83,7 +97,7 @@ def test_create_with_source_object_sends_canonical_source_object():
     assert body == {"source": {"type": "url", "url": "https://cdn.runapi.ai/public/samples/in.png"}}
 
 
-def test_create_with_local_file_builds_multipart():
+def test_create_with_local_file_uploads_directly():
     fake = FakeHttp(UPLOAD)
     client = FilesClient(api_key="k", http_client=fake)
 
@@ -91,14 +105,23 @@ def test_create_with_local_file_builds_multipart():
         handle.write(b"png")
         path = handle.name
     try:
-        client.create(file=path)
+        result = client.create(file=path)
     finally:
         os.unlink(path)
 
-    _, _, body = fake.calls[0]
-    assert isinstance(body, MultipartBody)
-    assert "file" in body.files
-    assert body.files["file"].filename == os.path.basename(path)
+    # prepare then confirm; bytes never travel through the API
+    assert [call[1] for call in fake.calls] == ["/api/v1/files/prepare", "/api/v1/files/confirm"]
+    _, _, prepare_body = fake.calls[0]
+    assert prepare_body["filename"] == os.path.basename(path)
+    assert prepare_body["byte_size"] == 3
+    assert prepare_body["checksum"] == base64.b64encode(hashlib.md5(b"png").digest()).decode("ascii")
+
+    # bytes go straight to the issued upload URL with its headers
+    assert fake.uploads == [(PREPARED["upload_url"], PREPARED["headers"], b"png")]
+
+    _, _, confirm_body = fake.calls[1]
+    assert confirm_body == {"signed_id": "signed-blob-id"}
+    assert result.url == UPLOAD["url"]
 
 
 def test_create_uses_explicit_file_name():
@@ -113,9 +136,8 @@ def test_create_uses_explicit_file_name():
     finally:
         os.unlink(path)
 
-    _, _, body = fake.calls[0]
-    assert body.files["file"].filename == "custom.png"
-    assert body.fields == {"file_name": "custom.png"}
+    _, _, prepare_body = fake.calls[0]
+    assert prepare_body["filename"] == "custom.png"
 
 
 def test_create_with_pathlib_path_keeps_full_path():
@@ -133,9 +155,10 @@ def test_create_with_pathlib_path_keeps_full_path():
     finally:
         os.unlink(path)
 
-    _, _, body = fake.calls[0]
-    assert body.files["file"].path == path
-    assert body.files["file"].filename == os.path.basename(path)
+    # the full path was read (checksum of the real bytes), not a basename miss
+    _, _, prepare_body = fake.calls[0]
+    assert prepare_body["checksum"] == base64.b64encode(hashlib.md5(b"png").digest()).decode("ascii")
+    assert fake.uploads[0][2] == b"png"
 
 
 def test_create_rejects_blank_source():

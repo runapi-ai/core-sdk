@@ -6,13 +6,14 @@ local file or register a remote URL and receive a usable file reference.
 
 from __future__ import annotations
 
+import base64
+import hashlib
 import os
 from typing import Any, Mapping, Optional, Union
 
 from . import auth
 from .http_client import HttpClient
 from .models import BaseModel, optional, required
-from .multipart import MultipartBody, MultipartFile
 from .options import ClientOptions, RequestOptions
 from .resource import Resource
 
@@ -28,6 +29,8 @@ class UploadResponse(BaseModel):
 
 class FilesClient(Resource):
     ENDPOINT = "/api/v1/files"
+    PREPARE_ENDPOINT = f"{ENDPOINT}/prepare"
+    CONFIRM_ENDPOINT = f"{ENDPOINT}/confirm"
 
     RESPONSE_CLASS = UploadResponse
 
@@ -61,13 +64,39 @@ class FilesClient(Resource):
         self._validate_source(file, source)
 
         if file is not None:
-            body: Any = self._multipart_body(file, file_name)
-        else:
-            body = self._compact_params(
-                {"source": self._source_object(source), "file_name": file_name}
-            )
+            return self._upload_direct(file, file_name, options)
 
+        body = self._compact_params(
+            {"source": self._source_object(source), "file_name": file_name}
+        )
         return self._request("post", self.ENDPOINT, body=body, options=options)
+
+    def _upload_direct(self, file: Any, file_name: Optional[str], options: Optional[RequestOptions]) -> Any:
+        """Local files upload straight to storage: ask for a pre-authorized target,
+        PUT the bytes there (never through the API), then confirm. The caller still
+        makes a single create call."""
+        path = self._file_path(file)
+        with open(path, "rb") as handle:
+            data = handle.read()
+
+        prepared = self._http.request(
+            "post",
+            self.PREPARE_ENDPOINT,
+            body=self._compact_params(
+                {
+                    "filename": file_name or os.path.basename(path),
+                    "byte_size": len(data),
+                    "checksum": base64.b64encode(hashlib.md5(data).digest()).decode("ascii"),
+                }
+            ),
+            options=options,
+        )
+
+        self._http.upload(prepared["upload_url"], headers=prepared["headers"], body=data)
+
+        return self._request(
+            "post", self.CONFIRM_ENDPOINT, body={"signed_id": prepared["signed_id"]}, options=options
+        )
 
     @staticmethod
     def _validate_source(file: Any, source: Optional[Union[str, Mapping[str, Any]]]) -> None:
@@ -94,14 +123,6 @@ class FilesClient(Resource):
             return {"type": "base64", "data": value}
 
         return source
-
-    def _multipart_body(self, file: Any, file_name: Optional[str]) -> MultipartBody:
-        path = self._file_path(file)
-        filename = file_name or os.path.basename(path)
-        return MultipartBody(
-            fields=self._compact_params({"file_name": file_name}),
-            files={"file": MultipartFile(path=path, filename=filename)},
-        )
 
     @staticmethod
     def _file_path(file: Any) -> str:

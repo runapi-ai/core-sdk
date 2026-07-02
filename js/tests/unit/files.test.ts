@@ -5,6 +5,7 @@ import type { HttpClient } from '../../src/http';
 describe('Files', () => {
   const mockHttp: HttpClient = {
     request: vi.fn(),
+    upload: vi.fn(),
   };
 
   beforeEach(() => {
@@ -37,30 +38,51 @@ describe('Files', () => {
     expect(result).toEqual(response);
   });
 
-  it('creates a temporary file from multipart file input', async () => {
-    vi.mocked(mockHttp.request).mockResolvedValueOnce({
+  it('uploads a local file directly via prepare, PUT, then confirm', async () => {
+    const confirmed = {
       file_name: 'image.png',
       url: 'https://file.runapi.ai/temp/image.png',
-      size_bytes: 123,
+      size_bytes: 3,
       mime_type: 'image/png',
       created_at: '2026-06-08T10:30:00Z',
       expires_at: '2026-06-08T11:30:00Z',
-    });
+    };
+    vi.mocked(mockHttp.request)
+      .mockResolvedValueOnce({
+        signed_id: 'signed-blob-id',
+        upload_url: 'https://file.runapi.ai/temp/user-uploads/key',
+        headers: { 'Content-Type': 'image/png', 'Content-MD5': 'abc==' },
+      })
+      .mockResolvedValueOnce(confirmed);
 
     const file = new Blob(['png'], { type: 'image/png' });
     const files = new Files(mockHttp);
-    await files.create({ file, file_name: 'image.png' });
+    const result = await files.create({ file, file_name: 'image.png' });
 
-    expect(mockHttp.request).toHaveBeenCalledTimes(1);
-    const [, path, options] = vi.mocked(mockHttp.request).mock.calls[0];
-    expect(path).toBe('/api/v1/files');
-    expect(options?.body).toBeInstanceOf(FormData);
-    const form = options?.body as FormData;
-    const uploaded = form.get('file') as File;
-    expect(uploaded.size).toBe(file.size);
-    expect(uploaded.type).toBe('image/png');
-    expect(uploaded.name).toBe('image.png');
-    expect(form.get('file_name')).toBe('image.png');
+    // prepare: declares the file, never sends bytes to the API
+    const [prepareMethod, preparePath, prepareOptions] = vi.mocked(mockHttp.request).mock.calls[0];
+    expect(prepareMethod).toBe('POST');
+    expect(preparePath).toBe('/api/v1/files/prepare');
+    const prepareBody = prepareOptions?.body as Record<string, unknown>;
+    expect(prepareBody.filename).toBe('image.png');
+    expect(prepareBody.byte_size).toBe(3);
+    expect(prepareBody.content_type).toBe('image/png');
+    expect(typeof prepareBody.checksum).toBe('string');
+    expect((prepareBody.checksum as string).length).toBe(24); // base64 of a 16-byte digest
+
+    // PUT: bytes go straight to the issued upload URL with its headers
+    expect(mockHttp.upload).toHaveBeenCalledTimes(1);
+    const [uploadUrl, uploadOptions] = vi.mocked(mockHttp.upload).mock.calls[0];
+    expect(uploadUrl).toBe('https://file.runapi.ai/temp/user-uploads/key');
+    expect(uploadOptions.headers['Content-MD5']).toBe('abc==');
+    expect(uploadOptions.body).toBeInstanceOf(Uint8Array);
+
+    // confirm: resolves the final resource
+    const [, confirmPath, confirmOptions] = vi.mocked(mockHttp.request).mock.calls[1];
+    expect(confirmPath).toBe('/api/v1/files/confirm');
+    expect(confirmOptions?.body).toEqual({ signed_id: 'signed-blob-id' });
+
+    expect(result).toEqual(confirmed);
   });
 
   it('rejects missing upload source before sending a request', async () => {
