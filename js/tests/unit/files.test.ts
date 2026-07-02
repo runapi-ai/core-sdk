@@ -24,13 +24,13 @@ describe('Files', () => {
 
     const files = new Files(mockHttp);
     const result = await files.create({
-      source: { type: 'url', url: 'https://example.com/image.png' },
+      source: { type: 'url', url: 'https://cdn.runapi.ai/public/samples/mask.png' },
       file_name: 'image.png',
     });
 
     expect(mockHttp.request).toHaveBeenCalledWith('POST', '/api/v1/files', {
       body: {
-        source: { type: 'url', url: 'https://example.com/image.png' },
+        source: { type: 'url', url: 'https://cdn.runapi.ai/public/samples/mask.png' },
         file_name: 'image.png',
       },
     });
@@ -77,7 +77,7 @@ describe('Files', () => {
     await expect(
       files.create({
         file,
-        source: { type: 'url', url: 'https://example.com/image.png' },
+        source: { type: 'url', url: 'https://cdn.runapi.ai/public/samples/mask.png' },
       } as never),
     ).rejects.toThrow('Exactly one source is required');
     expect(mockHttp.request).not.toHaveBeenCalled();

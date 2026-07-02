@@ -30,7 +30,7 @@ func TestCreateFromURLSendsJSONSource(t *testing.T) {
 	resp, err := client.Create(context.Background(), CreateParams{
 		Source: Source{
 			Type: "url",
-			URL:  "https://example.com/image.png",
+			URL:  "https://cdn.runapi.ai/public/samples/mask.png",
 		},
 		FileName: "image.png",
 	})
@@ -48,7 +48,7 @@ func TestCreateFromURLSendsJSONSource(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected source map, got %#v", body["source"])
 	}
-	if source["type"] != "url" || source["url"] != "https://example.com/image.png" {
+	if source["type"] != "url" || source["url"] != "https://cdn.runapi.ai/public/samples/mask.png" {
 		t.Fatalf("unexpected source: %#v", source)
 	}
 	if resp.URL != "https://file.runapi.ai/temp/image.png" || resp.ExpiresAt == "" {
@@ -101,7 +101,7 @@ func TestCreateRejectsMultipleSourcesBeforeRequest(t *testing.T) {
 		File: "testdata/image.png",
 		Source: Source{
 			Type: "url",
-			URL:  "https://example.com/image.png",
+			URL:  "https://cdn.runapi.ai/public/samples/mask.png",
 		},
 	})
 	if err == nil {

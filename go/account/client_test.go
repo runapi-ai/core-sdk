@@ -16,7 +16,7 @@ type stubHTTPClient struct {
 func (s *stubHTTPClient) Request(_ context.Context, method, path string, _ *core.HTTPRequestOptions) (json.RawMessage, error) {
 	s.method = method
 	s.path = path
-	return json.RawMessage(`{"id":1,"name":"test","email":"test@example.com","account":{"id":2,"name":"acme"}}`), nil
+	return json.RawMessage(`{"id":1,"name":"test","email":"developer@runapi.ai","account":{"id":2,"name":"acme"}}`), nil
 }
 
 func TestInfoSendsCorrectRequest(t *testing.T) {
@@ -29,7 +29,7 @@ func TestInfoSendsCorrectRequest(t *testing.T) {
 	if stub.method != "GET" || stub.path != "/api/v1/me" {
 		t.Fatalf("unexpected request: %s %s", stub.method, stub.path)
 	}
-	if resp.Email != "test@example.com" {
+	if resp.Email != "developer@runapi.ai" {
 		t.Fatalf("unexpected email: %s", resp.Email)
 	}
 	if resp.Account.Name != "acme" {

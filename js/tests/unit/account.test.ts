@@ -15,7 +15,7 @@ describe('Account', () => {
     const response = {
       id: 1,
       name: 'test',
-      email: 'test@example.com',
+      email: 'developer@runapi.ai',
       account: { id: 2, name: 'acme' },
     };
     vi.mocked(mockHttp.request).mockResolvedValueOnce(response);

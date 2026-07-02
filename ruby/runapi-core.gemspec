@@ -18,6 +18,7 @@ Dir.chdir(__dir__) do
     spec.metadata["homepage_uri"] = "https://runapi.ai/models"
     spec.metadata["documentation_uri"] = "https://github.com/runapi-ai/core-sdk/blob/main/ruby/README.md"
     spec.metadata["source_code_uri"] = "https://github.com/runapi-ai/core-sdk"
+    spec.metadata["bug_tracker_uri"] = "https://github.com/runapi-ai/core-sdk/issues"
     spec.metadata["changelog_uri"] = "https://github.com/runapi-ai/core-sdk/blob/main/CHANGELOG.md"
 
 

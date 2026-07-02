@@ -22,7 +22,7 @@
 </div>
 <br/>
 
-RunAPI Core SDK contains the shared authentication, HTTP, retry, error, file upload, account, and polling primitives used by RunAPI model SDKs. Application code should usually install a concrete model package such as `@runapi.ai/wan`, `runapi-wan`, `github.com/runapi-ai/wan-sdk/go`, or `ai.runapi:runapi-wan`; install core packages directly only when building shared SDK infrastructure.
+RunAPI Core SDK contains the shared authentication, HTTP, retry, error, file upload, account, and polling primitives used by RunAPI model SDKs. Application code should usually install a concrete model package such as `@runapi.ai/wan`, `runapi-wan`, `runapi-ai/wan`, `github.com/runapi-ai/wan-sdk/go`, or `ai.runapi:runapi-wan`; install core packages directly only when building shared SDK infrastructure.
 
 ## Install
 
@@ -65,7 +65,7 @@ RequestOptions options = RequestOptions.builder()
     .maxRetries(2)
     .build();
 
-FileCreateParams upload = FileCreateParams.fromUrl("https://example.com/input.png")
+FileCreateParams upload = FileCreateParams.fromUrl("https://cdn.runapi.ai/public/samples/input.png")
     .fileName("input.png")
     .build();
 ```
@@ -83,6 +83,19 @@ FileCreateParams upload = FileCreateParams.fromUrl("https://example.com/input.pn
 - SDK docs: https://runapi.ai/docs#runapi-sdks
 - Model catalog: https://runapi.ai/models
 - Repository: https://github.com/runapi-ai/core-sdk
+
+## Request identifiers
+
+RunAPI accepts an optional `X-Client-Request-Id` header on public API calls. Use printable ASCII values up to 512 characters. Accepted values are echoed in the response and stored with the RunAPI task for support and reconciliation.
+
+```typescript
+await client.textToImage.create(
+  { prompt: 'A sunset over the ocean' },
+  { headers: { 'X-Client-Request-Id': 'order-123' } }
+);
+```
+
+Public API responses expose `X-RunAPI-Task-Id` when a RunAPI task exists. High-level model SDK methods return parsed response bodies; use a custom transport or direct HTTP request when your integration needs response headers.
 
 ## License
 

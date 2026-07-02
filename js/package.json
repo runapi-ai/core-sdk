@@ -3,7 +3,7 @@
   "runapi": {
     "slug": "core"
   },
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "RunAPI core SDK for JavaScript, Python, Ruby, Go, and Java",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -52,10 +52,10 @@
     "api",
     "sdk",
     "typescript",
+    "python",
     "ruby",
     "golang",
     "java",
-    "python",
     "pypi",
     "maven",
     "gradle"
@@ -66,5 +66,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/runapi-ai/core-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/runapi-ai/core-sdk/issues"
   }
 }
