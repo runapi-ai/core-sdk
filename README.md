@@ -7,7 +7,7 @@
 </h3>
 
 <p align="center">
-  Shared SDK primitives for RunAPI JavaScript, Python, Ruby, Go, and Java SDKs.
+  Shared SDK primitives for RunAPI JavaScript, Python, Ruby, Go, Java, and PHP SDKs.
 </p>
 
 <div align="center">
@@ -22,7 +22,7 @@
 </div>
 <br/>
 
-RunAPI Core SDK contains the shared authentication, HTTP, retry, error, file upload, account, and polling primitives used by RunAPI model SDKs. Application code should usually install a concrete model package such as `@runapi.ai/wan`, `runapi-wan`, `runapi-ai/wan`, `github.com/runapi-ai/wan-sdk/go`, or `ai.runapi:runapi-wan`; install core packages directly only when building shared SDK infrastructure.
+RunAPI Core SDK contains the shared authentication, HTTP, retry, error, file upload, account, and polling primitives used by RunAPI Provider Client packages. Application code should usually install a concrete Provider Client package such as `@runapi.ai/wan`, `runapi-wan`, `runapi-ai/wan`, `github.com/runapi-ai/wan-sdk/go`, or `ai.runapi:runapi-wan`; install core packages directly only when building shared SDK infrastructure.
 
 ## Install
 
@@ -51,9 +51,11 @@ Maven:
 </dependency>
 ```
 
+The PHP core package is published from the split Composer repository as `runapi-ai/core`; see https://github.com/runapi-ai/core-php for PHP install and examples.
+
 ## Use Core Directly
 
-Core is normally transitive from a model SDK. Install it directly when you need shared Java exceptions, `RequestOptions`, files, account, or transport primitives in reusable tooling.
+Core is normally transitive from a Provider Client package. Install it directly when you need shared Java exceptions, `RequestOptions`, files, account, or transport primitives in reusable tooling.
 
 ```java
 import ai.runapi.core.RequestOptions;
@@ -77,6 +79,7 @@ FileCreateParams upload = FileCreateParams.fromUrl("https://cdn.runapi.ai/public
 - `ruby/` publishes `runapi-core`.
 - `go/` publishes `github.com/runapi-ai/core-sdk/go`.
 - `java/` publishes `ai.runapi:runapi-core` and `ai.runapi:runapi-bom`.
+- PHP publishes `runapi-ai/core` from https://github.com/runapi-ai/core-php.
 
 ## Public Links
 
@@ -95,7 +98,7 @@ await client.textToImage.create(
 );
 ```
 
-Public API responses expose `X-RunAPI-Task-Id` when a RunAPI task exists. High-level model SDK methods return parsed response bodies; use a custom transport or direct HTTP request when your integration needs response headers.
+Public API responses expose `X-RunAPI-Task-Id` when a RunAPI task exists. Ruby and Python Provider Client resource methods keep response headers on returned model objects via `response_headers` and `runapi_task_id`. Other high-level SDK resource methods expose parsed response bodies; use a custom transport or direct HTTP request when those integrations need raw response headers.
 
 ## License
 

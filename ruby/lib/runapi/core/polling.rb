@@ -16,15 +16,27 @@ module RunApi
 
           if status == "failed"
             message = value_for(response, "error") || "Task failed"
-            raise TaskFailedError.new(message, details: details_for(response))
+            raise TaskFailedError.new(
+              message,
+              details: details_for(response),
+              response_headers: response_headers_for(response)
+            )
           end
 
           if Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
-            raise TaskTimeoutError, "Task polling timed out after #{options.max_wait}s"
+            raise TaskTimeoutError.new(
+              "Task polling timed out after #{options.max_wait}s",
+              details: details_for(response),
+              response_headers: response_headers_for(response)
+            )
           end
 
           unless ACTIVE_STATUSES.include?(status)
-            raise TaskFailedError.new("Unknown task status: #{status}", details: details_for(response))
+            raise TaskFailedError.new(
+              "Unknown task status: #{status}",
+              details: details_for(response),
+              response_headers: response_headers_for(response)
+            )
           end
 
           sleep(options.poll_interval)
@@ -45,6 +57,11 @@ module RunApi
         response.is_a?(Core::BaseModel) ? response.to_h : response
       end
       private_class_method :details_for
+
+      def self.response_headers_for(response)
+        response.response_headers if response.respond_to?(:response_headers)
+      end
+      private_class_method :response_headers_for
     end
   end
 end

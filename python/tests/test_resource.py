@@ -1,6 +1,6 @@
 import pytest
 
-from runapi.core import BaseModel, Resource, TaskResponse, optional, required
+from runapi.core import ApiResponse, BaseModel, Resource, TaskResponse, optional, required
 from runapi.core.errors import ValidationError
 from runapi.core.options import PollingOptions
 
@@ -34,6 +34,31 @@ def test_request_coerces_to_response_class():
     result = resource._request("post", "/x", body={"a": 1})
     assert isinstance(result, TaskResponse)
     assert result.id == "1"
+
+
+def test_request_attaches_response_headers_to_model():
+    resource = SampleResource(
+        FakeHttp(ApiResponse({"id": "1", "status": "pending"}, {"X-RunAPI-Task-Id": "task-ref-1"}))
+    )
+    result = resource._request("post", "/x", body={"a": 1})
+    assert isinstance(result, TaskResponse)
+    assert result.runapi_task_id == "task-ref-1"
+    assert result.response_headers["X-RunAPI-Task-Id"] == "task-ref-1"
+    assert result.to_dict() == {"id": "1", "status": "pending"}
+
+
+def test_request_attaches_response_headers_to_array_items():
+    resource = SampleResource(
+        FakeHttp(ApiResponse([{"id": "1", "status": "pending"}], {"X-RunAPI-Task-Id": "task-ref-1"}))
+    )
+
+    result = resource._request("post", "/x", body={"a": 1})
+
+    assert len(result) == 1
+    assert isinstance(result[0], TaskResponse)
+    assert result[0].runapi_task_id == "task-ref-1"
+    assert result[0].response_headers["X-RunAPI-Task-Id"] == "task-ref-1"
+    assert result[0].to_dict() == {"id": "1", "status": "pending"}
 
 
 def test_compact_params_drops_none_and_blank():

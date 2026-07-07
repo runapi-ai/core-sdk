@@ -8,6 +8,8 @@ from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from typing import Any, Dict, Optional
 
+from .response import ResponseHeaders
+
 _HTML_MARKER = re.compile(r"<!doctype|<html", re.IGNORECASE)
 _TITLE = re.compile(r"<title>(.*?)</title>", re.IGNORECASE | re.DOTALL)
 _H1 = re.compile(r"<h1>(.*?)</h1>", re.IGNORECASE | re.DOTALL)
@@ -29,12 +31,23 @@ class Error(Exception):
         status: Optional[int] = None,
         request_id: Optional[str] = None,
         details: Any = None,
+        response_headers: Any = None,
     ) -> None:
         super().__init__(message)
         self.message = message
         self.status = status
         self.request_id = request_id
         self.details = details
+        self.response_headers = (
+            response_headers if isinstance(response_headers, ResponseHeaders) else ResponseHeaders(response_headers)
+        )
+
+    def response_header(self, name: str) -> Optional[str]:
+        return self.response_headers.get(name)
+
+    @property
+    def runapi_task_id(self) -> Optional[str]:
+        return self.response_header("X-RunAPI-Task-Id")
 
     def to_dict(self) -> Dict[str, Any]:
         data = {
@@ -184,7 +197,12 @@ def error_from_response(response: "Any") -> Error:
 
     error_class = STATUS_MAP.get(status, Error)
 
-    kwargs: Dict[str, Any] = {"status": status, "request_id": request_id, "details": parsed_body}
+    kwargs: Dict[str, Any] = {
+        "status": status,
+        "request_id": request_id,
+        "details": parsed_body,
+        "response_headers": response.headers,
+    }
     if error_class is RateLimitError:
         kwargs["retry_after"] = _parse_retry_after(response.headers.get("retry-after"))
 

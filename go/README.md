@@ -10,7 +10,7 @@ go get github.com/runapi-ai/core-sdk/go@latest
 
 ## Notes
 
-Use the core module for client options, common error types, request helpers, and task polling behavior that model SDKs share. Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
+Use the core module for client options, common error types, request helpers, and task polling behavior shared across Go Provider Client modules. Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
 
 ## Request identifiers
 
@@ -24,7 +24,7 @@ task, err := client.TextToMusic.Create(
 )
 ```
 
-Public API responses expose `X-RunAPI-Task-Id` when a RunAPI task exists. High-level model SDK methods return parsed response bodies; use a custom transport or direct HTTP request when your integration needs response headers.
+Public API responses expose `X-RunAPI-Task-Id` when a RunAPI task exists. High-level Go Provider Client resource methods return parsed response bodies; use a custom transport or direct HTTP request when your integration needs raw response headers.
 
 ## File Upload
 

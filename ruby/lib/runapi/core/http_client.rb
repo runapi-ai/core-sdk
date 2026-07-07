@@ -37,7 +37,13 @@ module RunApi
             raise NetworkError, e.message
           end
 
-          return parse_body(response.body) if response.is_a?(Net::HTTPSuccess)
+          if response.is_a?(Net::HTTPSuccess)
+            body = parse_body(response.body)
+            return nil if body.nil?
+            return body unless body.is_a?(Hash) || body.is_a?(Array)
+
+            return Response.new(body:, headers: response_headers(response))
+          end
 
           error = Error.from_response(response, response.body)
 
@@ -155,6 +161,12 @@ module RunApi
         JSON.parse(body)
       rescue JSON::ParserError
         body
+      end
+
+      def response_headers(response)
+        headers = {}
+        response.each_header { |key, value| headers[key] = value }
+        headers
       end
     end
   end

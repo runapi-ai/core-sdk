@@ -20,7 +20,10 @@ module RunApi
           @http.request(method, path, **kwargs)
         end
 
-        Core::BaseModel.coerce(response, as: response_class)
+        payload = response.is_a?(Core::Response) ? response.body : response
+        result = Core::BaseModel.coerce(payload, as: response_class)
+        attach_response_headers(result, response.response_headers) if response.is_a?(Core::Response)
+        result
       end
 
       def compact_params(params)
@@ -205,7 +208,18 @@ module RunApi
         return response if response.is_a?(completed_class)
 
         payload = response.is_a?(Core::BaseModel) ? response.to_h : response
-        completed_class.from_hash(payload)
+        completed = completed_class.from_hash(payload)
+        completed.with_response_headers(response.response_headers) if response.is_a?(Core::BaseModel)
+        completed
+      end
+
+      def attach_response_headers(result, headers)
+        case result
+        when Core::BaseModel
+          result.with_response_headers(headers)
+        when Array
+          result.each { |item| attach_response_headers(item, headers) }
+        end
       end
     end
   end

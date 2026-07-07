@@ -29,6 +29,7 @@ from .http_client import HttpClient
 from .models import BaseModel, DynamicModel, TaskResponse, optional, required
 from .multipart import MultipartBody, MultipartFile
 from .options import ClientOptions, PollingOptions, RequestOptions
+from .response import ApiResponse, ResponseHeaders
 from .resource import Resource
 from .version import __version__
 
@@ -57,6 +58,8 @@ __all__ = [
     "ClientOptions",
     "RequestOptions",
     "PollingOptions",
+    "ApiResponse",
+    "ResponseHeaders",
     "BaseModel",
     "DynamicModel",
     "TaskResponse",

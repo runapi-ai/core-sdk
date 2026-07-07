@@ -110,3 +110,10 @@ def test_field_inheritance_override():
     with pytest.raises(ValidationError, match="value is required"):
         Child({})
     assert Child({"value": "ok"}).value == "ok"
+
+
+def test_response_headers_stay_outside_serialized_body():
+    model = Sample({"id": "abc"})._with_response_headers({"X-RunAPI-Task-Id": "task-ref-1"})
+    assert model.response_header("x-runapi-task-id") == "task-ref-1"
+    assert model.runapi_task_id == "task-ref-1"
+    assert model.to_dict() == {"id": "abc"}

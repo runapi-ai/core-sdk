@@ -32,13 +32,25 @@ def poll_until_complete(fetch: Callable[[], Any], options: Optional[PollingOptio
 
         if status == "failed":
             message = _value_for(response, "error") or "Task failed"
-            raise TaskFailedError(message, details=_details_for(response))
+            raise TaskFailedError(
+                message,
+                details=_details_for(response),
+                response_headers=_response_headers_for(response),
+            )
 
         if time.monotonic() >= deadline:
-            raise TaskTimeoutError(f"Task polling timed out after {options.max_wait}s")
+            raise TaskTimeoutError(
+                f"Task polling timed out after {options.max_wait}s",
+                details=_details_for(response),
+                response_headers=_response_headers_for(response),
+            )
 
         if status not in ACTIVE_STATUSES:
-            raise TaskFailedError(f"Unknown task status: {status}", details=_details_for(response))
+            raise TaskFailedError(
+                f"Unknown task status: {status}",
+                details=_details_for(response),
+                response_headers=_response_headers_for(response),
+            )
 
         time.sleep(options.poll_interval)
 
@@ -53,3 +65,7 @@ def _value_for(response: Any, key: str) -> Any:
 
 def _details_for(response: Any) -> Any:
     return response.to_dict() if isinstance(response, BaseModel) else response
+
+
+def _response_headers_for(response: Any) -> Any:
+    return response.response_headers if hasattr(response, "response_headers") else None

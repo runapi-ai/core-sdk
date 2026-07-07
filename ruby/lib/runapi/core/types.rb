@@ -62,7 +62,9 @@ module RunApi
     #
     # @example
     #   client.text_to_image.run(
-    #     { prompt: "A sunset" },
+    #     prompt: "A sunset",
+    #     model: "z-image",
+    #     aspect_ratio: "1:1",
     #     options: RequestOptions.new(timeout: 30, headers: { "X-Custom" => "value" })
     #   )
     #

@@ -13,12 +13,23 @@ module RunApi
       attr_reader :request_id
       # @return [Hash, String, nil] Parsed response body or error details.
       attr_reader :details
+      # @return [ResponseHeaders] HTTP response headers when available.
+      attr_reader :response_headers
 
-      def initialize(message = nil, status: nil, request_id: nil, details: nil)
+      def initialize(message = nil, status: nil, request_id: nil, details: nil, response_headers: nil)
         super(message)
         @status = status
         @request_id = request_id
         @details = details
+        @response_headers = response_headers.is_a?(ResponseHeaders) ? response_headers : ResponseHeaders.new(response_headers)
+      end
+
+      def response_header(name)
+        response_headers[name]
+      end
+
+      def runapi_task_id
+        response_header("X-RunAPI-Task-Id")
       end
 
       def to_h
@@ -71,6 +82,7 @@ module RunApi
         def from_response(response, body = nil)
           status = response.code.to_i
           request_id = response["x-request-id"]
+          headers = response_headers(response)
 
           parsed_body = parse_body(body)
           message = extract_message(parsed_body) ||
@@ -89,7 +101,8 @@ module RunApi
           kwargs = {
             status: status,
             request_id: request_id,
-            details: parsed_body
+            details: parsed_body,
+            response_headers: headers
           }
           kwargs[:retry_after] = retry_after if error_class == RateLimitError
 
@@ -146,6 +159,14 @@ module RunApi
           rescue ArgumentError
             nil
           end
+        end
+
+        def response_headers(response)
+          return {} unless response.respond_to?(:each_header)
+
+          headers = {}
+          response.each_header { |key, value| headers[key] = value }
+          headers
         end
       end
     end

@@ -13,6 +13,7 @@ from . import constants
 from .errors import NetworkError, RateLimitError, TimeoutError, error_from_response
 from .multipart import MultipartBody
 from .options import ClientOptions, RequestOptions
+from .response import ApiResponse
 
 _NO_BODY = object()
 
@@ -77,7 +78,12 @@ class HttpClient:
                     raise NetworkError(str(exc))
 
                 if response.is_success:
-                    return self._parse_body(response.text)
+                    body = self._parse_body(response.text)
+                    if body is None:
+                        return None
+                    if isinstance(body, (dict, list)):
+                        return ApiResponse(body, response.headers)
+                    return body
 
                 error = error_from_response(response)
                 if self._retryable(method, response.status_code) and retries < max_retries:

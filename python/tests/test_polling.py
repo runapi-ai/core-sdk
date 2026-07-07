@@ -64,10 +64,34 @@ def test_serializes_model_details():
     assert info.value.details == {"status": "failed", "error": "oops", "code": 500}
 
 
+def test_task_failed_keeps_response_headers():
+    response = TaskResponse({"status": "failed", "error": "oops"})._with_response_headers(
+        {"X-RunAPI-Task-Id": "task-ref-1"}
+    )
+    with pytest.raises(TaskFailedError) as info:
+        polling.poll_until_complete(lambda: response, options())
+    assert info.value.runapi_task_id == "task-ref-1"
+    assert info.value.response_headers["x-runapi-task-id"] == "task-ref-1"
+
+
 def test_raises_timeout():
     short = PollingOptions(poll_interval=0.01, max_wait=0)
     with pytest.raises(TaskTimeoutError):
         polling.poll_until_complete(lambda: {"status": "processing"}, short)
+
+
+def test_task_timeout_keeps_last_response_headers():
+    short = PollingOptions(poll_interval=0.01, max_wait=0)
+    response = TaskResponse({"status": "processing"})._with_response_headers(
+        {"X-RunAPI-Task-Id": "task-ref-1"}
+    )
+
+    with pytest.raises(TaskTimeoutError) as info:
+        polling.poll_until_complete(lambda: response, short)
+
+    assert info.value.details == {"status": "processing"}
+    assert info.value.runapi_task_id == "task-ref-1"
+    assert info.value.response_headers["x-runapi-task-id"] == "task-ref-1"
 
 
 def test_normalizes_uppercase_status():

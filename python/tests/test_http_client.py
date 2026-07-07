@@ -4,7 +4,7 @@ import tempfile
 import httpx
 import pytest
 
-from runapi.core import constants, errors, http_client
+from runapi.core import ApiResponse, constants, errors, http_client
 from runapi.core.http_client import HttpClient
 from runapi.core.multipart import MultipartBody, MultipartFile
 from runapi.core.options import ClientOptions, RequestOptions
@@ -29,6 +29,55 @@ def make_client(handler, **overrides):
 def test_returns_parsed_json_on_success():
     client = make_client(lambda request: httpx.Response(200, json={"id": "123"}))
     assert client.request("get", "/api/v1/test") == {"id": "123"}
+
+
+def test_keeps_response_headers_on_success():
+    client = make_client(
+        lambda request: httpx.Response(
+            200,
+            json={"id": "task-1"},
+            headers={"X-RunAPI-Task-Id": "task-ref-1"},
+        )
+    )
+    result = client.request("post", "/api/v1/test", body={"prompt": "hello"})
+    assert result == {"id": "task-1"}
+    assert result.response_headers["X-RunAPI-Task-Id"] == "task-ref-1"
+    assert result.response_headers["x-runapi-task-id"] == "task-ref-1"
+
+
+def test_keeps_response_headers_on_successful_array_response():
+    client = make_client(
+        lambda request: httpx.Response(
+            200,
+            json=[{"id": "task-1"}],
+            headers={"X-RunAPI-Task-Id": "task-ref-1"},
+        )
+    )
+
+    result = client.request("get", "/api/v1/test")
+
+    assert isinstance(result, ApiResponse)
+    assert result == [{"id": "task-1"}]
+    assert result.body == [{"id": "task-1"}]
+    assert result[0] == {"id": "task-1"}
+    assert result.response_headers["x-runapi-task-id"] == "task-ref-1"
+
+
+def test_keeps_response_headers_on_error():
+    client = make_client(
+        lambda request: httpx.Response(
+            500,
+            json={"error": "fail"},
+            headers={"X-RunAPI-Task-Id": "task-ref-1"},
+        ),
+        max_retries=0,
+    )
+
+    with pytest.raises(errors.ServerError) as info:
+        client.request("get", "/api/v1/test")
+
+    assert info.value.runapi_task_id == "task-ref-1"
+    assert info.value.response_headers["x-runapi-task-id"] == "task-ref-1"
 
 
 def test_sends_bearer_and_user_agent():

@@ -20,6 +20,7 @@ from __future__ import annotations
 from typing import Any, Callable, Dict, List, Optional, Type, Union
 
 from .errors import ValidationError
+from .response import ResponseHeaders
 
 # A field's declared type. ``None`` means "untyped" (coerced dynamically); a
 # class is used directly; a callable is invoked lazily to resolve a forward
@@ -86,6 +87,7 @@ class BaseModel:
     def __init__(self, attributes: Optional[Dict[str, Any]] = None) -> None:
         source = self._normalize_input(attributes)
         self._attributes: Dict[str, Any] = {}
+        self._response_headers = ResponseHeaders()
 
         for field in self._fields.values():
             if field.name in source:
@@ -115,7 +117,7 @@ class BaseModel:
             return None
         if isinstance(value, BaseModel):
             if isinstance(target, type) and issubclass(target, BaseModel) and not isinstance(value, target):
-                return target.from_dict(value.to_dict())
+                return target.from_dict(value.to_dict())._with_response_headers(value.response_headers)
             return value
         if isinstance(value, dict):
             model = target if (isinstance(target, type) and issubclass(target, BaseModel)) else DynamicModel
@@ -152,6 +154,21 @@ class BaseModel:
 
     def to_dict(self) -> Dict[str, Any]:
         return {key: self._serialize(value) for key, value in self._attributes.items()}
+
+    @property
+    def response_headers(self) -> ResponseHeaders:
+        return self._response_headers
+
+    def response_header(self, name: str) -> Optional[str]:
+        return self._response_headers.get(name)
+
+    @property
+    def runapi_task_id(self) -> Optional[str]:
+        return self.response_header("X-RunAPI-Task-Id")
+
+    def _with_response_headers(self, headers: Any) -> "BaseModel":
+        self._response_headers = headers if isinstance(headers, ResponseHeaders) else ResponseHeaders(headers)
+        return self
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, BaseModel):

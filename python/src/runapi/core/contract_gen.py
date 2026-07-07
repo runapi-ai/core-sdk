@@ -603,7 +603,7 @@ CONTRACT = {
         }
     },
     "nano-banana/text-to-image": {
-        "models": ["nano-banana", "nano-banana-2", "nano-banana-pro"],
+        "models": ["nano-banana", "nano-banana-2", "nano-banana-2-lite", "nano-banana-pro"],
         "fields_by_model": {
             "nano-banana": {
                 "aspect_ratio": {
@@ -622,6 +622,11 @@ CONTRACT = {
                 },
                 "output_resolution": {
                     "enum": ["1k", "2k", "4k"]
+                }
+            },
+            "nano-banana-2-lite": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "1:4", "1:8", "2:3", "3:2", "3:4", "4:1", "4:3", "4:5", "5:4", "8:1", "9:16", "16:9", "21:9", "auto"]
                 }
             },
             "nano-banana-pro": {

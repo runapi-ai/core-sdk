@@ -8,6 +8,7 @@ from . import polling
 from .errors import ValidationError
 from .models import BaseModel, TaskResponse
 from .options import PollingOptions, RequestOptions
+from .response import ApiResponse
 
 
 class Resource:
@@ -33,7 +34,11 @@ class Resource:
         response_class: Optional[type] = None,
     ) -> Any:
         response = self._http.request(method, path, body=body, options=options)
-        return BaseModel.coerce(response, as_=response_class or type(self).RESPONSE_CLASS)
+        payload = response.body if isinstance(response, ApiResponse) else response
+        result = BaseModel.coerce(payload, as_=response_class or type(self).RESPONSE_CLASS)
+        if isinstance(response, ApiResponse):
+            self._attach_response_headers(result, response.response_headers)
+        return result
 
     @staticmethod
     def _compact_params(params: Dict[str, Any]) -> Dict[str, Any]:
@@ -196,4 +201,14 @@ class Resource:
             return response
 
         payload = response.to_dict() if isinstance(response, BaseModel) else response
-        return completed_class.from_dict(payload)
+        completed = completed_class.from_dict(payload)
+        if isinstance(response, BaseModel):
+            completed._with_response_headers(response.response_headers)
+        return completed
+
+    def _attach_response_headers(self, result: Any, headers: Any) -> None:
+        if isinstance(result, BaseModel):
+            result._with_response_headers(headers)
+        elif isinstance(result, list):
+            for item in result:
+                self._attach_response_headers(item, headers)

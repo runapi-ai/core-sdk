@@ -40,7 +40,7 @@ module RunApi
             nil
           when BaseModel
             if target_model && target_model <= BaseModel && !value.is_a?(target_model)
-              target_model.from_hash(value.to_h)
+              target_model.from_hash(value.to_h).with_response_headers(value.response_headers)
             else
               value
             end
@@ -87,9 +87,25 @@ module RunApi
       def initialize(attributes = {})
         source = normalize_input(attributes)
         @attributes = {}
+        @response_headers = ResponseHeaders.new
 
         assign_declared_fields!(source)
         assign_extra_fields!(source)
+      end
+
+      attr_reader :response_headers
+
+      def response_header(name)
+        response_headers[name]
+      end
+
+      def runapi_task_id
+        response_header("X-RunAPI-Task-Id")
+      end
+
+      def with_response_headers(headers)
+        @response_headers = headers.is_a?(ResponseHeaders) ? headers : ResponseHeaders.new(headers)
+        self
       end
 
       def [](key)

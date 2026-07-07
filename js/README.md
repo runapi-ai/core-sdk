@@ -1,6 +1,6 @@
 # RunAPI Core JavaScript SDK
 
-The RunAPI Core JavaScript SDK provides shared authentication, HTTP, retry, error, and polling primitives for RunAPI model SDK packages. Install `@runapi.ai/core` only when you are building SDK infrastructure or shared tooling; application code should normally install a concrete model package such as `@runapi.ai/suno`.
+The RunAPI Core JavaScript SDK provides shared authentication, HTTP, retry, error, and polling primitives for RunAPI JavaScript Provider Client packages. Install `@runapi.ai/core` only when you are building SDK infrastructure or shared tooling; application code should normally install a concrete package such as `@runapi.ai/suno`.
 
 ## Install
 
@@ -10,7 +10,7 @@ npm install @runapi.ai/core
 
 ## Notes
 
-Use the core package for `ClientOptions`, common error classes, request helpers, and task polling behavior that model SDKs share. Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
+Use the core package for `ClientOptions`, common error classes, request helpers, and task polling behavior shared across JavaScript Provider Client packages. Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
 
 ## Request identifiers
 
@@ -23,7 +23,7 @@ await client.textToImage.create(
 );
 ```
 
-Public API responses expose `X-RunAPI-Task-Id` when a RunAPI task exists. High-level model SDK methods return parsed response bodies; use a custom transport or direct HTTP request when your integration needs response headers.
+Public API responses expose `X-RunAPI-Task-Id` when a RunAPI task exists. High-level JavaScript Provider Client resource methods return parsed response bodies; use a custom transport or direct HTTP request when your integration needs raw response headers.
 
 ## File Upload
 
