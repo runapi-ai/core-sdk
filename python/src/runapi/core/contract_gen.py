@@ -478,10 +478,7 @@ CONTRACT = {
             },
             "imagen-4-fast": {
                 "aspect_ratio": {
-                    "enum": ["1:1", "16:9", "9:16", "3:4", "4:3"]
-                },
-                "output_count": {
-                    "enum": [1, 2, 3, 4]
+                    "enum": ["1:1", "16:9", "9:16", "3:4", "4:3", "auto"]
                 }
             },
             "imagen-4-ultra": {
@@ -730,7 +727,7 @@ CONTRACT = {
         }
     },
     "seedance/text-to-video": {
-        "models": ["seedance-1.5-pro", "seedance-2.0", "seedance-2.0-fast", "seedance-v1-lite", "seedance-v1-pro", "seedance-v1-pro-fast"],
+        "models": ["seedance-1.5-pro", "seedance-2-mini", "seedance-2.0", "seedance-2.0-fast", "seedance-v1-lite", "seedance-v1-pro", "seedance-v1-pro-fast"],
         "fields_by_model": {
             "seedance-1.5-pro": {
                 "aspect_ratio": {
@@ -740,12 +737,20 @@ CONTRACT = {
                     "enum": ["480p", "720p", "1080p"]
                 }
             },
+            "seedance-2-mini": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "21:9", "auto"]
+                },
+                "output_resolution": {
+                    "enum": ["480p", "720p"]
+                }
+            },
             "seedance-2.0": {
                 "aspect_ratio": {
                     "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "21:9", "auto"]
                 },
                 "output_resolution": {
-                    "enum": ["480p", "720p", "1080p"]
+                    "enum": ["480p", "720p", "1080p", "4k"]
                 }
             },
             "seedance-2.0-fast": {
@@ -1167,7 +1172,11 @@ CONTRACT = {
     "suno/replace-section": {
         "models": [],
         "fields_by_model": {
-            "_": {}
+            "_": {
+                "model": {
+                    "enum": ["suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5"]
+                }
+            }
         }
     },
     "suno/separate-audio-stems": {

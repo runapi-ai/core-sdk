@@ -53,11 +53,16 @@ module RunApi
       def validate_contract!(schema, params)
         model = param_value(params, "model")
         models = schema["models"] || []
-        unless models.include?(model)
-          raise Core::ValidationError, "model must be one of: #{models.sort.join(", ")}"
+        if models.empty?
+          fields = schema.dig("fields_by_model", "_") || {}
+        else
+          unless models.include?(model)
+            raise Core::ValidationError, "model must be one of: #{models.sort.join(", ")}"
+          end
+
+          fields = schema.dig("fields_by_model", model) || {}
         end
 
-        fields = schema.dig("fields_by_model", model) || {}
         fields.each do |field, rules|
           validate_schema_field!(params, field, rules)
         end

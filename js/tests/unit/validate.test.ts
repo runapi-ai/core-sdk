@@ -65,4 +65,21 @@ describe('validateParams', () => {
     expect(() => validateParams(flagSchema, { model: 'm', flag: false })).not.toThrow();
     expect(() => validateParams(flagSchema, { model: 'm' })).toThrow('flag is required');
   });
+
+  it('validates functional actions with underscore fields when models is empty', () => {
+    const functionalSchema = {
+      models: [],
+      fields_by_model: {
+        _: {
+          prompt: { required: true },
+          mode: { enum: ['fast', 'quality'] },
+        },
+      },
+    };
+    expect(() => validateParams(functionalSchema, { prompt: 'hello', mode: 'fast' })).not.toThrow();
+    expect(() => validateParams(functionalSchema, { mode: 'fast' })).toThrow('prompt is required');
+    expect(() => validateParams(functionalSchema, { prompt: 'hello', mode: 'slow' })).toThrow(
+      'mode must be one of: fast, quality',
+    );
+  });
 });

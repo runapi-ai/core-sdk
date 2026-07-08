@@ -21,13 +21,17 @@ func ValidateParams(schema any, params map[string]any) error {
 
 	model, _ := params["model"].(string)
 	models := toStringSlice(s["models"])
-	if !containsString(models, model) {
+	fieldsByModel := mapAt(s, "fields_by_model")
+	selectedModel := model
+	if len(models) == 0 {
+		selectedModel = "_"
+	} else if !containsString(models, model) {
 		sorted := append([]string(nil), models...)
 		sort.Strings(sorted)
 		return validationError(fmt.Sprintf("model must be one of: %s", strings.Join(sorted, ", ")))
 	}
 
-	fields := mapAt(mapAt(s, "fields_by_model"), model)
+	fields := mapAt(fieldsByModel, selectedModel)
 
 	// Sort field keys so the first reported error is deterministic across
 	// languages (Go map iteration order is otherwise random).

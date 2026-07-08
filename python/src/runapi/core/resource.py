@@ -66,10 +66,13 @@ class Resource:
     def _validate_contract(self, schema: Dict[str, Any], params: Dict[str, Any]) -> None:
         model = params.get("model")
         models = schema.get("models", [])
-        if model not in models:
-            raise ValidationError(f"model must be one of: {', '.join(sorted(models))}")
+        if models:
+            if model not in models:
+                raise ValidationError(f"model must be one of: {', '.join(sorted(models))}")
+            fields = schema.get("fields_by_model", {}).get(model, {})
+        else:
+            fields = schema.get("fields_by_model", {}).get("_", {})
 
-        fields = schema.get("fields_by_model", {}).get(model, {})
         for field, rules in fields.items():
             self._validate_schema_field(params, field, rules)
 

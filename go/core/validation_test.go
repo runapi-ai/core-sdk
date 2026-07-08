@@ -82,6 +82,28 @@ func TestIntegerAcceptsWholeFloat(t *testing.T) {
 	}
 }
 
+func TestValidateParamsFunctionalAction(t *testing.T) {
+	schema := map[string]any{
+		"models": []any{},
+		"fields_by_model": map[string]any{
+			"_": map[string]any{
+				"prompt": map[string]any{"required": true},
+				"mode":   map[string]any{"enum": []any{"fast", "quality"}},
+			},
+		},
+	}
+
+	if err := ValidateParams(schema, map[string]any{"prompt": "hello", "mode": "fast"}); err != nil {
+		t.Fatalf("functional action should not require model, got %v", err)
+	}
+	if err := ValidateParams(schema, map[string]any{"mode": "fast"}); errMsg(err) != "prompt is required" {
+		t.Fatalf("got %q", errMsg(err))
+	}
+	if err := ValidateParams(schema, map[string]any{"prompt": "hello", "mode": "slow"}); errMsg(err) != "mode must be one of: fast, quality" {
+		t.Fatalf("got %q", errMsg(err))
+	}
+}
+
 func TestFieldPresentFalseIsPresent(t *testing.T) {
 	// A boolean false counts as present (mirrors the server), so a required
 	// boolean field set to false does not raise.

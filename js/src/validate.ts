@@ -19,12 +19,18 @@ export function validateParams(schema: ActionSchema | undefined, params: Params)
 
   const model = params['model'];
   const models = schema.models ?? [];
-  if (typeof model !== 'string' || !models.includes(model)) {
-    const sorted = [...models].sort();
-    throw new ValidationError(`model must be one of: ${sorted.join(', ')}`);
+  let fields: Record<string, any>;
+  if (models.length === 0) {
+    fields = schema.fields_by_model?.['_'] ?? {};
+  } else {
+    if (typeof model !== 'string' || !models.includes(model)) {
+      const sorted = [...models].sort();
+      throw new ValidationError(`model must be one of: ${sorted.join(', ')}`);
+    }
+
+    fields = schema.fields_by_model?.[model] ?? {};
   }
 
-  const fields = schema.fields_by_model?.[model] ?? {};
   const keys = Object.keys(fields).sort();
   for (const field of keys) {
     validateSchemaField(params, field, fields[field]);

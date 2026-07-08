@@ -109,6 +109,24 @@ def test_validate_integer_still_enforces_range_for_valid_int():
     assert _run_validate({"model": "m", "duration_int": 13}) == "duration_int must be between 4 and 12"
 
 
+def test_validate_functional_action_uses_underscore_fields():
+    resource = SampleResource(FakeHttp())
+    schema = {
+        "models": [],
+        "fields_by_model": {
+            "_": {
+                "prompt": {"required": True},
+                "mode": {"enum": ["fast", "quality"]},
+            }
+        },
+    }
+    resource._validate_contract(schema, {"prompt": "hello", "mode": "fast"})
+    with pytest.raises(ValidationError, match="prompt is required"):
+        resource._validate_contract(schema, {"mode": "fast"})
+    with pytest.raises(ValidationError, match="mode must be one of: fast, quality"):
+        resource._validate_contract(schema, {"prompt": "hello", "mode": "slow"})
+
+
 def test_validate_integer_rejects_bool_and_whole_float():
     # bool is an int subclass but is not a valid integer value.
     assert _run_validate({"model": "m", "tolerance": True}) == "tolerance must be an integer"
