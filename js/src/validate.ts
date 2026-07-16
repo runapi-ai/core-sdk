@@ -11,8 +11,8 @@ type Params = Record<string, unknown>;
 
 /**
  * Validates request params against a generated action schema: model
- * membership, then per-field required/enum/integer/min/max/length, then
- * declared cross-field rules. A missing schema is a no-op.
+ * membership, then declared cross-field rules, then per-field
+ * required/enum/integer/min/max/length. A missing schema is a no-op.
  */
 export function validateParams(schema: ActionSchema | undefined, params: Params): void {
   if (!schema) return;
@@ -31,14 +31,14 @@ export function validateParams(schema: ActionSchema | undefined, params: Params)
     fields = schema.fields_by_model?.[model] ?? {};
   }
 
-  const keys = Object.keys(fields).sort();
-  for (const field of keys) {
-    validateSchemaField(params, field, fields[field]);
-  }
-
   const rules = schema.rules;
   if (Array.isArray(rules)) {
     for (const rule of rules) enforceContractRule(params, rule);
+  }
+
+  const keys = Object.keys(fields).sort();
+  for (const field of keys) {
+    validateSchemaField(params, field, fields[field]);
   }
 }
 

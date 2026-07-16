@@ -59,8 +59,8 @@ class Resource:
 
     # ---- Contract validation -------------------------------------------
     # Validates request params against the generated contract: model
-    # membership, then per-field required/enum/integer/min/max/length, then
-    # declared cross-field rules. `schema` is one action entry from the generated
+    # membership, then declared cross-field rules, then per-field
+    # required/enum/integer/min/max/length. `schema` is one action entry from the generated
     # per-package CONTRACT (CONTRACT["<action>"]).
 
     def _validate_contract(self, schema: Dict[str, Any], params: Dict[str, Any]) -> None:
@@ -73,11 +73,10 @@ class Resource:
         else:
             fields = schema.get("fields_by_model", {}).get("_", {})
 
-        for field, rules in fields.items():
-            self._validate_schema_field(params, field, rules)
-
         for rule in schema.get("rules", []):
             self._enforce_rule(params, rule)
+        for field, rules in fields.items():
+            self._validate_schema_field(params, field, rules)
 
     def _validate_schema_field(self, params: Dict[str, Any], field: str, rules: Dict[str, Any]) -> None:
         present = self._field_present(params, field)

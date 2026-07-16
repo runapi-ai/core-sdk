@@ -3,7 +3,10 @@ import { validateParams } from '../../src/validate';
 
 const schema = {
   models: ['m-b', 'm-a'],
-  rules: [{ when: { mode: 'exact' }, required: ['lyrics'], forbidden: ['prompt'] }],
+  rules: [
+    { when: { mode: 'exact' }, required: ['lyrics'], forbidden: ['prompt'] },
+    { when: { model: 'm-a' }, forbidden: ['source_task_id'] },
+  ],
   fields_by_model: {
     'm-a': {
       aspect_ratio: { enum: ['1:1', '16:9'] },
@@ -39,6 +42,7 @@ describe('validateParams', () => {
     [{ model: 'm-a', duration_seconds: 8, steps: 2 }, 'steps must be between 4 and 15'],
     [{ model: 'm-a', duration_seconds: 8, steps: 'x' }, 'steps must be a number'],
     [{ model: 'm-a', duration_seconds: 8, prompt: 'this is way too long' }, 'prompt must be between 1 and 10 characters'],
+    [{ model: 'm-a', source_task_id: 'src_1' }, 'source_task_id is not allowed when model is m-a'],
     [{ model: 'm-a', duration_seconds: 8, mode: 'exact' }, 'lyrics is required when mode is exact'],
     [{ model: 'm-a', duration_seconds: 8, mode: 'exact', lyrics: 'la', prompt: 'p' }, 'prompt is not allowed when mode is exact'],
     [{ model: 'm-a', duration_seconds: 12, aspect_ratio: '16:9', steps: 10, prompt: 'ok' }, ''],

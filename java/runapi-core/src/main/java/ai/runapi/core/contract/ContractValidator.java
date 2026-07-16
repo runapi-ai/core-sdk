@@ -41,13 +41,13 @@ public final class ContractValidator {
         fields = contract.getFieldsByModel().get(model);
       }
     }
+    if (selectedModel != null) {
+      validateRules(contract.getRulesByModel().get(selectedModel), params, selectedModel);
+    }
     if (fields != null) {
       for (Map.Entry<String, ContractField> entry : fields.entrySet()) {
         validateField(entry.getKey(), entry.getValue(), params.get(entry.getKey()));
       }
-    }
-    if (selectedModel != null) {
-      validateRules(contract.getRulesByModel().get(selectedModel), params, selectedModel);
     }
   }
 

@@ -211,7 +211,7 @@ CONTRACT = {
         }
     },
     "grok-imagine/image-to-video": {
-        "models": ["grok-imagine-image-to-video"],
+        "models": ["grok-imagine-image-to-video", "grok-imagine-video-1.5-preview"],
         "fields_by_model": {
             "grok-imagine-image-to-video": {
                 "aspect_ratio": {
@@ -219,6 +219,14 @@ CONTRACT = {
                 },
                 "motion_style": {
                     "enum": ["fun", "normal", "spicy"]
+                },
+                "output_resolution": {
+                    "enum": ["480p", "720p"]
+                }
+            },
+            "grok-imagine-video-1.5-preview": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "16:9", "9:16", "3:2", "2:3", "auto"]
                 },
                 "output_resolution": {
                     "enum": ["480p", "720p"]
@@ -237,7 +245,7 @@ CONTRACT = {
         }
     },
     "grok-imagine/text-to-video": {
-        "models": ["grok-imagine-text-to-video"],
+        "models": ["grok-imagine-text-to-video", "grok-imagine-video-1.5-preview"],
         "fields_by_model": {
             "grok-imagine-text-to-video": {
                 "aspect_ratio": {
@@ -245,6 +253,14 @@ CONTRACT = {
                 },
                 "motion_style": {
                     "enum": ["fun", "normal", "spicy"]
+                },
+                "output_resolution": {
+                    "enum": ["480p", "720p"]
+                }
+            },
+            "grok-imagine-video-1.5-preview": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "16:9", "9:16", "3:2", "2:3", "auto"]
                 },
                 "output_resolution": {
                     "enum": ["480p", "720p"]
@@ -508,7 +524,7 @@ CONTRACT = {
         }
     },
     "kling/image-to-video": {
-        "models": ["kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro"],
+        "models": ["kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro", "kling-v3-turbo-image-to-video"],
         "fields_by_model": {
             "kling-v2.1-master-image-to-video": {
                 "duration_seconds": {
@@ -528,6 +544,14 @@ CONTRACT = {
             "kling-v2.5-turbo-image-to-video-pro": {
                 "duration_seconds": {
                     "enum": [5, 10]
+                }
+            },
+            "kling-v3-turbo-image-to-video": {
+                "duration_seconds": {
+                    "enum": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                },
+                "output_resolution": {
+                    "enum": ["720p", "1080p"]
                 }
             }
         }
@@ -549,7 +573,7 @@ CONTRACT = {
         }
     },
     "kling/text-to-video": {
-        "models": ["kling-3.0", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro"],
+        "models": ["kling-3.0", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro", "kling-v3-turbo-text-to-video"],
         "fields_by_model": {
             "kling-3.0": {
                 "aspect_ratio": {
@@ -577,6 +601,17 @@ CONTRACT = {
                 "duration_seconds": {
                     "enum": [5, 10]
                 }
+            },
+            "kling-v3-turbo-text-to-video": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16", "1:1"]
+                },
+                "duration_seconds": {
+                    "enum": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                },
+                "output_resolution": {
+                    "enum": ["720p", "1080p"]
+                }
             }
         }
     },
@@ -587,8 +622,13 @@ CONTRACT = {
         }
     },
     "nano-banana/edit-image": {
-        "models": ["nano-banana-edit"],
+        "models": ["nano-banana-2-lite", "nano-banana-edit"],
         "fields_by_model": {
+            "nano-banana-2-lite": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "1:4", "1:8", "2:3", "3:2", "3:4", "4:1", "4:3", "4:5", "5:4", "8:1", "9:16", "16:9", "21:9", "auto"]
+                }
+            },
             "nano-banana-edit": {
                 "aspect_ratio": {
                     "enum": ["1:1", "9:16", "16:9", "3:4", "4:3", "3:2", "2:3", "5:4", "4:5", "21:9", "auto"]
@@ -637,6 +677,28 @@ CONTRACT = {
                     "enum": ["1k", "2k", "4k"]
                 }
             }
+        }
+    },
+    "omnihuman/audio-to-video": {
+        "models": ["omnihuman-1.5"],
+        "fields_by_model": {
+            "omnihuman-1.5": {
+                "output_resolution": {
+                    "enum": ["720p", "1080p"]
+                }
+            }
+        }
+    },
+    "omnihuman/human-identification": {
+        "models": ["omnihuman-1.5-human-identification"],
+        "fields_by_model": {
+            "omnihuman-1.5-human-identification": {}
+        }
+    },
+    "omnihuman/subject-detection": {
+        "models": ["omnihuman-1.5-subject-detection"],
+        "fields_by_model": {
+            "omnihuman-1.5-subject-detection": {}
         }
     },
     "qwen-2/edit-image": {
@@ -1346,6 +1408,16 @@ CONTRACT = {
             "_": {
                 "output_resolution": {
                     "enum": ["1080p", "4k"]
+                }
+            }
+        }
+    },
+    "volcengine-lip-sync/lip-sync-video": {
+        "models": ["volcengine-lip-sync"],
+        "fields_by_model": {
+            "volcengine-lip-sync": {
+                "mode": {
+                    "enum": ["lite", "basic"]
                 }
             }
         }

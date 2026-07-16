@@ -46,8 +46,8 @@ module RunApi
 
       # ---- Contract validation ------------------------------------------
       # Validates request params against the generated contract: model
-      # membership, then per-field required/enum/integer/min/max/length, then
-      # declared cross-field rules. `schema` is one action entry from the generated
+      # membership, then declared cross-field rules, then per-field
+      # required/enum/integer/min/max/length. `schema` is one action entry from the generated
       # per-package CONTRACT (CONTRACT["<action>"]).
 
       def validate_contract!(schema, params)
@@ -63,11 +63,10 @@ module RunApi
           fields = schema.dig("fields_by_model", model) || {}
         end
 
+        Array(schema["rules"]).each { |rule| enforce_contract_rule!(params, rule) }
         fields.each do |field, rules|
           validate_schema_field!(params, field, rules)
         end
-
-        Array(schema["rules"]).each { |rule| enforce_contract_rule!(params, rule) }
       end
 
       def validate_schema_field!(params, field, rules)

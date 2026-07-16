@@ -141,6 +141,40 @@ class ContractValidatorTest {
   }
 
   @Test
+  void reportsForbiddenRuleBeforeMissingRequiredField() {
+    ContractAction contract =
+        new ContractAction(
+            ContractBuilders.list("m"),
+            ContractBuilders.fieldsByModel(
+                new Object[][] {
+                  {
+                    "m",
+                    ContractBuilders.fields(
+                        new Object[][] {{"source_image_urls", ContractBuilders.field(ContractBuilders.required())}})
+                  }
+                }),
+            ContractBuilders.rulesByModel(
+                new Object[][] {
+                  {
+                    "m",
+                    ContractBuilders.rules(
+                        ContractBuilders.rule(
+                            ContractBuilders.conditions(new Object[][] {{"model", "m"}}),
+                            Collections.<String>emptyList(),
+                            ContractBuilders.list("source_task_id")))
+                  }
+                }));
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("model", "m");
+    params.put("source_task_id", "src_1");
+
+    ValidationException error =
+        assertThrows(ValidationException.class, () -> ContractValidator.validate(contract, params));
+
+    assertTrue(error.getMessage().contains("source_task_id is not allowed when model is m"));
+  }
+
+  @Test
   void appliesModelGatedRulesOnlyToTheMatchingModel() {
     Map<String, Object> multilingualParams = new HashMap<String, Object>();
     multilingualParams.put("model", "text-to-speech-multilingual-v2");

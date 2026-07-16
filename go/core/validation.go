@@ -9,8 +9,8 @@ import (
 )
 
 // ValidateParams checks request params against a generated action schema (one
-// entry from a package's contractSchema): model membership, then per-field
-// required/enum/integer/min/max/length, then declared cross-field rules. params is the
+// entry from a package's contractSchema): model membership, then declared
+// cross-field rules, then per-field required/enum/integer/min/max/length. params is the
 // marshaled request map (CompactParams output), where numbers arrive as
 // float64. A nil/non-map schema is a no-op.
 func ValidateParams(schema any, params map[string]any) error {
@@ -33,6 +33,18 @@ func ValidateParams(schema any, params map[string]any) error {
 
 	fields := mapAt(fieldsByModel, selectedModel)
 
+	if rulesList, ok := s["rules"].([]any); ok {
+		for _, raw := range rulesList {
+			rule, ok := raw.(map[string]any)
+			if !ok {
+				continue
+			}
+			if err := enforceContractRule(params, rule); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Sort field keys so the first reported error is deterministic across
 	// languages (Go map iteration order is otherwise random).
 	keys := make([]string, 0, len(fields))
@@ -50,17 +62,6 @@ func ValidateParams(schema any, params map[string]any) error {
 		}
 	}
 
-	if rulesList, ok := s["rules"].([]any); ok {
-		for _, raw := range rulesList {
-			rule, ok := raw.(map[string]any)
-			if !ok {
-				continue
-			}
-			if err := enforceContractRule(params, rule); err != nil {
-				return err
-			}
-		}
-	}
 	return nil
 }
 

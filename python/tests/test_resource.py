@@ -135,6 +135,17 @@ def test_validate_integer_rejects_bool_and_whole_float():
     assert _run_validate({"model": "m", "tolerance": 5}) == ""
 
 
+def test_validate_contract_runs_rules_before_field_requirements():
+    schema = {
+        "models": ["m"],
+        "rules": [{"when": {"model": "m"}, "forbidden": ["source_task_id"]}],
+        "fields_by_model": {"m": {"source_image_urls": {"required": True}}},
+    }
+    resource = SampleResource(FakeHttp())
+    with pytest.raises(ValidationError, match="source_task_id is not allowed when model is m"):
+        resource._validate_contract(schema, {"model": "m", "source_task_id": "src_1"})
+
+
 def test_poll_recoerces_to_completed_class():
     resource = SampleResource(FakeHttp())
     response = TaskResponse({"id": "1", "status": "completed", "images": [{"url": "u"}]})

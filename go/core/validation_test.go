@@ -12,6 +12,10 @@ func sampleSchema() map[string]any {
 				"required":  []any{"lyrics"},
 				"forbidden": []any{"prompt"},
 			},
+			map[string]any{
+				"when":      map[string]any{"model": "m-a"},
+				"forbidden": []any{"source_task_id"},
+			},
 		},
 		"fields_by_model": map[string]any{
 			"m-a": map[string]any{
@@ -51,6 +55,7 @@ func TestValidateParams(t *testing.T) {
 		{"range below", map[string]any{"model": "m-a", "duration_seconds": float64(8), "steps": float64(2)}, "steps must be between 4 and 15"},
 		{"range non-number", map[string]any{"model": "m-a", "duration_seconds": float64(8), "steps": "x"}, "steps must be a number"},
 		{"length over", map[string]any{"model": "m-a", "duration_seconds": float64(8), "prompt": "this is way too long"}, "prompt must be between 1 and 10 characters"},
+		{"rule forbidden before required", map[string]any{"model": "m-a", "source_task_id": "src_1"}, "source_task_id is not allowed when model is m-a"},
 		{"rule required", map[string]any{"model": "m-a", "duration_seconds": float64(8), "mode": "exact"}, "lyrics is required when mode is exact"},
 		{"rule forbidden", map[string]any{"model": "m-a", "duration_seconds": float64(8), "mode": "exact", "lyrics": "la", "prompt": "p"}, "prompt is not allowed when mode is exact"},
 		{"valid", map[string]any{"model": "m-a", "duration_seconds": float64(12), "aspect_ratio": "16:9", "steps": float64(10), "prompt": "ok"}, ""},
