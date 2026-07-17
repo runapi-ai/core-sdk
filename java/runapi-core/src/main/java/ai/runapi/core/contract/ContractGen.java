@@ -286,7 +286,7 @@ contract.put("grok-imagine/extend", new ContractAction(
             })},
           })));
 contract.put("grok-imagine/image-to-video", new ContractAction(
-    list("grok-imagine-image-to-video", "grok-imagine-video-1.5-preview"),
+    list("grok-imagine-image-to-video", "grok-imagine-video-1.5-fast", "grok-imagine-video-1.5-preview"),
           fieldsByModel(new Object[][] {
             {"grok-imagine-image-to-video", fields(new Object[][] {
                     {"aspect_ratio", field(enumValues("2:3", "3:2", "1:1", "16:9", "9:16"))},
@@ -298,7 +298,22 @@ contract.put("grok-imagine/image-to-video", new ContractAction(
                     {"motion_style", field(enumValues("fun", "normal", "spicy"))},
                     {"output_resolution", field(enumValues("480p", "720p"))},
                     {"prompt", field()},
+                    {"reference_image_urls", field()},
                     {"source_image_urls", field()},
+                    {"source_task_id", field()},
+            })},
+            {"grok-imagine-video-1.5-fast", fields(new Object[][] {
+                    {"aspect_ratio", field(enumValues("1:1", "16:9", "9:16", "3:2", "2:3"))},
+                    {"callback_url", field()},
+                    {"duration_seconds", field(min(Double.valueOf(1.0)), max(Double.valueOf(30.0)))},
+                    {"enable_safety_checker", field()},
+                    {"index", field()},
+                    {"model", field()},
+                    {"motion_style", field()},
+                    {"output_resolution", field(enumValues("480p", "720p"))},
+                    {"prompt", field()},
+                    {"reference_image_urls", field()},
+                    {"source_image_urls", field(required())},
                     {"source_task_id", field()},
             })},
             {"grok-imagine-video-1.5-preview", fields(new Object[][] {
@@ -311,12 +326,15 @@ contract.put("grok-imagine/image-to-video", new ContractAction(
                     {"motion_style", field()},
                     {"output_resolution", field(enumValues("480p", "720p"))},
                     {"prompt", field(min(Double.valueOf(1.0)), max(Double.valueOf(4096.0)), length())},
+                    {"reference_image_urls", field()},
                     {"source_image_urls", field(required())},
                     {"source_task_id", field()},
             })},
           }),
           rulesByModel(new Object[][] {
-{"grok-imagine-video-1.5-preview", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-video-1.5-preview"}}), list(), list("source_task_id", "index", "motion_style", "enable_safety_checker")))},
+{"grok-imagine-image-to-video", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-image-to-video"}}), list(), list("reference_image_urls")))},
+{"grok-imagine-video-1.5-fast", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-video-1.5-fast"}}), list(), list("source_task_id", "index", "motion_style", "enable_safety_checker")))},
+{"grok-imagine-video-1.5-preview", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-video-1.5-preview"}}), list(), list("source_task_id", "index", "reference_image_urls", "motion_style", "enable_safety_checker")))},
           })));
 contract.put("grok-imagine/text-to-image", new ContractAction(
     list("grok-imagine-text-to-image"),
@@ -331,7 +349,7 @@ contract.put("grok-imagine/text-to-image", new ContractAction(
             })},
           })));
 contract.put("grok-imagine/text-to-video", new ContractAction(
-    list("grok-imagine-text-to-video", "grok-imagine-video-1.5-preview"),
+    list("grok-imagine-text-to-video", "grok-imagine-video-1.5-fast", "grok-imagine-video-1.5-preview"),
           fieldsByModel(new Object[][] {
             {"grok-imagine-text-to-video", fields(new Object[][] {
                     {"aspect_ratio", field(enumValues("2:3", "3:2", "1:1", "16:9", "9:16"))},
@@ -342,6 +360,18 @@ contract.put("grok-imagine/text-to-video", new ContractAction(
                     {"motion_style", field(enumValues("fun", "normal", "spicy"))},
                     {"output_resolution", field(enumValues("480p", "720p"))},
                     {"prompt", field()},
+                    {"reference_image_urls", field()},
+            })},
+            {"grok-imagine-video-1.5-fast", fields(new Object[][] {
+                    {"aspect_ratio", field(enumValues("1:1", "16:9", "9:16", "3:2", "2:3"))},
+                    {"callback_url", field()},
+                    {"duration_seconds", field(min(Double.valueOf(1.0)), max(Double.valueOf(30.0)))},
+                    {"enable_safety_checker", field()},
+                    {"model", field()},
+                    {"motion_style", field()},
+                    {"output_resolution", field(enumValues("480p", "720p"))},
+                    {"prompt", field(required())},
+                    {"reference_image_urls", field()},
             })},
             {"grok-imagine-video-1.5-preview", fields(new Object[][] {
                     {"aspect_ratio", field(enumValues("1:1", "16:9", "9:16", "3:2", "2:3", "auto"))},
@@ -352,10 +382,13 @@ contract.put("grok-imagine/text-to-video", new ContractAction(
                     {"motion_style", field()},
                     {"output_resolution", field(enumValues("480p", "720p"))},
                     {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(4096.0)), length())},
+                    {"reference_image_urls", field()},
             })},
           }),
           rulesByModel(new Object[][] {
-{"grok-imagine-video-1.5-preview", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-video-1.5-preview"}}), list(), list("motion_style", "enable_safety_checker")))},
+{"grok-imagine-text-to-video", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-text-to-video"}}), list(), list("reference_image_urls")))},
+{"grok-imagine-video-1.5-fast", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-video-1.5-fast"}}), list(), list("motion_style", "enable_safety_checker")))},
+{"grok-imagine-video-1.5-preview", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-video-1.5-preview"}}), list(), list("reference_image_urls", "motion_style", "enable_safety_checker")))},
           })));
 contract.put("grok-imagine/upscale-image", new ContractAction(
     list(),

@@ -211,7 +211,7 @@ CONTRACT = {
         }
     },
     "grok-imagine/image-to-video": {
-        "models": ["grok-imagine-image-to-video", "grok-imagine-video-1.5-preview"],
+        "models": ["grok-imagine-image-to-video", "grok-imagine-video-1.5-fast", "grok-imagine-video-1.5-preview"],
         "fields_by_model": {
             "grok-imagine-image-to-video": {
                 "aspect_ratio": {
@@ -219,6 +219,14 @@ CONTRACT = {
                 },
                 "motion_style": {
                     "enum": ["fun", "normal", "spicy"]
+                },
+                "output_resolution": {
+                    "enum": ["480p", "720p"]
+                }
+            },
+            "grok-imagine-video-1.5-fast": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "16:9", "9:16", "3:2", "2:3"]
                 },
                 "output_resolution": {
                     "enum": ["480p", "720p"]
@@ -245,7 +253,7 @@ CONTRACT = {
         }
     },
     "grok-imagine/text-to-video": {
-        "models": ["grok-imagine-text-to-video", "grok-imagine-video-1.5-preview"],
+        "models": ["grok-imagine-text-to-video", "grok-imagine-video-1.5-fast", "grok-imagine-video-1.5-preview"],
         "fields_by_model": {
             "grok-imagine-text-to-video": {
                 "aspect_ratio": {
@@ -253,6 +261,14 @@ CONTRACT = {
                 },
                 "motion_style": {
                     "enum": ["fun", "normal", "spicy"]
+                },
+                "output_resolution": {
+                    "enum": ["480p", "720p"]
+                }
+            },
+            "grok-imagine-video-1.5-fast": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "16:9", "9:16", "3:2", "2:3"]
                 },
                 "output_resolution": {
                     "enum": ["480p", "720p"]
