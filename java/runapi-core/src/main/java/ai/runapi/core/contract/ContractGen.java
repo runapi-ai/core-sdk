@@ -848,6 +848,56 @@ contract.put("luma/modify-video", new ContractAction(
                     {"watermark", field()},
             })},
           })));
+contract.put("midjourney/edit-image", new ContractAction(
+    list("midjourney-edit-image"),
+          fieldsByModel(new Object[][] {
+            {"midjourney-edit-image", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"include_split_images", field()},
+                    {"mask_url", field()},
+                    {"model", field()},
+                    {"prompt", field(required())},
+                    {"source_image_url", field(required())},
+            })},
+          })));
+contract.put("midjourney/get-seed", new ContractAction(
+    list(),
+          fieldsByModel(new Object[][] {
+            {"_", fields(new Object[][] {
+                    {"image_id", field(required())},
+            })},
+          })));
+contract.put("midjourney/image-to-prompt", new ContractAction(
+    list(),
+          fieldsByModel(new Object[][] {
+            {"_", fields(new Object[][] {
+                    {"source_image_url", field(required())},
+            })},
+          })));
+contract.put("midjourney/image-to-video", new ContractAction(
+    list("midjourney-image-to-video"),
+          fieldsByModel(new Object[][] {
+            {"midjourney-image-to-video", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"enable_loop", field()},
+                    {"last_frame_image_url", field()},
+                    {"model", field()},
+                    {"output_resolution", field(enumValues("480p"))},
+                    {"prompt", field()},
+                    {"source_image_url", field(required())},
+            })},
+          })));
+contract.put("midjourney/text-to-image", new ContractAction(
+    list("midjourney-v8.1"),
+          fieldsByModel(new Object[][] {
+            {"midjourney-v8.1", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"enable_prompt_translation", field()},
+                    {"include_split_images", field()},
+                    {"model", field()},
+                    {"prompt", field(required())},
+            })},
+          })));
 contract.put("nano-banana/edit-image", new ContractAction(
     list("nano-banana-2-lite", "nano-banana-edit"),
           fieldsByModel(new Object[][] {
@@ -855,7 +905,6 @@ contract.put("nano-banana/edit-image", new ContractAction(
                     {"aspect_ratio", field(required(), enumValues("1:1", "1:4", "1:8", "2:3", "3:2", "3:4", "4:1", "4:3", "4:5", "5:4", "8:1", "9:16", "16:9", "21:9", "auto"))},
                     {"callback_url", field()},
                     {"model", field()},
-                    {"output_format", field()},
                     {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(20000.0)), length())},
                     {"source_image_urls", field(required())},
             })},
@@ -896,8 +945,6 @@ contract.put("nano-banana/text-to-image", new ContractAction(
                     {"aspect_ratio", field(required(), enumValues("1:1", "1:4", "1:8", "2:3", "3:2", "3:4", "4:1", "4:3", "4:5", "5:4", "8:1", "9:16", "16:9", "21:9", "auto"))},
                     {"callback_url", field()},
                     {"model", field()},
-                    {"output_format", field()},
-                    {"output_resolution", field()},
                     {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(20000.0)), length())},
                     {"reference_image_urls", field()},
             })},

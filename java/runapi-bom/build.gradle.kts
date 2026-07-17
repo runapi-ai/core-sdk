@@ -11,7 +11,7 @@ javaPlatform {
 
 dependencies {
   constraints {
-    api("ai.runapi:runapi-core:0.1.5")
+    api("ai.runapi:runapi-core:0.1.6")
     api("ai.runapi:runapi-elevenlabs:0.1.1")
     api("ai.runapi:runapi-flux-kontext:0.1.1")
     api("ai.runapi:runapi-flux-2:0.1.1")
@@ -28,6 +28,7 @@ dependencies {
     api("ai.runapi:runapi-gemini-omni:0.1.1")
     api("ai.runapi:runapi-kling:0.1.2")
     api("ai.runapi:runapi-luma:0.1.1")
+    api("ai.runapi:runapi-midjourney:0.0.0")
     api("ai.runapi:runapi-volcengine-lip-sync:0.1.1")
     api("ai.runapi:runapi-nano-banana:0.1.4")
     api("ai.runapi:runapi-qwen-2:0.1.1")

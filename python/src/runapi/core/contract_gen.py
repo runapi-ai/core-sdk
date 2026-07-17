@@ -621,6 +621,40 @@ CONTRACT = {
             "luma-modify-video": {}
         }
     },
+    "midjourney/edit-image": {
+        "models": ["midjourney-edit-image"],
+        "fields_by_model": {
+            "midjourney-edit-image": {}
+        }
+    },
+    "midjourney/get-seed": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
+    "midjourney/image-to-prompt": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
+    "midjourney/image-to-video": {
+        "models": ["midjourney-image-to-video"],
+        "fields_by_model": {
+            "midjourney-image-to-video": {
+                "output_resolution": {
+                    "enum": ["480p"]
+                }
+            }
+        }
+    },
+    "midjourney/text-to-image": {
+        "models": ["midjourney-v8.1"],
+        "fields_by_model": {
+            "midjourney-v8.1": {}
+        }
+    },
     "nano-banana/edit-image": {
         "models": ["nano-banana-2-lite", "nano-banana-edit"],
         "fields_by_model": {
