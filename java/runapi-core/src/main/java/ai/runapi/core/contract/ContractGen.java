@@ -2416,7 +2416,6 @@ contract.put("wan/image-to-video", new ContractAction(
                     {"output_resolution", field(enumValues("720p", "1080p"))},
                     {"prompt", field(required())},
                     {"ratio", field()},
-                    {"seed", field()},
                     {"source_video_url", field()},
                     {"watermark", field()},
             })},
@@ -2438,7 +2437,6 @@ contract.put("wan/image-to-video", new ContractAction(
                     {"output_resolution", field(enumValues("720p", "1080p"))},
                     {"prompt", field(required())},
                     {"ratio", field()},
-                    {"seed", field()},
                     {"source_video_url", field()},
                     {"watermark", field()},
             })},
@@ -2464,6 +2462,10 @@ contract.put("wan/image-to-video", new ContractAction(
                     {"source_video_url", field()},
                     {"watermark", field()},
             })},
+          }),
+          rulesByModel(new Object[][] {
+{"wan-2.6-flash-image-to-video", rules(rule(conditions(new Object[][] {{"model", "wan-2.6-flash-image-to-video"}}), list(), list("seed")))},
+{"wan-2.6-image-to-video", rules(rule(conditions(new Object[][] {{"model", "wan-2.6-image-to-video"}}), list(), list("seed")))},
           })));
 contract.put("wan/speech-to-video", new ContractAction(
     list("wan-2.2-a14b-speech-to-video-turbo"),
@@ -2581,7 +2583,6 @@ contract.put("wan/text-to-video", new ContractAction(
                     {"reference_audio_url", field()},
                     {"reference_image_urls", field()},
                     {"reference_video_urls", field()},
-                    {"seed", field()},
                     {"watermark", field()},
             })},
             {"wan-2.7-r2v", fields(new Object[][] {
@@ -2624,6 +2625,9 @@ contract.put("wan/text-to-video", new ContractAction(
                     {"seed", field()},
                     {"watermark", field()},
             })},
+          }),
+          rulesByModel(new Object[][] {
+{"wan-2.6-text-to-video", rules(rule(conditions(new Object[][] {{"model", "wan-2.6-text-to-video"}}), list(), list("seed")))},
           })));
 contract.put("z-image/text-to-image", new ContractAction(
     list("z-image"),

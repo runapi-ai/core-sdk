@@ -1,5 +1,11 @@
 # Changelog
 
+## [java/v0.2.1](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.1) - 2026-07-20
+
+### Fixed
+- Publish model-specific contract rules that reject `seed` for Wan 2.6 video requests.
+
+
 ## [python/v0.2.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.2.0) - 2026-07-20
 
 ### Added
