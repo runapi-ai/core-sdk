@@ -19,12 +19,13 @@ func sampleSchema() map[string]any {
 		},
 		"fields_by_model": map[string]any{
 			"m-a": map[string]any{
-				"aspect_ratio":     map[string]any{"enum": []any{"1:1", "16:9"}},
-				"duration_seconds": map[string]any{"enum": []any{4, 8, 12}, "required": true},
-				"duration_int":     map[string]any{"type": "integer", "min": 4, "max": 12},
-				"tolerance":        map[string]any{"type": "integer"},
-				"steps":            map[string]any{"min": 4, "max": 15},
-				"prompt":           map[string]any{"min": 1, "max": 10, "length": true},
+				"aspect_ratio":         map[string]any{"enum": []any{"1:1", "16:9"}},
+				"duration_seconds":     map[string]any{"enum": []any{4, 8, 12}, "required": true},
+				"duration_int":         map[string]any{"type": "integer", "min": 4, "max": 12},
+				"tolerance":            map[string]any{"type": "integer"},
+				"steps":                map[string]any{"min": 4, "max": 15},
+				"prompt":               map[string]any{"min": 1, "max": 10, "length": true},
+				"reference_image_urls": map[string]any{"min_items": 1, "max_items": 3},
 			},
 		},
 	}
@@ -55,11 +56,15 @@ func TestValidateParams(t *testing.T) {
 		{"range below", map[string]any{"model": "m-a", "duration_seconds": float64(8), "steps": float64(2)}, "steps must be between 4 and 15"},
 		{"range non-number", map[string]any{"model": "m-a", "duration_seconds": float64(8), "steps": "x"}, "steps must be a number"},
 		{"length over", map[string]any{"model": "m-a", "duration_seconds": float64(8), "prompt": "this is way too long"}, "prompt must be between 1 and 10 characters"},
+		{"array wrong type", map[string]any{"model": "m-a", "duration_seconds": float64(8), "reference_image_urls": "image.png"}, "reference_image_urls must be an array"},
+		{"array below min", map[string]any{"model": "m-a", "duration_seconds": float64(8), "reference_image_urls": []any{}}, "reference_image_urls must contain between 1 and 3 items"},
+		{"array above max", map[string]any{"model": "m-a", "duration_seconds": float64(8), "reference_image_urls": []any{"a", "b", "c", "d"}}, "reference_image_urls must contain between 1 and 3 items"},
 		{"rule forbidden before required", map[string]any{"model": "m-a", "source_task_id": "src_1"}, "source_task_id is not allowed when model is m-a"},
 		{"rule required", map[string]any{"model": "m-a", "duration_seconds": float64(8), "mode": "exact"}, "lyrics is required when mode is exact"},
 		{"rule forbidden", map[string]any{"model": "m-a", "duration_seconds": float64(8), "mode": "exact", "lyrics": "la", "prompt": "p"}, "prompt is not allowed when mode is exact"},
 		{"valid", map[string]any{"model": "m-a", "duration_seconds": float64(12), "aspect_ratio": "16:9", "steps": float64(10), "prompt": "ok"}, ""},
 		{"rule inactive", map[string]any{"model": "m-a", "duration_seconds": float64(8), "mode": "auto"}, ""},
+		{"array valid", map[string]any{"model": "m-a", "duration_seconds": float64(8), "reference_image_urls": []any{"a", "b", "c"}}, ""},
 	}
 
 	for _, tc := range cases {

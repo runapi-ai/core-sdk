@@ -1,5 +1,19 @@
 # Changelog
 
+## [js/v0.2.14](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.2.14), [ruby/v0.2.14](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.2.14), [go/v0.2.14](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.2.14) - 2026-07-20
+
+### Changed
+- Validate array types and generated minimum and maximum item counts before sending requests.
+
+## [python/v0.2.1](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.2.1), [java/v0.2.2](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.2) - 2026-07-20
+
+### Added
+- Publish shared Python and Java SDK contract metadata for the Producer text-to-music request schema.
+
+### Changed
+- Validate array types and generated minimum and maximum item counts before sending requests.
+
+
 ## [java/v0.2.1](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.1) - 2026-07-20
 
 ### Fixed

@@ -66,6 +66,15 @@ func ValidateParams(schema any, params map[string]any) error {
 }
 
 func validateSchemaField(params map[string]any, field string, rules map[string]any) error {
+	value, provided := params[field]
+	_, hasMinItems := rules["min_items"]
+	_, hasMaxItems := rules["max_items"]
+	if provided && value != nil && (hasMinItems || hasMaxItems) {
+		if err := validateSchemaItemCount(field, value, rules); err != nil {
+			return err
+		}
+	}
+
 	present := fieldPresent(params, field)
 	if asBool(rules["required"]) && !present {
 		return validationError(fmt.Sprintf("%s is required", field))
@@ -74,7 +83,6 @@ func validateSchemaField(params map[string]any, field string, rules map[string]a
 		return nil
 	}
 
-	value := params[field]
 	if enum, ok := rules["enum"].([]any); ok && !enumValueAllowed(enum, value) {
 		return validationError(fmt.Sprintf("%s must be one of: %s", field, joinValues(enum)))
 	}
@@ -91,6 +99,32 @@ func validateSchemaField(params map[string]any, field string, rules map[string]a
 		return validateSchemaRange(field, value, rules)
 	}
 	return nil
+}
+
+func validateSchemaItemCount(field string, value any, rules map[string]any) error {
+	items, ok := value.([]any)
+	if !ok {
+		return validationError(fmt.Sprintf("%s must be an array", field))
+	}
+
+	min, hasMin := toFloat(rules["min_items"])
+	max, hasMax := toFloat(rules["max_items"])
+	count := float64(len(items))
+	if (!hasMin || count >= min) && (!hasMax || count <= max) {
+		return nil
+	}
+	return validationError(itemCountMessage(field, rules["min_items"], rules["max_items"]))
+}
+
+func itemCountMessage(field string, min, max any) string {
+	switch {
+	case min != nil && max != nil:
+		return fmt.Sprintf("%s must contain between %s and %s items", field, formatValue(min), formatValue(max))
+	case min != nil:
+		return fmt.Sprintf("%s must contain at least %s items", field, formatValue(min))
+	default:
+		return fmt.Sprintf("%s must contain at most %s items", field, formatValue(max))
+	}
 }
 
 // validateSchemaInteger mirrors GatewayEntry#validate_schema_integer!: a

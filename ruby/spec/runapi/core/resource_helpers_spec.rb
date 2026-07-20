@@ -206,6 +206,33 @@ RSpec.describe RunApi::Core::ResourceHelpers do
     end
   end
 
+  describe "#validate_contract! array item count constraints" do
+    let(:schema) do
+      {
+        "models" => ["m"],
+        "fields_by_model" => {
+          "m" => {
+            "reference_image_urls" => {"min_items" => 1, "max_items" => 3}
+          }
+        }
+      }
+    end
+
+    def validate_array(params)
+      helper.send(:validate_contract!, schema, params)
+    end
+
+    it "rejects non-arrays and out-of-range item counts" do
+      expect { validate_array("model" => "m", "reference_image_urls" => "image.png") }
+        .to raise_error(RunApi::Core::ValidationError, "reference_image_urls must be an array")
+      expect { validate_array("model" => "m", "reference_image_urls" => []) }
+        .to raise_error(RunApi::Core::ValidationError, "reference_image_urls must contain between 1 and 3 items")
+      expect { validate_array("model" => "m", "reference_image_urls" => %w[a b c d]) }
+        .to raise_error(RunApi::Core::ValidationError, "reference_image_urls must contain between 1 and 3 items")
+      expect { validate_array(model: "m", reference_image_urls: %w[a b c]) }.not_to raise_error
+    end
+  end
+
   describe "#validate_contract! functional actions" do
     let(:schema) do
       {

@@ -43,13 +43,17 @@ export function validateParams(schema: ActionSchema | undefined, params: Params)
 }
 
 function validateSchemaField(params: Params, field: string, rules: Record<string, any>): void {
+  const value = params[field];
+  if (value != null && ('min_items' in rules || 'max_items' in rules)) {
+    validateSchemaItemCount(field, value, rules);
+  }
+
   const present = fieldPresent(params, field);
   if (rules.required && !present) {
     throw new ValidationError(`${field} is required`);
   }
   if (!present) return;
 
-  const value = params[field];
   if (rules.enum !== undefined && !enumValueAllowed(rules.enum, value)) {
     throw new ValidationError(`${field} must be one of: ${formatEnumValues(rules.enum)}`);
   }
@@ -61,6 +65,27 @@ function validateSchemaField(params: Params, field: string, rules: Record<string
   if ('min' in rules || 'max' in rules) {
     validateSchemaRange(field, value, rules);
   }
+}
+
+function validateSchemaItemCount(field: string, value: unknown, rules: Record<string, any>): void {
+  if (!Array.isArray(value)) {
+    throw new ValidationError(`${field} must be an array`);
+  }
+
+  const min = rules.min_items;
+  const max = rules.max_items;
+  if ((min == null || value.length >= min) && (max == null || value.length <= max)) return;
+  throw new ValidationError(itemCountMessage(field, min, max));
+}
+
+function itemCountMessage(field: string, min: unknown, max: unknown): string {
+  if (min != null && max != null) {
+    return `${field} must contain between ${formatValue(min)} and ${formatValue(max)} items`;
+  }
+  if (min != null) {
+    return `${field} must contain at least ${formatValue(min)} items`;
+  }
+  return `${field} must contain at most ${formatValue(max)} items`;
 }
 
 // Mirrors GatewayEntry#validate_schema_integer!: a type: integer field rejects

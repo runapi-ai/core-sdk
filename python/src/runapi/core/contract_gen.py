@@ -786,6 +786,16 @@ CONTRACT = {
             "tts-1-hd": {}
         }
     },
+    "producer/text-to-music": {
+        "models": ["fuzz-2.0"],
+        "fields_by_model": {
+            "fuzz-2.0": {
+                "vocal_mode": {
+                    "enum": ["exact_lyrics", "instrumental"]
+                }
+            }
+        }
+    },
     "qwen-2/edit-image": {
         "models": ["qwen-2-edit-image"],
         "fields_by_model": {

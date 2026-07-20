@@ -15,6 +15,7 @@ const schema = {
       tolerance: { type: 'integer' },
       steps: { min: 4, max: 15 },
       prompt: { min: 1, max: 10, length: true },
+      reference_image_urls: { min_items: 1, max_items: 3 },
     },
   },
 };
@@ -42,11 +43,15 @@ describe('validateParams', () => {
     [{ model: 'm-a', duration_seconds: 8, steps: 2 }, 'steps must be between 4 and 15'],
     [{ model: 'm-a', duration_seconds: 8, steps: 'x' }, 'steps must be a number'],
     [{ model: 'm-a', duration_seconds: 8, prompt: 'this is way too long' }, 'prompt must be between 1 and 10 characters'],
+    [{ model: 'm-a', duration_seconds: 8, reference_image_urls: 'image.png' }, 'reference_image_urls must be an array'],
+    [{ model: 'm-a', duration_seconds: 8, reference_image_urls: [] }, 'reference_image_urls must contain between 1 and 3 items'],
+    [{ model: 'm-a', duration_seconds: 8, reference_image_urls: ['a', 'b', 'c', 'd'] }, 'reference_image_urls must contain between 1 and 3 items'],
     [{ model: 'm-a', source_task_id: 'src_1' }, 'source_task_id is not allowed when model is m-a'],
     [{ model: 'm-a', duration_seconds: 8, mode: 'exact' }, 'lyrics is required when mode is exact'],
     [{ model: 'm-a', duration_seconds: 8, mode: 'exact', lyrics: 'la', prompt: 'p' }, 'prompt is not allowed when mode is exact'],
     [{ model: 'm-a', duration_seconds: 12, aspect_ratio: '16:9', steps: 10, prompt: 'ok' }, ''],
     [{ model: 'm-a', duration_seconds: 8, mode: 'auto' }, ''],
+    [{ model: 'm-a', duration_seconds: 8, reference_image_urls: ['a', 'b', 'c'] }, ''],
   ])('validates %o', (params, expected) => {
     expect(run(params as Record<string, unknown>)).toBe(expected);
   });

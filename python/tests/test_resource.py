@@ -135,6 +135,30 @@ def test_validate_integer_rejects_bool_and_whole_float():
     assert _run_validate({"model": "m", "tolerance": 5}) == ""
 
 
+def test_validate_array_item_count_constraints():
+    schema = {
+        "models": ["m"],
+        "fields_by_model": {
+            "m": {
+                "reference_image_urls": {"min_items": 1, "max_items": 3},
+            }
+        },
+    }
+    resource = SampleResource(FakeHttp())
+
+    with pytest.raises(ValidationError, match="^reference_image_urls must be an array$"):
+        resource._validate_contract(schema, {"model": "m", "reference_image_urls": "image.png"})
+    with pytest.raises(ValidationError, match="^reference_image_urls must contain between 1 and 3 items$"):
+        resource._validate_contract(schema, {"model": "m", "reference_image_urls": []})
+    with pytest.raises(ValidationError, match="^reference_image_urls must contain between 1 and 3 items$"):
+        resource._validate_contract(schema, {"model": "m", "reference_image_urls": ["a", "b", "c", "d"]})
+    with pytest.raises(ValidationError, match="^reference_image_urls must contain between 1 and 3 items$"):
+        resource._validate_contract(schema, {"model": "m", "reference_image_urls": ("a", "b", "c", "d")})
+
+    resource._validate_contract(schema, {"model": "m", "reference_image_urls": ["a", "b", "c"]})
+    resource._validate_contract(schema, {"model": "m", "reference_image_urls": ("a", "b", "c")})
+
+
 def test_validate_contract_runs_rules_before_field_requirements():
     schema = {
         "models": ["m"],

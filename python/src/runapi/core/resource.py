@@ -79,13 +79,16 @@ class Resource:
             self._validate_schema_field(params, field, rules)
 
     def _validate_schema_field(self, params: Dict[str, Any], field: str, rules: Dict[str, Any]) -> None:
+        value = params.get(field)
+        if value is not None and ("min_items" in rules or "max_items" in rules):
+            self._validate_item_count(field, value, rules)
+
         present = self._field_present(params, field)
         if rules.get("required") and not present:
             raise ValidationError(f"{field} is required")
         if not present:
             return
 
-        value = params[field]
         enum = rules.get("enum")
         if enum is not None and not self._enum_allowed(enum, value):
             raise ValidationError(f"{field} must be one of: {', '.join(str(option) for option in enum)}")
@@ -95,6 +98,24 @@ class Resource:
 
         if "min" in rules or "max" in rules:
             self._validate_range(field, value, rules)
+
+    def _validate_item_count(self, field: str, value: Any, rules: Dict[str, Any]) -> None:
+        if not isinstance(value, (list, tuple)):
+            raise ValidationError(f"{field} must be an array")
+
+        minimum = rules.get("min_items")
+        maximum = rules.get("max_items")
+        if (minimum is None or len(value) >= minimum) and (maximum is None or len(value) <= maximum):
+            return
+        raise ValidationError(self._item_count_message(field, minimum, maximum))
+
+    @staticmethod
+    def _item_count_message(field: str, minimum: Any, maximum: Any) -> str:
+        if minimum is not None and maximum is not None:
+            return f"{field} must contain between {minimum} and {maximum} items"
+        if minimum is not None:
+            return f"{field} must contain at least {minimum} items"
+        return f"{field} must contain at most {maximum} items"
 
     @staticmethod
     def _validate_integer(field: str, value: Any, rules: Dict[str, Any]) -> None:

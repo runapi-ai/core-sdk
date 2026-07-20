@@ -70,17 +70,41 @@ module RunApi
       end
 
       def validate_schema_field!(params, field, rules)
+        value = param_value(params, field)
+        if !value.nil? && (rules.key?("min_items") || rules.key?("max_items"))
+          validate_schema_item_count!(field, value, rules)
+        end
+
         present = field_present?(params, field)
         raise Core::ValidationError, "#{field} is required" if rules["required"] && !present
         return unless present
 
-        value = param_value(params, field)
         if (enum = rules["enum"]) && !enum_value_allowed?(enum, value)
           raise Core::ValidationError, "#{field} must be one of: #{enum.join(", ")}"
         end
 
         validate_schema_integer!(field, value, rules) if rules["type"] == "integer"
         validate_schema_range!(field, value, rules) if rules.key?("min") || rules.key?("max")
+      end
+
+      def validate_schema_item_count!(field, value, rules)
+        raise Core::ValidationError, "#{field} must be an array" unless value.is_a?(Array)
+
+        min = rules["min_items"]
+        max = rules["max_items"]
+        return if (min.nil? || value.size >= min) && (max.nil? || value.size <= max)
+
+        raise Core::ValidationError, item_count_message(field, min, max)
+      end
+
+      def item_count_message(field, min, max)
+        if min && max
+          "#{field} must contain between #{min} and #{max} items"
+        elsif min
+          "#{field} must contain at least #{min} items"
+        else
+          "#{field} must contain at most #{max} items"
+        end
       end
 
       # Mirrors GatewayEntry#validate_schema_integer!: a type: integer field
