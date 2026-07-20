@@ -9,6 +9,8 @@ module RunApi
     class Error < StandardError
       # @return [Integer, nil] HTTP status code if available.
       attr_reader :status
+      # @return [String, nil] Explicit machine-readable reason.
+      attr_reader :code
       # @return [String, nil] Request ID from response headers.
       attr_reader :request_id
       # @return [Hash, String, nil] Parsed response body or error details.
@@ -16,8 +18,9 @@ module RunApi
       # @return [ResponseHeaders] HTTP response headers when available.
       attr_reader :response_headers
 
-      def initialize(message = nil, status: nil, request_id: nil, details: nil, response_headers: nil)
+      def initialize(message = nil, code: nil, status: nil, request_id: nil, details: nil, response_headers: nil)
         super(message)
+        @code = code
         @status = status
         @request_id = request_id
         @details = details
@@ -36,6 +39,7 @@ module RunApi
         {
           error: self.class.name,
           message: message,
+          code: code,
           status: status,
           request_id: request_id,
           details: details
@@ -99,6 +103,7 @@ module RunApi
           end
 
           kwargs = {
+            code: extract_code(parsed_body),
             status: status,
             request_id: request_id,
             details: parsed_body,
@@ -148,6 +153,13 @@ module RunApi
             body["msg"]
         end
 
+        def extract_code(body)
+          return nil unless body.is_a?(Hash)
+
+          code = body.dig("error", "code") if body["error"].is_a?(Hash)
+          (code.is_a?(String) && !code.empty?) ? code : nil
+        end
+
         def parse_retry_after(value)
           return nil if value.nil?
 
@@ -174,6 +186,7 @@ module RunApi
     # Raised when API key is missing or invalid (HTTP 401).
     class AuthenticationError < Error
       def initialize(message = "Unauthorized", **kwargs)
+        kwargs[:code] = "authentication" unless kwargs.key?(:code)
         super(message, status: 401, **kwargs)
       end
     end
@@ -184,6 +197,7 @@ module RunApi
       attr_reader :retry_after
 
       def initialize(message = "Too many requests", retry_after: nil, **kwargs)
+        kwargs[:code] = "rate_limit" unless kwargs.key?(:code)
         super(message, status: 429, **kwargs)
         @retry_after = retry_after
       end
@@ -192,6 +206,7 @@ module RunApi
     # Raised when account has insufficient credits (HTTP 402).
     class InsufficientCreditsError < Error
       def initialize(message = "Insufficient credits", **kwargs)
+        kwargs[:code] = "insufficient_credits" unless kwargs.key?(:code)
         super(message, status: 402, **kwargs)
       end
     end
@@ -199,6 +214,7 @@ module RunApi
     # Raised when requested resource does not exist (HTTP 404).
     class NotFoundError < Error
       def initialize(message = "Not found", **kwargs)
+        kwargs[:code] = "not_found" unless kwargs.key?(:code)
         super(message, status: 404, **kwargs)
       end
     end
@@ -206,6 +222,7 @@ module RunApi
     # Raised when request validation fails (HTTP 400, 422).
     class ValidationError < Error
       def initialize(message = "Validation failed", **kwargs)
+        kwargs[:code] = "validation" unless kwargs.key?(:code)
         super
       end
     end
@@ -213,6 +230,7 @@ module RunApi
     # Raised when service is temporarily unavailable (HTTP 503).
     class ServiceUnavailableError < Error
       def initialize(message = "Service unavailable", **kwargs)
+        kwargs[:code] = "service_unavailable" unless kwargs.key?(:code)
         super(message, status: kwargs.delete(:status) || 503, **kwargs)
       end
     end
@@ -220,6 +238,7 @@ module RunApi
     # Raised when network connection fails or request cannot be sent.
     class NetworkError < Error
       def initialize(message = "Network error", **kwargs)
+        kwargs[:code] = "network" unless kwargs.key?(:code)
         super
       end
     end
@@ -227,6 +246,7 @@ module RunApi
     # Raised when HTTP request exceeds configured timeout.
     class TimeoutError < Error
       def initialize(message = "Request timed out", **kwargs)
+        kwargs[:code] = "timeout" unless kwargs.key?(:code)
         super
       end
     end
@@ -234,6 +254,7 @@ module RunApi
     # Raised when polling for task completion exceeds maximum wait time.
     class TaskTimeoutError < Error
       def initialize(message = "Task polling timed out", **kwargs)
+        kwargs[:code] = "task_timeout" unless kwargs.key?(:code)
         super
       end
     end
@@ -241,6 +262,7 @@ module RunApi
     # Raised when async task fails during processing.
     class TaskFailedError < Error
       def initialize(message = "Task failed", **kwargs)
+        kwargs[:code] = "task_failed" unless kwargs.key?(:code)
         super
       end
     end
@@ -248,6 +270,7 @@ module RunApi
     # Raised when request conflicts with current resource state (HTTP 409).
     class ConflictError < Error
       def initialize(message = "Conflict", **kwargs)
+        kwargs[:code] = "conflict" unless kwargs.key?(:code)
         super(message, status: 409, **kwargs)
       end
     end
@@ -255,6 +278,7 @@ module RunApi
     # Raised when server encounters an internal error (HTTP 5xx).
     class ServerError < Error
       def initialize(message = "Server error", **kwargs)
+        kwargs[:code] = "server" unless kwargs.key?(:code)
         super(message, status: kwargs.delete(:status) || 500, **kwargs)
       end
     end

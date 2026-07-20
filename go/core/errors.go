@@ -12,7 +12,9 @@ import (
 	"time"
 )
 
-// ErrorCode identifies the category of an API error.
+// ErrorCode is an explicit machine-readable reason supplied by RunAPI or by
+// an SDK-local error constructor. HTTP response codes are never inferred into
+// this field.
 type ErrorCode string
 
 const (
@@ -22,7 +24,7 @@ const (
 	ErrInsufficientCredits ErrorCode = "insufficient_credits"
 	// ErrNotFound indicates the requested resource does not exist (HTTP 404).
 	ErrNotFound ErrorCode = "not_found"
-	// ErrValidation indicates request validation failed (HTTP 400, 422).
+	// ErrValidation indicates request validation failed (HTTP 400, 413, 422).
 	ErrValidation ErrorCode = "validation"
 	// ErrConflict indicates the request conflicts with current resource state (HTTP 409).
 	ErrConflict ErrorCode = "conflict"
@@ -83,34 +85,49 @@ func NewError(code ErrorCode, message string, status int, requestID string, deta
 }
 
 // IsAuthentication reports whether err is an authentication error.
-func IsAuthentication(err error) bool { return hasCode(err, ErrAuthentication) }
+func IsAuthentication(err error) bool {
+	return hasCodeOrStatus(err, ErrAuthentication, http.StatusUnauthorized)
+}
 
 // IsInsufficientCredits reports whether err is an insufficient credits error.
-func IsInsufficientCredits(err error) bool { return hasCode(err, ErrInsufficientCredits) }
+func IsInsufficientCredits(err error) bool {
+	return hasCodeOrStatus(err, ErrInsufficientCredits, http.StatusPaymentRequired)
+}
 
 // IsNotFound reports whether err is a not found error.
-func IsNotFound(err error) bool { return hasCode(err, ErrNotFound) }
+func IsNotFound(err error) bool { return hasCodeOrStatus(err, ErrNotFound, http.StatusNotFound) }
 
 // IsValidation reports whether err is a validation error.
-func IsValidation(err error) bool { return hasCode(err, ErrValidation) }
+func IsValidation(err error) bool {
+	return hasCodeOrStatus(err, ErrValidation, http.StatusBadRequest, http.StatusRequestEntityTooLarge, http.StatusUnprocessableEntity)
+}
 
 // IsConflict reports whether err is a conflict error.
-func IsConflict(err error) bool { return hasCode(err, ErrConflict) }
+func IsConflict(err error) bool { return hasCodeOrStatus(err, ErrConflict, http.StatusConflict) }
 
 // IsRateLimit reports whether err is a rate limit error.
-func IsRateLimit(err error) bool { return hasCode(err, ErrRateLimit) }
+func IsRateLimit(err error) bool {
+	return hasCodeOrStatus(err, ErrRateLimit, http.StatusTooManyRequests)
+}
 
 // IsServiceUnavailable reports whether err is a service unavailable error.
-func IsServiceUnavailable(err error) bool { return hasCode(err, ErrServiceUnavailable) }
+func IsServiceUnavailable(err error) bool {
+	return hasCodeOrStatus(err, ErrServiceUnavailable, http.StatusServiceUnavailable)
+}
 
 // IsServer reports whether err is a server error.
-func IsServer(err error) bool { return hasCode(err, ErrServer) }
+func IsServer(err error) bool {
+	target, ok := errors.AsType[*Error](err)
+	return ok && (target.Code == ErrServer || target.Status >= http.StatusInternalServerError)
+}
 
 // IsNetwork reports whether err is a network error.
 func IsNetwork(err error) bool { return hasCode(err, ErrNetwork) }
 
 // IsTimeout reports whether err is an HTTP request timeout error.
-func IsTimeout(err error) bool { return hasCode(err, ErrTimeout) }
+func IsTimeout(err error) bool {
+	return hasCodeOrStatus(err, ErrTimeout, http.StatusRequestTimeout)
+}
 
 // IsTaskTimeout reports whether err is a task polling timeout error.
 func IsTaskTimeout(err error) bool { return hasCode(err, ErrTaskTimeout) }
@@ -123,8 +140,24 @@ func hasCode(err error, code ErrorCode) bool {
 	return ok && target.Code == code
 }
 
+func hasCodeOrStatus(err error, code ErrorCode, statuses ...int) bool {
+	target, ok := errors.AsType[*Error](err)
+	if !ok {
+		return false
+	}
+	if target.Code == code {
+		return true
+	}
+	for _, status := range statuses {
+		if target.Status == status {
+			return true
+		}
+	}
+	return false
+}
+
 // ErrorFromResponse constructs an appropriate Error from an HTTP response.
-// It maps status codes to error codes and extracts error messages from the body.
+// It preserves an explicit API error code and extracts error messages from the body.
 func ErrorFromResponse(response *http.Response, body []byte) error {
 	status := response.StatusCode
 	requestID := response.Header.Get("x-request-id")
@@ -139,38 +172,28 @@ func ErrorFromResponse(response *http.Response, body []byte) error {
 
 	apiErr := &Error{
 		Message:   message,
-		Code:      codeForStatus(status),
+		Code:      extractErrorCode(details),
 		Status:    status,
 		RequestID: requestID,
 		Details:   details,
 	}
-	if apiErr.Code == ErrRateLimit {
+	if status == http.StatusTooManyRequests {
 		apiErr.RetryAfter = ParseRetryAfter(response.Header.Get("retry-after"))
 	}
 	return apiErr
 }
 
-func codeForStatus(status int) ErrorCode {
-	switch {
-	case status == 400 || status == 422:
-		return ErrValidation
-	case status == 401:
-		return ErrAuthentication
-	case status == 402:
-		return ErrInsufficientCredits
-	case status == 404:
-		return ErrNotFound
-	case status == 409:
-		return ErrConflict
-	case status == 429:
-		return ErrRateLimit
-	case status == 503:
-		return ErrServiceUnavailable
-	case status >= 500 && status <= 505:
-		return ErrServer
-	default:
-		return ErrServer
+func extractErrorCode(body any) ErrorCode {
+	value, ok := body.(map[string]any)
+	if !ok {
+		return ""
 	}
+	nested, ok := value["error"].(map[string]any)
+	if !ok {
+		return ""
+	}
+	code, _ := nested["code"].(string)
+	return ErrorCode(code)
 }
 
 func defaultMessageForStatus(status int) string {
@@ -185,6 +208,8 @@ func defaultMessageForStatus(status int) string {
 		return "Not found"
 	case 409:
 		return "Conflict"
+	case 413:
+		return "Payload too large"
 	case 422:
 		return "Validation failed"
 	case 429:
@@ -265,7 +290,7 @@ func ParseRetryAfter(header string) time.Duration {
 // FormatError returns a human-readable error message, including retry-after info for rate limits.
 func FormatError(err error) string {
 	if target, ok := errors.AsType[*Error](err); ok {
-		if target.Code == ErrRateLimit && target.RetryAfter > 0 {
+		if IsRateLimit(target) && target.RetryAfter > 0 {
 			return fmt.Sprintf("%s (retry after %s)", target.Message, target.RetryAfter.Round(time.Second))
 		}
 		return target.Message

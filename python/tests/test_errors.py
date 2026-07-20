@@ -70,6 +70,36 @@ def test_extracts_message_from_nested_error():
     assert error.message == "Nested message"
 
 
+def test_preserves_explicit_http_error_code_and_leaves_missing_code_none():
+    explicit = errors.error_from_response(
+        response(409, body='{"error":{"code":"source_task_not_ready","message":"wait"}}')
+    )
+    missing = errors.error_from_response(response(409, body='{"error":{"message":"wait"}}'))
+
+    assert explicit.code == "source_task_not_ready"
+    assert missing.code is None
+
+
+def test_continuation_errors_preserve_codes_and_status_classification():
+    cases = [
+        (400, "invalid_resource_id", errors.ValidationError),
+        (409, "request_conflict", errors.ConflictError),
+        (409, "source_task_not_ready", errors.ConflictError),
+        (422, "source_task_unusable", errors.ValidationError),
+        (422, "continuation_not_supported", errors.ValidationError),
+        (429, "rate_limited", errors.RateLimitError),
+        (503, "continuation_unavailable", errors.ServiceUnavailableError),
+    ]
+
+    for status, code, error_class in cases:
+        error = errors.error_from_response(
+            response(status, body=f'{{"error":{{"code":"{code}","message":"failed"}}}}')
+        )
+        assert isinstance(error, error_class)
+        assert error.status == status
+        assert error.code == code
+
+
 def test_extracts_message_from_errors_array():
     error = errors.error_from_response(response(400, body='{"errors":["First error"]}'))
     assert error.message == "First error"
@@ -99,6 +129,7 @@ def test_to_dict_is_compact():
     assert error.to_dict() == {
         "error": "AuthenticationError",
         "message": "Bad key",
+        "code": "authentication",
         "status": 401,
         "request_id": "req-1",
     }

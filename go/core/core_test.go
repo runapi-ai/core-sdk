@@ -17,11 +17,77 @@ func TestErrorFromResponseMapsRateLimit(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected *Error, got %T", err)
 	}
-	if apiErr.Code != ErrRateLimit {
-		t.Fatalf("unexpected error code: %s", apiErr.Code)
+	if apiErr.Code != "" {
+		t.Fatalf("expected missing HTTP code to remain empty, got %q", apiErr.Code)
+	}
+	if !IsRateLimit(apiErr) {
+		t.Fatal("expected HTTP status to retain rate-limit classification")
 	}
 	if apiErr.RetryAfter.Seconds() != 3 {
 		t.Fatalf("unexpected retry-after: %s", apiErr.RetryAfter)
+	}
+}
+
+func TestContinuationErrorsPreserveCodeAndClassifyByStatus(t *testing.T) {
+	tests := []struct {
+		status int
+		code   ErrorCode
+		class  func(error) bool
+	}{
+		{http.StatusBadRequest, "invalid_resource_id", IsValidation},
+		{http.StatusConflict, "request_conflict", IsConflict},
+		{http.StatusConflict, "source_task_not_ready", IsConflict},
+		{http.StatusUnprocessableEntity, "source_task_unusable", IsValidation},
+		{http.StatusUnprocessableEntity, "continuation_not_supported", IsValidation},
+		{http.StatusTooManyRequests, "rate_limited", IsRateLimit},
+		{http.StatusServiceUnavailable, "continuation_unavailable", IsServiceUnavailable},
+	}
+
+	for _, tt := range tests {
+		t.Run(string(tt.code), func(t *testing.T) {
+			response := &http.Response{StatusCode: tt.status, Header: make(http.Header)}
+			body := []byte(`{"error":{"code":"` + string(tt.code) + `","message":"failed"}}`)
+			err := ErrorFromResponse(response, body)
+			apiErr := err.(*Error)
+
+			if apiErr.Code != tt.code {
+				t.Fatalf("unexpected code: %q", apiErr.Code)
+			}
+			if apiErr.Status != tt.status || !tt.class(err) {
+				t.Fatalf("unexpected classification: status=%d error=%#v", apiErr.Status, apiErr)
+			}
+		})
+	}
+}
+
+func TestErrorFromResponsePreservesOnlyExplicitCode(t *testing.T) {
+	response := &http.Response{StatusCode: http.StatusConflict, Header: make(http.Header)}
+	explicit := ErrorFromResponse(response, []byte(`{"error":{"code":"source_task_not_ready","message":"wait"}}`)).(*Error)
+	missing := ErrorFromResponse(response, []byte(`{"error":{"message":"wait"}}`)).(*Error)
+
+	if explicit.Code != ErrorCode("source_task_not_ready") {
+		t.Fatalf("unexpected explicit code: %q", explicit.Code)
+	}
+	if missing.Code != "" {
+		t.Fatalf("expected missing code to remain empty, got %q", missing.Code)
+	}
+}
+
+func TestErrorFromResponseClassifiesPayloadTooLargeAsValidation(t *testing.T) {
+	response := &http.Response{StatusCode: http.StatusRequestEntityTooLarge, Header: make(http.Header)}
+	err := ErrorFromResponse(response, nil)
+	apiErr, ok := err.(*Error)
+	if !ok {
+		t.Fatalf("expected *Error, got %T", err)
+	}
+	if apiErr.Code != "" {
+		t.Fatalf("expected missing HTTP code to remain empty, got %q", apiErr.Code)
+	}
+	if !IsValidation(apiErr) {
+		t.Fatal("expected HTTP status to retain validation classification")
+	}
+	if apiErr.Message != "Payload too large" {
+		t.Fatalf("unexpected message: %q", apiErr.Message)
 	}
 }
 

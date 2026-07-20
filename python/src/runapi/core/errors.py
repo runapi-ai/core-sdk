@@ -28,6 +28,7 @@ class Error(Exception):
         self,
         message: Optional[str] = None,
         *,
+        code: Optional[str] = None,
         status: Optional[int] = None,
         request_id: Optional[str] = None,
         details: Any = None,
@@ -35,6 +36,7 @@ class Error(Exception):
     ) -> None:
         super().__init__(message)
         self.message = message
+        self.code = code
         self.status = status
         self.request_id = request_id
         self.details = details
@@ -53,6 +55,7 @@ class Error(Exception):
         data = {
             "error": type(self).__name__,
             "message": self.message,
+            "code": self.code,
             "status": self.status,
             "request_id": self.request_id,
             "details": self.details,
@@ -64,6 +67,7 @@ class AuthenticationError(Error):
     """API key is missing or invalid (HTTP 401)."""
 
     def __init__(self, message: str = "Unauthorized", *, status: int = 401, **kwargs: Any) -> None:
+        kwargs.setdefault("code", "authentication")
         super().__init__(message, status=status, **kwargs)
 
 
@@ -78,6 +82,7 @@ class RateLimitError(Error):
         retry_after: Optional[float] = None,
         **kwargs: Any,
     ) -> None:
+        kwargs.setdefault("code", "rate_limit")
         super().__init__(message, status=status, **kwargs)
         self.retry_after = retry_after
 
@@ -86,6 +91,7 @@ class InsufficientCreditsError(Error):
     """Account has insufficient credits (HTTP 402)."""
 
     def __init__(self, message: str = "Insufficient credits", *, status: int = 402, **kwargs: Any) -> None:
+        kwargs.setdefault("code", "insufficient_credits")
         super().__init__(message, status=status, **kwargs)
 
 
@@ -93,6 +99,7 @@ class NotFoundError(Error):
     """Requested resource does not exist (HTTP 404)."""
 
     def __init__(self, message: str = "Not found", *, status: int = 404, **kwargs: Any) -> None:
+        kwargs.setdefault("code", "not_found")
         super().__init__(message, status=status, **kwargs)
 
 
@@ -100,6 +107,7 @@ class ValidationError(Error):
     """Request validation failed (HTTP 400 / 422), or a client-side check failed."""
 
     def __init__(self, message: str = "Validation failed", **kwargs: Any) -> None:
+        kwargs.setdefault("code", "validation")
         super().__init__(message, **kwargs)
 
 
@@ -107,6 +115,7 @@ class ServiceUnavailableError(Error):
     """Service is temporarily unavailable (HTTP 503)."""
 
     def __init__(self, message: str = "Service unavailable", *, status: Optional[int] = None, **kwargs: Any) -> None:
+        kwargs.setdefault("code", "service_unavailable")
         super().__init__(message, status=503 if status is None else status, **kwargs)
 
 
@@ -114,6 +123,7 @@ class ConflictError(Error):
     """Request conflicts with the current resource state (HTTP 409)."""
 
     def __init__(self, message: str = "Conflict", *, status: int = 409, **kwargs: Any) -> None:
+        kwargs.setdefault("code", "conflict")
         super().__init__(message, status=status, **kwargs)
 
 
@@ -121,6 +131,7 @@ class ServerError(Error):
     """Server encountered an internal error (HTTP 5xx)."""
 
     def __init__(self, message: str = "Server error", *, status: Optional[int] = None, **kwargs: Any) -> None:
+        kwargs.setdefault("code", "server")
         super().__init__(message, status=500 if status is None else status, **kwargs)
 
 
@@ -128,6 +139,7 @@ class NetworkError(Error):
     """Network connection failed or the request could not be sent."""
 
     def __init__(self, message: str = "Network error", **kwargs: Any) -> None:
+        kwargs.setdefault("code", "network")
         super().__init__(message, **kwargs)
 
 
@@ -135,6 +147,7 @@ class TimeoutError(Error):  # noqa: A001 - intentional SDK error name, parallels
     """HTTP request exceeded the configured timeout."""
 
     def __init__(self, message: str = "Request timed out", **kwargs: Any) -> None:
+        kwargs.setdefault("code", "timeout")
         super().__init__(message, **kwargs)
 
 
@@ -142,6 +155,7 @@ class TaskTimeoutError(Error):
     """Polling for task completion exceeded the maximum wait time."""
 
     def __init__(self, message: str = "Task polling timed out", **kwargs: Any) -> None:
+        kwargs.setdefault("code", "task_timeout")
         super().__init__(message, **kwargs)
 
 
@@ -149,6 +163,7 @@ class TaskFailedError(Error):
     """Async task failed during processing."""
 
     def __init__(self, message: str = "Task failed", **kwargs: Any) -> None:
+        kwargs.setdefault("code", "task_failed")
         super().__init__(message, **kwargs)
 
 
@@ -198,6 +213,7 @@ def error_from_response(response: "Any") -> Error:
     error_class = STATUS_MAP.get(status, Error)
 
     kwargs: Dict[str, Any] = {
+        "code": _extract_code(parsed_body),
         "status": status,
         "request_id": request_id,
         "details": parsed_body,
@@ -207,6 +223,16 @@ def error_from_response(response: "Any") -> Error:
         kwargs["retry_after"] = _parse_retry_after(response.headers.get("retry-after"))
 
     return error_class(message, **kwargs)
+
+
+def _extract_code(body: Any) -> Optional[str]:
+    if not isinstance(body, dict):
+        return None
+    error = body.get("error")
+    if not isinstance(error, dict):
+        return None
+    code = error.get("code")
+    return code if isinstance(code, str) and code else None
 
 
 def _parse_body(body: Optional[str]) -> Any:

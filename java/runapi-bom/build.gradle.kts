@@ -11,14 +11,14 @@ javaPlatform {
 
 dependencies {
   constraints {
-    api("ai.runapi:runapi-core:0.1.7")
+    api("ai.runapi:runapi-core:0.2.0")
     api("ai.runapi:runapi-elevenlabs:0.1.1")
     api("ai.runapi:runapi-flux-kontext:0.1.1")
     api("ai.runapi:runapi-flux-2:0.1.1")
     api("ai.runapi:runapi-gpt-image:0.1.1")
     api("ai.runapi:runapi-gpt-image-2:0.1.1")
     api("ai.runapi:runapi-gpt-4o-image:0.1.1")
-    api("ai.runapi:runapi-grok-imagine:0.1.2")
+    api("ai.runapi:runapi-grok-imagine:0.1.3")
     api("ai.runapi:runapi-hailuo:0.1.1")
     api("ai.runapi:runapi-happyhorse:0.1.1")
     api("ai.runapi:runapi-ideogram-v3:0.1.1")
@@ -26,6 +26,9 @@ dependencies {
     api("ai.runapi:runapi-infinitetalk:0.1.1")
     api("ai.runapi:runapi-omnihuman:0.1.2")
     api("ai.runapi:runapi-gemini-omni:0.1.1")
+    api("ai.runapi:runapi-openai-tts:0.0.0")
+    api("ai.runapi:runapi-fish-audio:0.0.0")
+    api("ai.runapi:runapi-gemini-tts:0.0.0")
     api("ai.runapi:runapi-kling:0.1.2")
     api("ai.runapi:runapi-luma:0.1.1")
     api("ai.runapi:runapi-midjourney:0.1.0")

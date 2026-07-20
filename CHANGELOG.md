@@ -1,5 +1,58 @@
 # Changelog
 
+## [python/v0.2.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.2.0) - 2026-07-20
+
+### Added
+- Add shared contract metadata for OpenAI TTS and Fish Audio clients.
+- Add model-specific contract validation metadata for Gemini Omni Flash Preview text-to-video requests.
+- Publish Gemini TTS model and input contract metadata for Provider Clients.
+- Publish Seedream 5 Pro model and input contract metadata.
+
+### Changed
+- Publish shared Python and Java contract metadata for the Midjourney prompt shortening request schema.
+- Publish Seedream 5-Lite output format contract metadata.
+- Publish advanced stem separation mode, stem values, and conditional validation metadata.
+
+### Fixed
+- Preserve API-provided error codes, leave missing codes unset, and use SDK exception types for local failures.
+- Recognize continuation request failures across HTTP 400, 409, 422, 429, and 503 responses.
+
+## [java/v0.2.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.0) - 2026-07-20
+
+### Breaking
+- Replace Grok Imagine image-to-video `source_image_urls` contract metadata with scalar `source_image_url`.
+  Migration: Validate and send the source image through `source_image_url`.
+
+### Added
+- Add shared contract metadata for OpenAI TTS and Fish Audio clients.
+- Add OpenAI TTS and Fish Audio modules to the RunAPI BOM.
+- Add model-specific contract validation metadata for Gemini Omni Flash Preview text-to-video requests.
+- Publish Gemini TTS model and input contract metadata for Provider Clients.
+- Publish Seedream 5 Pro model and input contract metadata.
+
+### Changed
+- Publish shared Python and Java contract metadata for the Midjourney prompt shortening request schema.
+- Publish Seedream 5-Lite output format contract metadata.
+- Publish advanced stem separation mode, stem values, and conditional validation metadata.
+
+### Fixed
+- Preserve API-provided error codes, leave missing codes unset, and use SDK exception types for local failures.
+- Recognize continuation request failures across HTTP 400, 409, 422, 429, and 503 responses.
+
+## [go/v0.2.13](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.2.13) - 2026-07-20
+
+### Fixed
+- Classify HTTP 413 responses as validation errors with a stable default message.
+- Preserve API-provided error codes, leave missing codes unset, and use SDK exception types for local failures.
+- Recognize continuation request failures across HTTP 400, 409, 422, 429, and 503 responses.
+
+## [js/v0.2.13](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.2.13), [ruby/v0.2.13](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.2.13) - 2026-07-20
+
+### Fixed
+- Preserve API-provided error codes, leave missing codes unset, and use SDK exception types for local failures.
+- Recognize continuation request failures across HTTP 400, 409, 422, 429, and 503 responses.
+
+
 ## [python/v0.1.6](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.1.6), [java/v0.1.7](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.1.7) - 2026-07-17
 
 ### Changed

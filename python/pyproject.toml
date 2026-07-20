@@ -5,17 +5,21 @@ build-backend = "hatchling.build"
 [project]
 name = "runapi-core"
 dynamic = ["version"]
-description = "Core module for the RunAPI Python SDK"
+description = "RunAPI core SDK for JavaScript, Python, Ruby, Go, Java, and PHP"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "Apache-2.0"
 authors = [{ name = "RunAPI", email = "contact@runapi.ai" }]
-keywords = ["runapi", "ai", "sdk", "api"]
+keywords = ["runapi", "runapi-ai", "core", "api", "sdk", "typescript", "python", "ruby", "golang", "java", "pypi", "maven", "gradle"]
 dependencies = ["httpx>=0.27"]
 
 [project.urls]
-Homepage = "https://runapi.ai"
-Documentation = "https://runapi.ai/docs#sdk"
+Homepage = "https://runapi.ai/models"
+Documentation = "https://runapi.ai/docs#runapi-sdks"
+Source = "https://github.com/runapi-ai/core-sdk"
+Issues = "https://github.com/runapi-ai/core-sdk/issues"
+Changelog = "https://github.com/runapi-ai/core-sdk/blob/main/CHANGELOG.md"
+"Release Notes" = "https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.2.0"
 
 [tool.hatch.version]
 path = "src/runapi/core/version.py"

@@ -118,6 +118,37 @@ RSpec.describe RunApi::Core::Error do
       expect(error.message).to eq("Nested message")
     end
 
+    it "preserves explicit HTTP error code and leaves a missing code nil" do
+      response, = mock_response(code: 409)
+
+      explicit = described_class.from_response(response, {error: {code: "source_task_not_ready", message: "wait"}}.to_json)
+      missing = described_class.from_response(response, {error: {message: "wait"}}.to_json)
+
+      expect(explicit.code).to eq("source_task_not_ready")
+      expect(missing.code).to be_nil
+    end
+
+    it "preserves continuation codes while classifying by status" do
+      cases = [
+        [400, "invalid_resource_id", RunApi::Core::ValidationError],
+        [409, "request_conflict", RunApi::Core::ConflictError],
+        [409, "source_task_not_ready", RunApi::Core::ConflictError],
+        [422, "source_task_unusable", RunApi::Core::ValidationError],
+        [422, "continuation_not_supported", RunApi::Core::ValidationError],
+        [429, "rate_limited", RunApi::Core::RateLimitError],
+        [503, "continuation_unavailable", RunApi::Core::ServiceUnavailableError]
+      ]
+
+      cases.each do |status, code, error_class|
+        response, = mock_response(code: status)
+        error = described_class.from_response(response, {error: {code: code, message: "failed"}}.to_json)
+
+        expect(error).to be_a(error_class)
+        expect(error.status).to eq(status)
+        expect(error.code).to eq(code)
+      end
+    end
+
     it "extracts message from JSON body with errors array" do
       body = {"errors" => ["First error"]}.to_json
       response, = mock_response(code: 400)
@@ -165,6 +196,7 @@ RSpec.describe RunApi::Core::Error do
       expect(error.to_h).to eq(
         error: "RunApi::Core::AuthenticationError",
         message: "Bad key",
+        code: "authentication",
         status: 401,
         request_id: "req-1"
       )

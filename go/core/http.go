@@ -140,7 +140,7 @@ func (c *defaultHTTPClient) Request(ctx context.Context, method, path string, op
 		}
 
 		wait := RetryDelay(attempt+1, c.retryBaseDelay, c.retryMaxDelay)
-		if apiErr, ok := errors.AsType[*Error](err); ok && apiErr.Code == ErrRateLimit && apiErr.RetryAfter > 0 {
+		if apiErr, ok := errors.AsType[*Error](err); ok && IsRateLimit(apiErr) && apiErr.RetryAfter > 0 {
 			wait = apiErr.RetryAfter
 		}
 		select {

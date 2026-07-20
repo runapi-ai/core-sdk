@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
+  ConflictError,
   errorFromResponse,
   RateLimitError,
   ServiceUnavailableError,
+  ValidationError,
 } from '../../src/errors';
 
 function buildError(
@@ -95,6 +97,35 @@ describe('errorFromResponse defaults', () => {
 });
 
 describe('errorFromResponse class mapping', () => {
+  it('preserves explicit HTTP error code and leaves a missing code undefined', () => {
+    const explicit = buildError(409, { error: { code: 'source_task_not_ready', message: 'wait' } });
+    const missing = buildError(409, { error: { message: 'wait' } });
+
+    expect(explicit.code).toBe('source_task_not_ready');
+    expect(missing.code).toBeUndefined();
+  });
+
+  it.each([
+    [400, 'invalid_resource_id', ValidationError],
+    [409, 'request_conflict', ConflictError],
+    [409, 'source_task_not_ready', ConflictError],
+    [422, 'source_task_unusable', ValidationError],
+    [422, 'continuation_not_supported', ValidationError],
+    [429, 'rate_limited', RateLimitError],
+    [503, 'continuation_unavailable', ServiceUnavailableError],
+  ])('preserves continuation code %s/%s', (status, code, ErrorClass) => {
+    const error = buildError(status, { error: { code, message: 'failed' } });
+
+    expect(error).toBeInstanceOf(ErrorClass);
+    expect(error.status).toBe(status);
+    expect(error.code).toBe(code);
+  });
+
+  it('assigns explicit codes to SDK-local typed errors', () => {
+    expect(new ValidationError('invalid').code).toBe('validation');
+    expect(new ConflictError('conflict').code).toBe('conflict');
+  });
+
   it('maps 503 to ServiceUnavailableError', () => {
     const error = buildError(503, { error: 'No active channel available' });
     expect(error).toBeInstanceOf(ServiceUnavailableError);

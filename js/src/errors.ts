@@ -2,6 +2,8 @@ import { parseRetryAfterMs } from './retry';
 
 /** Options for constructing RunApiError instances. */
 export interface RunApiErrorOptions extends ErrorOptions {
+  /** Explicit machine-readable reason. */
+  code?: string;
   /** HTTP status code. */
   status?: number;
   /** Request ID from `X-Request-ID` header. */
@@ -15,6 +17,8 @@ export interface RunApiErrorOptions extends ErrorOptions {
  * Includes HTTP status, request ID, and response details.
  */
 export class RunApiError extends Error {
+  /** Explicit machine-readable reason when one was provided. */
+  code?: string;
   /** HTTP status code if available. */
   status?: number;
   /** Request ID from response headers. */
@@ -25,6 +29,7 @@ export class RunApiError extends Error {
   constructor(message: string, options: RunApiErrorOptions = {}) {
     super(message, options);
     this.name = 'RunApiError';
+    this.code = options.code;
     this.status = options.status;
     this.requestId = options.requestId;
     this.details = options.details;
@@ -34,7 +39,7 @@ export class RunApiError extends Error {
 /** Thrown when API key is missing or invalid (HTTP 401). */
 export class AuthenticationError extends RunApiError {
   constructor(message: string, options: RunApiErrorOptions = {}) {
-    super(message, options);
+    super(message, { code: 'authentication', ...options });
     this.name = 'AuthenticationError';
   }
 }
@@ -48,7 +53,7 @@ export class RateLimitError extends RunApiError {
     message: string,
     options: RunApiErrorOptions & { retryAfterMs?: number } = {}
   ) {
-    super(message, options);
+    super(message, { code: 'rate_limit', ...options });
     this.name = 'RateLimitError';
     this.retryAfterMs = options.retryAfterMs;
   }
@@ -57,7 +62,7 @@ export class RateLimitError extends RunApiError {
 /** Thrown when account has insufficient credits (HTTP 402). */
 export class InsufficientCreditsError extends RunApiError {
   constructor(message: string, options: RunApiErrorOptions = {}) {
-    super(message, options);
+    super(message, { code: 'insufficient_credits', ...options });
     this.name = 'InsufficientCreditsError';
   }
 }
@@ -65,7 +70,7 @@ export class InsufficientCreditsError extends RunApiError {
 /** Thrown when requested resource does not exist (HTTP 404). */
 export class NotFoundError extends RunApiError {
   constructor(message: string, options: RunApiErrorOptions = {}) {
-    super(message, options);
+    super(message, { code: 'not_found', ...options });
     this.name = 'NotFoundError';
   }
 }
@@ -73,15 +78,23 @@ export class NotFoundError extends RunApiError {
 /** Thrown when request validation fails (HTTP 400, 422). */
 export class ValidationError extends RunApiError {
   constructor(message: string, options: RunApiErrorOptions = {}) {
-    super(message, options);
+    super(message, { code: 'validation', ...options });
     this.name = 'ValidationError';
+  }
+}
+
+/** Thrown when a request conflicts with current resource state (HTTP 409). */
+export class ConflictError extends RunApiError {
+  constructor(message: string, options: RunApiErrorOptions = {}) {
+    super(message, { code: 'conflict', ...options });
+    this.name = 'ConflictError';
   }
 }
 
 /** Thrown when service is temporarily unavailable (HTTP 503). */
 export class ServiceUnavailableError extends RunApiError {
   constructor(message: string, options: RunApiErrorOptions = {}) {
-    super(message, options);
+    super(message, { code: 'service_unavailable', ...options });
     this.name = 'ServiceUnavailableError';
   }
 }
@@ -89,7 +102,7 @@ export class ServiceUnavailableError extends RunApiError {
 /** Thrown when network connection fails or request cannot be sent. */
 export class NetworkError extends RunApiError {
   constructor(message: string, options: RunApiErrorOptions = {}) {
-    super(message, options);
+    super(message, { code: 'network', ...options });
     this.name = 'NetworkError';
   }
 }
@@ -97,7 +110,7 @@ export class NetworkError extends RunApiError {
 /** Thrown when HTTP request exceeds configured timeout. */
 export class TimeoutError extends RunApiError {
   constructor(message: string, options: RunApiErrorOptions = {}) {
-    super(message, options);
+    super(message, { code: 'timeout', ...options });
     this.name = 'TimeoutError';
   }
 }
@@ -105,7 +118,7 @@ export class TimeoutError extends RunApiError {
 /** Thrown when polling for task completion exceeds maximum wait time. */
 export class TaskTimeoutError extends RunApiError {
   constructor(message: string, options: RunApiErrorOptions = {}) {
-    super(message, options);
+    super(message, { code: 'task_timeout', ...options });
     this.name = 'TaskTimeoutError';
   }
 }
@@ -113,7 +126,7 @@ export class TaskTimeoutError extends RunApiError {
 /** Thrown when async task fails during processing. */
 export class TaskFailedError extends RunApiError {
   constructor(message: string, options: RunApiErrorOptions = {}) {
-    super(message, options);
+    super(message, { code: 'task_failed', ...options });
     this.name = 'TaskFailedError';
   }
 }
@@ -201,6 +214,20 @@ function extractErrorMessage(body: unknown): string | undefined {
   return undefined;
 }
 
+function extractErrorCode(body: unknown): string | undefined {
+  if (!body || typeof body !== 'object') {
+    return undefined;
+  }
+
+  const error = (body as { error?: unknown }).error;
+  if (!error || typeof error !== 'object') {
+    return undefined;
+  }
+
+  const code = (error as { code?: unknown }).code;
+  return typeof code === 'string' && code.trim() ? code : undefined;
+}
+
 function defaultMessageForStatus(status: number): string {
   switch (status) {
     case 400:
@@ -211,6 +238,8 @@ function defaultMessageForStatus(status: number): string {
       return 'Insufficient credits';
     case 404:
       return 'Not found';
+    case 409:
+      return 'Conflict';
     case 408:
       return 'Request timeout';
     case 413:
@@ -251,30 +280,35 @@ export function errorFromResponse(
     extractErrorMessage(bodyJson) || extractErrorMessage(bodyText);
   const message = messageFromBody || defaultMessageForStatus(status);
   const details = bodyJson ?? bodyText ?? undefined;
+  const code = extractErrorCode(bodyJson);
 
   if (status === 401) {
-    return new AuthenticationError(message, { status, requestId, details });
+    return new AuthenticationError(message, { code, status, requestId, details });
   }
   if (status === 402) {
-    return new InsufficientCreditsError(message, { status, requestId, details });
+    return new InsufficientCreditsError(message, { code, status, requestId, details });
   }
   if (status === 404) {
-    return new NotFoundError(message, { status, requestId, details });
+    return new NotFoundError(message, { code, status, requestId, details });
   }
   if (status === 422 || status === 400) {
-    return new ValidationError(message, { status, requestId, details });
+    return new ValidationError(message, { code, status, requestId, details });
+  }
+  if (status === 409) {
+    return new ConflictError(message, { code, status, requestId, details });
   }
   if (status === 429) {
     return new RateLimitError(message, {
       status,
+      code,
       requestId,
       details,
       retryAfterMs: parseRetryAfterMs(response),
     });
   }
   if (status === 503) {
-    return new ServiceUnavailableError(message, { status, requestId, details });
+    return new ServiceUnavailableError(message, { code, status, requestId, details });
   }
 
-  return new RunApiError(message, { status, requestId, details });
+  return new RunApiError(message, { code, status, requestId, details });
 }

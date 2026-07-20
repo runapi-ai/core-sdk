@@ -38,6 +38,13 @@ CONTRACT = {
             "text-to-speech-turbo-v2.5": {}
         }
     },
+    "fish-audio/text-to-speech": {
+        "models": ["s1", "s2-pro"],
+        "fields_by_model": {
+            "s1": {},
+            "s2-pro": {}
+        }
+    },
     "flux-2/remix-image": {
         "models": ["flux-2-flex-remix-image", "flux-2-pro-remix-image"],
         "fields_by_model": {
@@ -114,8 +121,16 @@ CONTRACT = {
         }
     },
     "gemini-omni/text-to-video": {
-        "models": ["gemini-omni-text-to-video"],
+        "models": ["gemini-omni-flash-preview", "gemini-omni-text-to-video"],
         "fields_by_model": {
+            "gemini-omni-flash-preview": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16"]
+                },
+                "output_resolution": {
+                    "enum": ["720p"]
+                }
+            },
             "gemini-omni-text-to-video": {
                 "aspect_ratio": {
                     "enum": ["16:9", "9:16"]
@@ -127,6 +142,13 @@ CONTRACT = {
                     "enum": ["720p", "1080p", "4k"]
                 }
             }
+        }
+    },
+    "gemini-tts/text-to-speech": {
+        "models": ["gemini-2.5-pro-tts", "gemini-3.1-flash-tts"],
+        "fields_by_model": {
+            "gemini-2.5-pro-tts": {},
+            "gemini-3.1-flash-tts": {}
         }
     },
     "gpt-4o-image/text-to-image": {
@@ -665,6 +687,12 @@ CONTRACT = {
             }
         }
     },
+    "midjourney/shorten-prompt": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
     "midjourney/text-to-image": {
         "models": ["midjourney-v8.1"],
         "fields_by_model": {
@@ -749,6 +777,13 @@ CONTRACT = {
         "models": ["omnihuman-1.5-subject-detection"],
         "fields_by_model": {
             "omnihuman-1.5-subject-detection": {}
+        }
+    },
+    "openai-tts/text-to-speech": {
+        "models": ["tts-1", "tts-1-hd"],
+        "fields_by_model": {
+            "tts-1": {},
+            "tts-1-hd": {}
         }
     },
     "qwen-2/edit-image": {
@@ -906,7 +941,7 @@ CONTRACT = {
         }
     },
     "seedream/edit-image": {
-        "models": ["seedream-4.5-edit", "seedream-5-lite-edit", "seedream-v4-edit"],
+        "models": ["seedream-4.5-edit", "seedream-5-lite-edit", "seedream-5-pro-edit", "seedream-v4-edit"],
         "fields_by_model": {
             "seedream-4.5-edit": {
                 "aspect_ratio": {
@@ -919,6 +954,20 @@ CONTRACT = {
             "seedream-5-lite-edit": {
                 "aspect_ratio": {
                     "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "2:3", "3:2", "21:9"]
+                },
+                "output_format": {
+                    "enum": ["png", "jpeg"]
+                },
+                "output_quality": {
+                    "enum": ["basic", "high"]
+                }
+            },
+            "seedream-5-pro-edit": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "2:3", "3:2", "21:9"]
+                },
+                "output_format": {
+                    "enum": ["png", "jpeg"]
                 },
                 "output_quality": {
                     "enum": ["basic", "high"]
@@ -938,7 +987,7 @@ CONTRACT = {
         }
     },
     "seedream/text-to-image": {
-        "models": ["seedream-4.5-text-to-image", "seedream-5-lite-text-to-image", "seedream-v4-text-to-image"],
+        "models": ["seedream-4.5-text-to-image", "seedream-5-lite-text-to-image", "seedream-5-pro-text-to-image", "seedream-v4-text-to-image"],
         "fields_by_model": {
             "seedream-4.5-text-to-image": {
                 "aspect_ratio": {
@@ -951,6 +1000,20 @@ CONTRACT = {
             "seedream-5-lite-text-to-image": {
                 "aspect_ratio": {
                     "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "2:3", "3:2", "21:9"]
+                },
+                "output_format": {
+                    "enum": ["png", "jpeg"]
+                },
+                "output_quality": {
+                    "enum": ["basic", "high"]
+                }
+            },
+            "seedream-5-pro-text-to-image": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "2:3", "3:2", "21:9"]
+                },
+                "output_format": {
+                    "enum": ["png", "jpeg"]
                 },
                 "output_quality": {
                     "enum": ["basic", "high"]
@@ -1294,7 +1357,14 @@ CONTRACT = {
     "suno/separate-audio-stems": {
         "models": [],
         "fields_by_model": {
-            "_": {}
+            "_": {
+                "stem_name": {
+                    "enum": ["Lead Vocal", "Drum Kit", "Kick", "Snare", "Risers", "Bass", "Backing Vocals", "Piano", "Electric Guitar", "Percussion", "String Section", "Synth", "Acoustic Guitar", "Sound Effects", "Synth Pad", "Synth Bass", "Guitar", "Brass Section", "Organ", "Electronic Drum Kit", "Lead Electric Guitar", "Synth Keys", "Rhythm Electric Guitar", "Electric Piano", "Upright Bass", "Keyboards", "Distorted Electric Guitar", "Synth Strings", "Synth Lead", "Woodwinds", "Rhythm Acoustic Guitar", "Flute", "Harp", "Tambourine", "Trumpet", "Arpeggiator", "Accordion", "Fiddle", "Pedal Steel Guitar", "Synth Voice", "Violin", "Digital Piano", "Synth Brass", "Mandolin", "Choir", "Banjo", "Bells", "Clarinet", "Tenor Saxophone", "Trombone", "Shaker", "French Horn", "Glockenspiel", "Electric Bass", "Cello", "Timpani", "Harmonica", "Marimba", "Vibraphone", "Lap Steel Guitar", "Saxophone", "Orchestra", "Horns", "Cymbals", "Hand Clap", "Oboe", "Celesta", "Congas", "Drone", "Alto Saxophone", "Double Bass", "Ukulele", "Harpsichord", "Baritone Saxophone", "Xylophone", "Tuba", "Bass Guitar", "Whistle", "Lead Guitar", "Rhodes", "808", "Bongos", "Bassoon", "Cowbell", "Viola", "Sitar", "Steel Drums", "Piccolo", "Theremin", "Bagpipes", "Hi-Hat", "Music Box", "Melodica", "Tabla", "Koto", "Djembe", "Taiko", "Didgeridoo"]
+                },
+                "type": {
+                    "enum": ["separate_vocal", "split_stem", "split_stem_advanced"]
+                }
+            }
         }
     },
     "suno/text-to-music": {
