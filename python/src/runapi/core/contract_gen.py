@@ -1077,6 +1077,12 @@ CONTRACT = {
             }
         }
     },
+    "suno/blend-lyrics": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
     "suno/boost-style": {
         "models": [],
         "fields_by_model": {

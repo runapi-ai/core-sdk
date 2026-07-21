@@ -1,5 +1,20 @@
 # Changelog
 
+## [java/v0.2.3](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.3) - 2026-07-21
+
+### Added
+- Add the optional Fish Audio references field to shared Java contract metadata.
+- Add generated validation metadata for lyrics generation and lyric blending requests.
+
+### Changed
+- Publish Seedance 1.5 Pro and V1 Pro Fast seed constraints in aggregate contract metadata.
+
+## [python/v0.2.2](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.2.2) - 2026-07-21
+
+### Added
+- Add generated validation metadata for lyrics generation and lyric blending requests.
+
+
 ## [js/v0.2.14](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.2.14), [ruby/v0.2.14](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.2.14), [go/v0.2.14](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.2.14) - 2026-07-20
 
 ### Changed
