@@ -1,5 +1,32 @@
 # Changelog
 
+## [python/v0.2.3](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.2.3) - 2026-07-22
+
+### Added
+- Add Kling 2.6 text-to-video and image-to-video constraints to shared contract metadata.
+- Add generated validation metadata for Midjourney first-video extension requests.
+- Add generated validation metadata for Flux text-to-image and remix-image requests.
+- Publish Veo 3.1 Lite model and input constraints in aggregate contract metadata.
+- Add shared request validation metadata for Qwen Image generation, remix, and edit endpoints.
+
+## [java/v0.2.4](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.4) - 2026-07-22
+
+### Added
+- Add Kling 2.6 text-to-video and image-to-video constraints to shared contract metadata.
+- Add generated validation metadata for Midjourney first-video extension requests.
+- Add generated validation metadata for Flux text-to-image and remix-image requests.
+- Publish Veo 3.1 Lite model and input constraints in aggregate contract metadata.
+- Add shared request validation metadata for Qwen Image generation, remix, and edit endpoints.
+
+### Changed
+- Maintenance release with no public API changes; refresh generated Java contract source partitioning.
+
+## [go/v0.2.15](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.2.15) - 2026-07-22
+
+### Fixed
+- Apply generated numeric conditional rules consistently in Go request validation.
+
+
 ## [java/v0.2.3](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.3) - 2026-07-21
 
 ### Added

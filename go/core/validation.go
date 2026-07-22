@@ -197,23 +197,21 @@ func rangeMessage(field string, min, max any, unit string) string {
 }
 
 func enumValueAllowed(enum []any, value any) bool {
-	valNum, valIsNum := toFloat(value)
 	for _, allowed := range enum {
-		allowedNum, allowedIsNum := toFloat(allowed)
-		switch {
-		case allowedIsNum:
-			if valIsNum && valNum == allowedNum {
-				return true
-			}
-		case valIsNum:
-			// allowed non-numeric while value is numeric never matches.
-		default:
-			if toComparable(allowed) == toComparable(value) {
-				return true
-			}
+		if contractValuesEqual(allowed, value) {
+			return true
 		}
 	}
 	return false
+}
+
+func contractValuesEqual(expected, actual any) bool {
+	expectedNum, expectedIsNum := toFloat(expected)
+	actualNum, actualIsNum := toFloat(actual)
+	if expectedIsNum || actualIsNum {
+		return expectedIsNum && actualIsNum && expectedNum == actualNum
+	}
+	return toComparable(expected) == toComparable(actual)
 }
 
 func enforceContractRule(params map[string]any, rule map[string]any) error {
@@ -255,7 +253,7 @@ func ruleConditionMet(params map[string]any, field string, value any) bool {
 	if !ok {
 		return false
 	}
-	return toComparable(actual) == toComparable(value)
+	return contractValuesEqual(value, actual)
 }
 
 func fieldPresent(params map[string]any, field string) bool {

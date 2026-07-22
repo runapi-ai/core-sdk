@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "ai.runapi"
-version = "0.2.3"
+version = "0.2.4"
 
 allprojects {
   group = rootProject.group

@@ -16,6 +16,10 @@ func sampleSchema() map[string]any {
 				"when":      map[string]any{"model": "m-a"},
 				"forbidden": []any{"source_task_id"},
 			},
+			map[string]any{
+				"when":      map[string]any{"duration_seconds": 4},
+				"forbidden": []any{"reference_image_urls"},
+			},
 		},
 		"fields_by_model": map[string]any{
 			"m-a": map[string]any{
@@ -62,6 +66,7 @@ func TestValidateParams(t *testing.T) {
 		{"rule forbidden before required", map[string]any{"model": "m-a", "source_task_id": "src_1"}, "source_task_id is not allowed when model is m-a"},
 		{"rule required", map[string]any{"model": "m-a", "duration_seconds": float64(8), "mode": "exact"}, "lyrics is required when mode is exact"},
 		{"rule forbidden", map[string]any{"model": "m-a", "duration_seconds": float64(8), "mode": "exact", "lyrics": "la", "prompt": "p"}, "prompt is not allowed when mode is exact"},
+		{"numeric rule condition", map[string]any{"model": "m-a", "duration_seconds": float64(4), "reference_image_urls": []any{"a"}}, "reference_image_urls is not allowed when duration_seconds is 4"},
 		{"valid", map[string]any{"model": "m-a", "duration_seconds": float64(12), "aspect_ratio": "16:9", "steps": float64(10), "prompt": "ok"}, ""},
 		{"rule inactive", map[string]any{"model": "m-a", "duration_seconds": float64(8), "mode": "auto"}, ""},
 		{"array valid", map[string]any{"model": "m-a", "duration_seconds": float64(8), "reference_image_urls": []any{"a", "b", "c"}}, ""},

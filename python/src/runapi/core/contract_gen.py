@@ -108,6 +108,56 @@ CONTRACT = {
             }
         }
     },
+    "flux/remix-image": {
+        "models": ["flux-dev", "flux-pro"],
+        "fields_by_model": {
+            "flux-dev": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3"]
+                },
+                "output_count": {
+                    "enum": [1]
+                }
+            },
+            "flux-pro": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3"]
+                },
+                "output_count": {
+                    "enum": [1]
+                }
+            }
+        }
+    },
+    "flux/text-to-image": {
+        "models": ["flux-2-klein", "flux-dev", "flux-pro"],
+        "fields_by_model": {
+            "flux-2-klein": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3"]
+                },
+                "output_count": {
+                    "enum": [1]
+                }
+            },
+            "flux-dev": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3"]
+                },
+                "output_count": {
+                    "enum": [1]
+                }
+            },
+            "flux-pro": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3"]
+                },
+                "output_count": {
+                    "enum": [1]
+                }
+            }
+        }
+    },
     "gemini-omni/create-audio": {
         "models": ["gemini-omni-audio"],
         "fields_by_model": {
@@ -367,8 +417,13 @@ CONTRACT = {
         }
     },
     "happyhorse/image-to-video": {
-        "models": ["happyhorse-image-to-video"],
+        "models": ["happyhorse-1.0-i2v", "happyhorse-image-to-video"],
         "fields_by_model": {
+            "happyhorse-1.0-i2v": {
+                "output_resolution": {
+                    "enum": ["720p", "1080p"]
+                }
+            },
             "happyhorse-image-to-video": {
                 "output_resolution": {
                     "enum": ["720p", "1080p"]
@@ -377,8 +432,24 @@ CONTRACT = {
         }
     },
     "happyhorse/text-to-video": {
-        "models": ["happyhorse-character", "happyhorse-text-to-video"],
+        "models": ["happyhorse-1.0-r2v", "happyhorse-1.0-t2v", "happyhorse-character", "happyhorse-text-to-video"],
         "fields_by_model": {
+            "happyhorse-1.0-r2v": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16", "1:1", "4:3", "3:4"]
+                },
+                "output_resolution": {
+                    "enum": ["720p", "1080p"]
+                }
+            },
+            "happyhorse-1.0-t2v": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16", "1:1", "4:3", "3:4"]
+                },
+                "output_resolution": {
+                    "enum": ["720p", "1080p"]
+                }
+            },
             "happyhorse-character": {
                 "aspect_ratio": {
                     "enum": ["16:9", "9:16", "1:1", "4:3", "3:4"]
@@ -562,7 +633,7 @@ CONTRACT = {
         }
     },
     "kling/image-to-video": {
-        "models": ["kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro", "kling-v3-turbo-image-to-video"],
+        "models": ["kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro", "kling-v2.6", "kling-v3-turbo-image-to-video"],
         "fields_by_model": {
             "kling-v2.1-master-image-to-video": {
                 "duration_seconds": {
@@ -582,6 +653,17 @@ CONTRACT = {
             "kling-v2.5-turbo-image-to-video-pro": {
                 "duration_seconds": {
                     "enum": [5, 10]
+                }
+            },
+            "kling-v2.6": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16", "1:1"]
+                },
+                "duration_seconds": {
+                    "enum": [5, 10]
+                },
+                "mode": {
+                    "enum": ["std", "pro"]
                 }
             },
             "kling-v3-turbo-image-to-video": {
@@ -611,7 +693,7 @@ CONTRACT = {
         }
     },
     "kling/text-to-video": {
-        "models": ["kling-3.0", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro", "kling-v3-turbo-text-to-video"],
+        "models": ["kling-3.0", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro", "kling-v2.6", "kling-v3-turbo-text-to-video"],
         "fields_by_model": {
             "kling-3.0": {
                 "aspect_ratio": {
@@ -640,6 +722,17 @@ CONTRACT = {
                     "enum": [5, 10]
                 }
             },
+            "kling-v2.6": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16", "1:1"]
+                },
+                "duration_seconds": {
+                    "enum": [5, 10]
+                },
+                "mode": {
+                    "enum": ["std", "pro"]
+                }
+            },
             "kling-v3-turbo-text-to-video": {
                 "aspect_ratio": {
                     "enum": ["16:9", "9:16", "1:1"]
@@ -663,6 +756,12 @@ CONTRACT = {
         "models": ["midjourney-edit-image"],
         "fields_by_model": {
             "midjourney-edit-image": {}
+        }
+    },
+    "midjourney/extend-video": {
+        "models": ["midjourney-image-to-video"],
+        "fields_by_model": {
+            "midjourney-image-to-video": {}
         }
     },
     "midjourney/get-seed": {
@@ -809,12 +908,12 @@ CONTRACT = {
             }
         }
     },
-    "qwen-2/remix-image": {
-        "models": ["qwen-2-remix-image"],
+    "qwen-2/text-to-image": {
+        "models": ["qwen-2-text-to-image"],
         "fields_by_model": {
-            "qwen-2-remix-image": {
-                "acceleration": {
-                    "enum": ["none", "regular", "high"]
+            "qwen-2-text-to-image": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "3:4", "4:3", "9:16", "16:9"]
                 },
                 "output_format": {
                     "enum": ["png", "jpeg"]
@@ -822,12 +921,35 @@ CONTRACT = {
             }
         }
     },
-    "qwen-2/text-to-image": {
-        "models": ["qwen-2-text-to-image"],
+    "qwen-image/edit-image": {
+        "models": ["qwen-image-edit-image"],
         "fields_by_model": {
-            "qwen-2-text-to-image": {
+            "qwen-image-edit-image": {
                 "aspect_ratio": {
-                    "enum": ["1:1", "3:4", "4:3", "9:16", "16:9"]
+                    "enum": ["1:1", "3:4", "9:16", "4:3", "16:9"]
+                },
+                "output_format": {
+                    "enum": ["png", "jpeg"]
+                }
+            }
+        }
+    },
+    "qwen-image/remix-image": {
+        "models": ["qwen-image-remix-image"],
+        "fields_by_model": {
+            "qwen-image-remix-image": {
+                "output_format": {
+                    "enum": ["png", "jpeg"]
+                }
+            }
+        }
+    },
+    "qwen-image/text-to-image": {
+        "models": ["qwen-image-text-to-image"],
+        "fields_by_model": {
+            "qwen-image-text-to-image": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "3:4", "9:16", "4:3", "16:9"]
                 },
                 "output_format": {
                     "enum": ["png", "jpeg"]
@@ -1512,7 +1634,7 @@ CONTRACT = {
         }
     },
     "veo-3-1/text-to-video": {
-        "models": ["veo-3.1", "veo-3.1-fast"],
+        "models": ["veo-3.1", "veo-3.1-fast", "veo-3.1-lite"],
         "fields_by_model": {
             "veo-3.1": {
                 "aspect_ratio": {
@@ -1528,6 +1650,17 @@ CONTRACT = {
             "veo-3.1-fast": {
                 "aspect_ratio": {
                     "enum": ["16:9", "9:16", "auto"]
+                },
+                "duration_seconds": {
+                    "enum": [4, 6, 8]
+                },
+                "input_mode": {
+                    "enum": ["text", "first_and_last_frames", "reference"]
+                }
+            },
+            "veo-3.1-lite": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16"]
                 },
                 "duration_seconds": {
                     "enum": [4, 6, 8]
