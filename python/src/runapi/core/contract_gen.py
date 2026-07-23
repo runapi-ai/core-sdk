@@ -703,12 +703,20 @@ CONTRACT = {
         }
     },
     "kling/motion-control": {
-        "models": ["kling-3.0"],
+        "models": ["kling-3.0", "kling-v2.6"],
         "fields_by_model": {
             "kling-3.0": {
                 "background_source": {
                     "enum": ["video", "image"]
                 },
+                "character_orientation": {
+                    "enum": ["video", "image"]
+                },
+                "output_resolution": {
+                    "enum": ["720p", "1080p"]
+                }
+            },
+            "kling-v2.6": {
                 "character_orientation": {
                     "enum": ["video", "image"]
                 },

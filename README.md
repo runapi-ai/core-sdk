@@ -37,7 +37,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-core:0.2.5")
+  implementation("ai.runapi:runapi-core:0.2.6")
 }
 ```
 
@@ -47,7 +47,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-core</artifactId>
-  <version>0.2.5</version>
+  <version>0.2.6</version>
 </dependency>
 ```
 
@@ -91,10 +91,15 @@ FileCreateParams upload = FileCreateParams.fromUrl("https://cdn.runapi.ai/public
 
 RunAPI accepts an optional `X-Client-Request-Id` header on public API calls. Use printable ASCII values up to 512 characters. Accepted values are echoed in the response and stored with the RunAPI task for support and reconciliation.
 
+Task-creation calls also accept an optional opaque `Idempotency-Key` up to 512 characters. Generate one value per logical task and reuse it only with identical input after an unknown result. Reusing the value with different input returns `409 Conflict`; do not derive it from `X-Client-Request-Id`.
+
 ```typescript
 await client.textToImage.create(
   { prompt: 'A sunset over the ocean' },
-  { headers: { 'X-Client-Request-Id': 'order-123' } }
+  { headers: {
+    'X-Client-Request-Id': 'order-123',
+    'Idempotency-Key': 'opaque-logical-task-123'
+  } }
 );
 ```
 

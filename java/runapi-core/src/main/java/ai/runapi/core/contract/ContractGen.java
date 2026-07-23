@@ -980,7 +980,7 @@ contract.put("kling/image-to-video", new ContractAction(
 {"kling-v3-turbo-image-to-video", rules(rule(conditions(new Object[][] {{"model", "kling-v3-turbo-image-to-video"}}), list(), list("enable_sound", "aspect_ratio", "negative_prompt", "cfg_scale", "last_frame_image_url")))},
           })));
 contract.put("kling/motion-control", new ContractAction(
-    list("kling-3.0"),
+    list("kling-3.0", "kling-v2.6"),
           fieldsByModel(new Object[][] {
             {"kling-3.0", fields(new Object[][] {
                     {"background_source", field(enumValues("video", "image"))},
@@ -992,6 +992,18 @@ contract.put("kling/motion-control", new ContractAction(
                     {"reference_video_url", field(required())},
                     {"source_image_url", field(required())},
             })},
+            {"kling-v2.6", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"character_orientation", field(required(), enumValues("video", "image"))},
+                    {"model", field(required())},
+                    {"output_resolution", field(required(), enumValues("720p", "1080p"))},
+                    {"prompt", field(max(Double.valueOf(2500.0)), length())},
+                    {"reference_video_url", field(required())},
+                    {"source_image_url", field(required())},
+            })},
+          }),
+          rulesByModel(new Object[][] {
+{"kling-v2.6", rules(rule(conditions(new Object[][] {{"model", "kling-v2.6"}}), list(), list("background_source")))},
           })));
 contract.put("kling/text-to-video", new ContractAction(
     list("kling-3.0", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro", "kling-v2.6", "kling-v3-omni", "kling-v3-turbo-text-to-video"),

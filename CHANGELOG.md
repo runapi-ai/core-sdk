@@ -1,5 +1,11 @@
 # Changelog
 
+## [python/v0.2.5](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.2.5), [java/v0.2.6](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.6) - 2026-07-23
+
+### Added
+- Add generated Python and Java contract metadata required by Kling 2.6 motion-control validation.
+
+
 ## [java/v0.2.5](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.5) - 2026-07-23
 
 ### Added

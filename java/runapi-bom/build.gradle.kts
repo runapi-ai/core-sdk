@@ -11,7 +11,7 @@ javaPlatform {
 
 dependencies {
   constraints {
-    api("ai.runapi:runapi-core:0.2.5")
+    api("ai.runapi:runapi-core:0.2.6")
     api("ai.runapi:runapi-elevenlabs:0.1.1")
     api("ai.runapi:runapi-flux-kontext:0.1.1")
     api("ai.runapi:runapi-flux-2:0.1.1")
@@ -30,14 +30,14 @@ dependencies {
     api("ai.runapi:runapi-openai-tts:0.1.0")
     api("ai.runapi:runapi-fish-audio:0.1.1")
     api("ai.runapi:runapi-gemini-tts:0.1.0")
-    api("ai.runapi:runapi-kling:0.1.3")
+    api("ai.runapi:runapi-kling:0.1.4")
     api("ai.runapi:runapi-luma:0.1.1")
     api("ai.runapi:runapi-midjourney:0.3.0")
     api("ai.runapi:runapi-volcengine-lip-sync:0.1.1")
     api("ai.runapi:runapi-nano-banana:0.1.4")
     api("ai.runapi:runapi-qwen-2:0.1.1")
     api("ai.runapi:runapi-qwen-image:0.1.0")
-    api("ai.runapi:runapi-producer:0.1.0")
+    api("ai.runapi:runapi-producer:0.2.0")
     api("ai.runapi:runapi-recraft:0.1.1")
     api("ai.runapi:runapi-runway:0.1.1")
     api("ai.runapi:runapi-runway-aleph:0.1.1")

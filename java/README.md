@@ -14,7 +14,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-core:0.2.5")
+  implementation("ai.runapi:runapi-core:0.2.6")
 }
 ```
 
@@ -24,7 +24,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-core</artifactId>
-  <version>0.2.5</version>
+  <version>0.2.6</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ Use the BOM when multiple RunAPI Java modules are installed:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.2.5"))
+  implementation(platform("ai.runapi:runapi-bom:0.2.6"))
   implementation("ai.runapi:runapi-core")
 }
 ```
@@ -44,6 +44,19 @@ dependencies {
 - Files and account clients used by all model clients.
 - Strict contract validation helpers used by model packages.
 - Common error types such as `RunApiException`, `ValidationException`, and `RateLimitException`.
+
+## Request Identifiers And Safe Task Creation
+
+Task-creation calls accept an optional opaque `Idempotency-Key` up to 512 characters. Generate one value per logical task and reuse it only with identical input after an unknown result. Reusing the value with different input returns `409 Conflict`; do not derive it from `X-Client-Request-Id`.
+
+```java
+import ai.runapi.core.RequestOptions;
+
+RequestOptions options = RequestOptions.builder()
+    .header("X-Client-Request-Id", "order-123")
+    .header("Idempotency-Key", "opaque-logical-task-123")
+    .build();
+```
 
 ## File Upload
 
