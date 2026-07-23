@@ -1,5 +1,31 @@
 # Changelog
 
+## [java/v0.2.5](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.5) - 2026-07-23
+
+### Added
+- Add Kling V3 Omni text-to-video and image-to-video constraints to shared contract metadata.
+- Add generated validation metadata for seven additional Producer FUZZ music generation versions.
+- Add generated contract metadata required by the Kling video continuation resource.
+
+### Fixed
+- Restore the generated method boundary required for the Java core contract metadata to compile.
+- Keep generated Java contract metadata aligned with the current aggregate API contract.
+- Restore valid generated method partitioning after concurrent catalog merges.
+
+## [js/v0.2.15](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.2.15), [ruby/v0.2.15](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.2.15) - 2026-07-23
+
+### Added
+- Add Kling V3 Omni text-to-video and image-to-video constraints to shared contract metadata.
+- Add generated contract metadata required by the Kling video continuation resource.
+
+## [python/v0.2.4](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.2.4) - 2026-07-23
+
+### Added
+- Add Kling V3 Omni text-to-video and image-to-video constraints to shared contract metadata.
+- Add generated validation metadata for seven additional Producer FUZZ music generation versions.
+- Add generated contract metadata required by the Kling video continuation resource.
+
+
 ## [python/v0.2.3](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.2.3) - 2026-07-22
 
 ### Added

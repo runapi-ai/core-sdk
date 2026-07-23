@@ -873,21 +873,37 @@ contract.put("kling/avatar", new ContractAction(
                     {"source_image_url", field(required())},
             })},
           })));
+contract.put("kling/extend-video", new ContractAction(
+    list("kling-v2.5-turbo-image-to-video-pro", "kling-v2.5-turbo-text-to-video-pro"),
+          fieldsByModel(new Object[][] {
+            {"kling-v2.5-turbo-image-to-video-pro", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"mode", field(enumValues("std", "pro"))},
+                    {"prompt", field()},
+                    {"source_task_id", field(required())},
+            })},
+            {"kling-v2.5-turbo-text-to-video-pro", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"mode", field(enumValues("std", "pro"))},
+                    {"prompt", field()},
+                    {"source_task_id", field(required())},
+            })},
+          })));
+  }
+
+  private static void addActions5(Map<String, ContractAction> contract) {
 contract.put("kling/image-to-video", new ContractAction(
-    list("kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro", "kling-v2.6", "kling-v3-turbo-image-to-video"),
+    list("kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro", "kling-v2.6", "kling-v3-omni", "kling-v3-turbo-image-to-video"),
           fieldsByModel(new Object[][] {
             {"kling-v2.1-master-image-to-video", fields(new Object[][] {
                     {"aspect_ratio", field()},
                     {"callback_url", field()},
                     {"cfg_scale", field()},
                     {"duration_seconds", field(enumValues(Integer.valueOf(5), Integer.valueOf(10)))},
-                    {"enable_sound", field()},
                     {"first_frame_image_url", field(required())},
                     {"last_frame_image_url", field()},
-                    {"mode", field()},
                     {"model", field(required())},
                     {"negative_prompt", field()},
-                    {"output_resolution", field()},
                     {"prompt", field(required())},
             })},
             {"kling-v2.1-pro", fields(new Object[][] {
@@ -895,13 +911,10 @@ contract.put("kling/image-to-video", new ContractAction(
                     {"callback_url", field()},
                     {"cfg_scale", field()},
                     {"duration_seconds", field(enumValues(Integer.valueOf(5), Integer.valueOf(10)))},
-                    {"enable_sound", field()},
                     {"first_frame_image_url", field(required())},
                     {"last_frame_image_url", field()},
-                    {"mode", field()},
                     {"model", field(required())},
                     {"negative_prompt", field()},
-                    {"output_resolution", field()},
                     {"prompt", field(required())},
             })},
             {"kling-v2.1-standard", fields(new Object[][] {
@@ -909,13 +922,10 @@ contract.put("kling/image-to-video", new ContractAction(
                     {"callback_url", field()},
                     {"cfg_scale", field()},
                     {"duration_seconds", field(enumValues(Integer.valueOf(5), Integer.valueOf(10)))},
-                    {"enable_sound", field()},
                     {"first_frame_image_url", field(required())},
                     {"last_frame_image_url", field()},
-                    {"mode", field()},
                     {"model", field(required())},
                     {"negative_prompt", field()},
-                    {"output_resolution", field()},
                     {"prompt", field(required())},
             })},
             {"kling-v2.5-turbo-image-to-video-pro", fields(new Object[][] {
@@ -923,55 +933,52 @@ contract.put("kling/image-to-video", new ContractAction(
                     {"callback_url", field()},
                     {"cfg_scale", field()},
                     {"duration_seconds", field(enumValues(Integer.valueOf(5), Integer.valueOf(10)))},
-                    {"enable_sound", field()},
                     {"first_frame_image_url", field(required())},
                     {"last_frame_image_url", field()},
-                    {"mode", field()},
                     {"model", field(required())},
                     {"negative_prompt", field()},
-                    {"output_resolution", field()},
                     {"prompt", field(required())},
             })},
             {"kling-v2.6", fields(new Object[][] {
                     {"aspect_ratio", field(enumValues("16:9", "9:16", "1:1"))},
                     {"callback_url", field()},
-                    {"cfg_scale", field()},
                     {"duration_seconds", field(enumValues(Integer.valueOf(5), Integer.valueOf(10)))},
                     {"enable_sound", field()},
                     {"first_frame_image_url", field(required())},
                     {"last_frame_image_url", field()},
                     {"mode", field(enumValues("std", "pro"))},
                     {"model", field(required())},
-                    {"negative_prompt", field()},
-                    {"output_resolution", field()},
                     {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(2500.0)), length())},
             })},
-            {"kling-v3-turbo-image-to-video", fields(new Object[][] {
-                    {"aspect_ratio", field()},
+            {"kling-v3-omni", fields(new Object[][] {
+                    {"aspect_ratio", field(enumValues("16:9", "9:16", "1:1"))},
                     {"callback_url", field()},
-                    {"cfg_scale", field()},
                     {"duration_seconds", field(enumValues(Integer.valueOf(3), Integer.valueOf(4), Integer.valueOf(5), Integer.valueOf(6), Integer.valueOf(7), Integer.valueOf(8), Integer.valueOf(9), Integer.valueOf(10), Integer.valueOf(11), Integer.valueOf(12), Integer.valueOf(13), Integer.valueOf(14), Integer.valueOf(15)))},
                     {"enable_sound", field()},
                     {"first_frame_image_url", field(required())},
                     {"last_frame_image_url", field()},
-                    {"mode", field()},
                     {"model", field(required())},
-                    {"negative_prompt", field()},
+                    {"output_resolution", field(enumValues("720p", "1080p", "4k"))},
+                    {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(2500.0)), length())},
+            })},
+            {"kling-v3-turbo-image-to-video", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"duration_seconds", field(enumValues(Integer.valueOf(3), Integer.valueOf(4), Integer.valueOf(5), Integer.valueOf(6), Integer.valueOf(7), Integer.valueOf(8), Integer.valueOf(9), Integer.valueOf(10), Integer.valueOf(11), Integer.valueOf(12), Integer.valueOf(13), Integer.valueOf(14), Integer.valueOf(15)))},
+                    {"first_frame_image_url", field(required())},
+                    {"model", field(required())},
                     {"output_resolution", field(enumValues("720p", "1080p"))},
                     {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(2500.0)), length())},
             })},
           }),
           rulesByModel(new Object[][] {
-{"kling-v2.1-master-image-to-video", rules(rule(conditions(new Object[][] {{"model", "kling-v2.1-master-image-to-video"}}), list(), list("output_resolution", "mode", "enable_sound")))},
-{"kling-v2.1-pro", rules(rule(conditions(new Object[][] {{"model", "kling-v2.1-pro"}}), list(), list("output_resolution", "mode", "enable_sound")))},
-{"kling-v2.1-standard", rules(rule(conditions(new Object[][] {{"model", "kling-v2.1-standard"}}), list(), list("output_resolution", "mode", "enable_sound")))},
-{"kling-v2.5-turbo-image-to-video-pro", rules(rule(conditions(new Object[][] {{"model", "kling-v2.5-turbo-image-to-video-pro"}}), list(), list("output_resolution", "mode", "enable_sound")))},
+{"kling-v2.1-master-image-to-video", rules(rule(conditions(new Object[][] {{"model", "kling-v2.1-master-image-to-video"}}), list(), list("output_resolution", "enable_sound")))},
+{"kling-v2.1-pro", rules(rule(conditions(new Object[][] {{"model", "kling-v2.1-pro"}}), list(), list("output_resolution", "enable_sound")))},
+{"kling-v2.1-standard", rules(rule(conditions(new Object[][] {{"model", "kling-v2.1-standard"}}), list(), list("output_resolution", "enable_sound")))},
+{"kling-v2.5-turbo-image-to-video-pro", rules(rule(conditions(new Object[][] {{"model", "kling-v2.5-turbo-image-to-video-pro"}}), list(), list("output_resolution", "enable_sound")))},
 {"kling-v2.6", rules(rule(conditions(new Object[][] {{"model", "kling-v2.6"}}), list(), list("output_resolution", "negative_prompt", "cfg_scale")))},
-{"kling-v3-turbo-image-to-video", rules(rule(conditions(new Object[][] {{"model", "kling-v3-turbo-image-to-video"}}), list(), list("mode", "enable_sound", "aspect_ratio", "negative_prompt", "cfg_scale", "last_frame_image_url")))},
+{"kling-v3-omni", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni"}}), list(), list("negative_prompt", "cfg_scale")))},
+{"kling-v3-turbo-image-to-video", rules(rule(conditions(new Object[][] {{"model", "kling-v3-turbo-image-to-video"}}), list(), list("enable_sound", "aspect_ratio", "negative_prompt", "cfg_scale", "last_frame_image_url")))},
           })));
-  }
-
-  private static void addActions5(Map<String, ContractAction> contract) {
 contract.put("kling/motion-control", new ContractAction(
     list("kling-3.0"),
           fieldsByModel(new Object[][] {
@@ -987,7 +994,7 @@ contract.put("kling/motion-control", new ContractAction(
             })},
           })));
 contract.put("kling/text-to-video", new ContractAction(
-    list("kling-3.0", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro", "kling-v2.6", "kling-v3-turbo-text-to-video"),
+    list("kling-3.0", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro", "kling-v2.6", "kling-v3-omni", "kling-v3-turbo-text-to-video"),
           fieldsByModel(new Object[][] {
             {"kling-3.0", fields(new Object[][] {
                     {"aspect_ratio", field(enumValues("16:9", "9:16", "1:1"))},
@@ -998,7 +1005,6 @@ contract.put("kling/text-to-video", new ContractAction(
                     {"first_frame_image_url", field()},
                     {"kling_elements", field()},
                     {"last_frame_image_url", field()},
-                    {"mode", field()},
                     {"model", field(required())},
                     {"multi_prompt", field()},
                     {"multi_shots", field()},
@@ -1012,15 +1018,8 @@ contract.put("kling/text-to-video", new ContractAction(
                     {"cfg_scale", field()},
                     {"duration_seconds", field(enumValues(Integer.valueOf(5), Integer.valueOf(10)))},
                     {"enable_sound", field()},
-                    {"first_frame_image_url", field()},
-                    {"kling_elements", field()},
-                    {"last_frame_image_url", field()},
-                    {"mode", field()},
                     {"model", field(required())},
-                    {"multi_prompt", field()},
-                    {"multi_shots", field()},
                     {"negative_prompt", field()},
-                    {"output_resolution", field()},
                     {"prompt", field()},
             })},
             {"kling-v2.5-turbo-text-to-video-pro", fields(new Object[][] {
@@ -1029,58 +1028,42 @@ contract.put("kling/text-to-video", new ContractAction(
                     {"cfg_scale", field()},
                     {"duration_seconds", field(enumValues(Integer.valueOf(5), Integer.valueOf(10)))},
                     {"enable_sound", field()},
-                    {"first_frame_image_url", field()},
-                    {"kling_elements", field()},
-                    {"last_frame_image_url", field()},
-                    {"mode", field()},
                     {"model", field(required())},
-                    {"multi_prompt", field()},
-                    {"multi_shots", field()},
                     {"negative_prompt", field()},
-                    {"output_resolution", field()},
                     {"prompt", field()},
             })},
             {"kling-v2.6", fields(new Object[][] {
                     {"aspect_ratio", field(enumValues("16:9", "9:16", "1:1"))},
                     {"callback_url", field()},
-                    {"cfg_scale", field()},
                     {"duration_seconds", field(enumValues(Integer.valueOf(5), Integer.valueOf(10)))},
                     {"enable_sound", field()},
-                    {"first_frame_image_url", field()},
-                    {"kling_elements", field()},
-                    {"last_frame_image_url", field()},
                     {"mode", field(enumValues("std", "pro"))},
                     {"model", field(required())},
-                    {"multi_prompt", field()},
-                    {"multi_shots", field()},
-                    {"negative_prompt", field()},
-                    {"output_resolution", field()},
+                    {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(2500.0)), length())},
+            })},
+            {"kling-v3-omni", fields(new Object[][] {
+                    {"aspect_ratio", field(enumValues("16:9", "9:16", "1:1"))},
+                    {"callback_url", field()},
+                    {"duration_seconds", field(enumValues(Integer.valueOf(3), Integer.valueOf(4), Integer.valueOf(5), Integer.valueOf(6), Integer.valueOf(7), Integer.valueOf(8), Integer.valueOf(9), Integer.valueOf(10), Integer.valueOf(11), Integer.valueOf(12), Integer.valueOf(13), Integer.valueOf(14), Integer.valueOf(15)))},
+                    {"enable_sound", field()},
+                    {"model", field(required())},
+                    {"output_resolution", field(enumValues("720p", "1080p", "4k"))},
                     {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(2500.0)), length())},
             })},
             {"kling-v3-turbo-text-to-video", fields(new Object[][] {
                     {"aspect_ratio", field(enumValues("16:9", "9:16", "1:1"))},
                     {"callback_url", field()},
-                    {"cfg_scale", field()},
                     {"duration_seconds", field(enumValues(Integer.valueOf(3), Integer.valueOf(4), Integer.valueOf(5), Integer.valueOf(6), Integer.valueOf(7), Integer.valueOf(8), Integer.valueOf(9), Integer.valueOf(10), Integer.valueOf(11), Integer.valueOf(12), Integer.valueOf(13), Integer.valueOf(14), Integer.valueOf(15)))},
-                    {"enable_sound", field()},
-                    {"first_frame_image_url", field()},
-                    {"kling_elements", field()},
-                    {"last_frame_image_url", field()},
-                    {"mode", field()},
                     {"model", field(required())},
-                    {"multi_prompt", field()},
-                    {"multi_shots", field()},
-                    {"negative_prompt", field()},
                     {"output_resolution", field(enumValues("720p", "1080p"))},
                     {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(2500.0)), length())},
             })},
           }),
           rulesByModel(new Object[][] {
-{"kling-3.0", rules(rule(conditions(new Object[][] {{"model", "kling-3.0"}}), list(), list("mode")))},
-{"kling-v2.1-master-text-to-video", rules(rule(conditions(new Object[][] {{"model", "kling-v2.1-master-text-to-video"}}), list(), list("mode")))},
 {"kling-v2.5-turbo-text-to-video-pro", rules(rule(conditions(new Object[][] {{"model", "kling-v2.5-turbo-text-to-video-pro"}}), list(), list("mode")))},
 {"kling-v2.6", rules(rule(conditions(new Object[][] {{"model", "kling-v2.6"}}), list(), list("output_resolution", "negative_prompt", "cfg_scale", "multi_shots", "multi_prompt", "first_frame_image_url", "last_frame_image_url", "kling_elements")))},
-{"kling-v3-turbo-text-to-video", rules(rule(conditions(new Object[][] {{"model", "kling-v3-turbo-text-to-video"}}), list(), list("mode", "enable_sound", "negative_prompt", "cfg_scale", "multi_shots", "multi_prompt", "first_frame_image_url", "last_frame_image_url", "kling_elements")))},
+{"kling-v3-omni", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni"}}), list(), list("negative_prompt", "cfg_scale", "multi_shots", "multi_prompt", "first_frame_image_url", "last_frame_image_url", "kling_elements")))},
+{"kling-v3-turbo-text-to-video", rules(rule(conditions(new Object[][] {{"model", "kling-v3-turbo-text-to-video"}}), list(), list("enable_sound", "negative_prompt", "cfg_scale", "multi_shots", "multi_prompt", "first_frame_image_url", "last_frame_image_url", "kling_elements")))},
           })));
 contract.put("luma/modify-video", new ContractAction(
     list("luma-modify-video"),
@@ -1128,6 +1111,9 @@ contract.put("midjourney/image-to-prompt", new ContractAction(
                     {"source_image_url", field(required())},
             })},
           })));
+  }
+
+  private static void addActions6(Map<String, ContractAction> contract) {
 contract.put("midjourney/image-to-video", new ContractAction(
     list("midjourney-image-to-video"),
           fieldsByModel(new Object[][] {
@@ -1141,9 +1127,6 @@ contract.put("midjourney/image-to-video", new ContractAction(
                     {"source_image_url", field(required())},
             })},
           })));
-  }
-
-  private static void addActions6(Map<String, ContractAction> contract) {
 contract.put("midjourney/shorten-prompt", new ContractAction(
     list(),
           fieldsByModel(new Object[][] {
@@ -1258,6 +1241,9 @@ contract.put("omnihuman/subject-detection", new ContractAction(
                     {"source_image_url", field(required())},
             })},
           })));
+  }
+
+  private static void addActions7(Map<String, ContractAction> contract) {
 contract.put("openai-tts/text-to-speech", new ContractAction(
     list("tts-1", "tts-1-hd"),
           fieldsByModel(new Object[][] {
@@ -1270,13 +1256,66 @@ contract.put("openai-tts/text-to-speech", new ContractAction(
                     {"text", field(required(), max(Double.valueOf(4096.0)), length())},
             })},
           })));
-  }
-
-  private static void addActions7(Map<String, ContractAction> contract) {
 contract.put("producer/text-to-music", new ContractAction(
-    list("fuzz-2.0"),
+    list("fuzz-0.8", "fuzz-1.0", "fuzz-1.0-pro", "fuzz-1.1", "fuzz-1.1-pro", "fuzz-2.0", "fuzz-2.0-pro", "fuzz-2.0-raw"),
           fieldsByModel(new Object[][] {
+            {"fuzz-0.8", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"lyrics", field()},
+                    {"model", field(required())},
+                    {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(200.0)), length())},
+                    {"title", field()},
+                    {"vocal_mode", field(required(), enumValues("exact_lyrics", "instrumental"))},
+            })},
+            {"fuzz-1.0", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"lyrics", field()},
+                    {"model", field(required())},
+                    {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(200.0)), length())},
+                    {"title", field()},
+                    {"vocal_mode", field(required(), enumValues("exact_lyrics", "instrumental"))},
+            })},
+            {"fuzz-1.0-pro", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"lyrics", field()},
+                    {"model", field(required())},
+                    {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(200.0)), length())},
+                    {"title", field()},
+                    {"vocal_mode", field(required(), enumValues("exact_lyrics", "instrumental"))},
+            })},
+            {"fuzz-1.1", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"lyrics", field()},
+                    {"model", field(required())},
+                    {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(200.0)), length())},
+                    {"title", field()},
+                    {"vocal_mode", field(required(), enumValues("exact_lyrics", "instrumental"))},
+            })},
+            {"fuzz-1.1-pro", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"lyrics", field()},
+                    {"model", field(required())},
+                    {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(200.0)), length())},
+                    {"title", field()},
+                    {"vocal_mode", field(required(), enumValues("exact_lyrics", "instrumental"))},
+            })},
             {"fuzz-2.0", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"lyrics", field()},
+                    {"model", field(required())},
+                    {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(200.0)), length())},
+                    {"title", field()},
+                    {"vocal_mode", field(required(), enumValues("exact_lyrics", "instrumental"))},
+            })},
+            {"fuzz-2.0-pro", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"lyrics", field()},
+                    {"model", field(required())},
+                    {"prompt", field(required(), min(Double.valueOf(1.0)), max(Double.valueOf(200.0)), length())},
+                    {"title", field()},
+                    {"vocal_mode", field(required(), enumValues("exact_lyrics", "instrumental"))},
+            })},
+            {"fuzz-2.0-raw", fields(new Object[][] {
                     {"callback_url", field()},
                     {"lyrics", field()},
                     {"model", field(required())},
@@ -1286,7 +1325,14 @@ contract.put("producer/text-to-music", new ContractAction(
             })},
           }),
           rulesByModel(new Object[][] {
+{"fuzz-0.8", rules(rule(conditions(new Object[][] {{"vocal_mode", "exact_lyrics"}}), list("lyrics"), list()), rule(conditions(new Object[][] {{"vocal_mode", "instrumental"}}), list(), list("lyrics")))},
+{"fuzz-1.0", rules(rule(conditions(new Object[][] {{"vocal_mode", "exact_lyrics"}}), list("lyrics"), list()), rule(conditions(new Object[][] {{"vocal_mode", "instrumental"}}), list(), list("lyrics")))},
+{"fuzz-1.0-pro", rules(rule(conditions(new Object[][] {{"vocal_mode", "exact_lyrics"}}), list("lyrics"), list()), rule(conditions(new Object[][] {{"vocal_mode", "instrumental"}}), list(), list("lyrics")))},
+{"fuzz-1.1", rules(rule(conditions(new Object[][] {{"vocal_mode", "exact_lyrics"}}), list("lyrics"), list()), rule(conditions(new Object[][] {{"vocal_mode", "instrumental"}}), list(), list("lyrics")))},
+{"fuzz-1.1-pro", rules(rule(conditions(new Object[][] {{"vocal_mode", "exact_lyrics"}}), list("lyrics"), list()), rule(conditions(new Object[][] {{"vocal_mode", "instrumental"}}), list(), list("lyrics")))},
 {"fuzz-2.0", rules(rule(conditions(new Object[][] {{"vocal_mode", "exact_lyrics"}}), list("lyrics"), list()), rule(conditions(new Object[][] {{"vocal_mode", "instrumental"}}), list(), list("lyrics")))},
+{"fuzz-2.0-pro", rules(rule(conditions(new Object[][] {{"vocal_mode", "exact_lyrics"}}), list("lyrics"), list()), rule(conditions(new Object[][] {{"vocal_mode", "instrumental"}}), list(), list("lyrics")))},
+{"fuzz-2.0-raw", rules(rule(conditions(new Object[][] {{"vocal_mode", "exact_lyrics"}}), list("lyrics"), list()), rule(conditions(new Object[][] {{"vocal_mode", "instrumental"}}), list(), list("lyrics")))},
           })));
 contract.put("qwen-2/edit-image", new ContractAction(
     list("qwen-2-edit-image"),
@@ -1362,6 +1408,9 @@ contract.put("recraft/remove-background", new ContractAction(
                     {"source_image_url", field(required())},
             })},
           })));
+  }
+
+  private static void addActions8(Map<String, ContractAction> contract) {
 contract.put("recraft/upscale-image", new ContractAction(
     list("recraft-crisp-upscale"),
           fieldsByModel(new Object[][] {
@@ -1371,9 +1420,6 @@ contract.put("recraft/upscale-image", new ContractAction(
                     {"source_image_url", field(required())},
             })},
           })));
-  }
-
-  private static void addActions8(Map<String, ContractAction> contract) {
 contract.put("runway-aleph/edit-video", new ContractAction(
     list("runway-aleph"),
           fieldsByModel(new Object[][] {
@@ -2197,7 +2243,6 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"callback_url", field()},
                     {"continue_at", field()},
                     {"duration_seconds", field()},
-                    {"endpoint", field()},
                     {"lyrics", field()},
                     {"model", field(required())},
                     {"negative_tags", field()},
@@ -2216,7 +2261,6 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"callback_url", field()},
                     {"continue_at", field()},
                     {"duration_seconds", field()},
-                    {"endpoint", field()},
                     {"lyrics", field()},
                     {"model", field(required())},
                     {"negative_tags", field()},
@@ -2235,7 +2279,6 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"callback_url", field()},
                     {"continue_at", field()},
                     {"duration_seconds", field()},
-                    {"endpoint", field()},
                     {"lyrics", field()},
                     {"model", field(required())},
                     {"negative_tags", field()},
@@ -2254,7 +2297,6 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"callback_url", field()},
                     {"continue_at", field()},
                     {"duration_seconds", field()},
-                    {"endpoint", field()},
                     {"lyrics", field()},
                     {"model", field(required())},
                     {"negative_tags", field()},
@@ -2273,7 +2315,6 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"callback_url", field()},
                     {"continue_at", field()},
                     {"duration_seconds", field()},
-                    {"endpoint", field()},
                     {"lyrics", field()},
                     {"model", field(required())},
                     {"negative_tags", field()},
@@ -2292,7 +2333,6 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"callback_url", field()},
                     {"continue_at", field()},
                     {"duration_seconds", field()},
-                    {"endpoint", field()},
                     {"lyrics", field()},
                     {"model", field(required())},
                     {"negative_tags", field()},

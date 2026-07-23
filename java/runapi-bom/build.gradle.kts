@@ -11,7 +11,7 @@ javaPlatform {
 
 dependencies {
   constraints {
-    api("ai.runapi:runapi-core:0.2.4")
+    api("ai.runapi:runapi-core:0.2.5")
     api("ai.runapi:runapi-elevenlabs:0.1.1")
     api("ai.runapi:runapi-flux-kontext:0.1.1")
     api("ai.runapi:runapi-flux-2:0.1.1")

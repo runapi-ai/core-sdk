@@ -632,8 +632,23 @@ CONTRACT = {
             "kling-v1-avatar-standard": {}
         }
     },
+    "kling/extend-video": {
+        "models": ["kling-v2.5-turbo-image-to-video-pro", "kling-v2.5-turbo-text-to-video-pro"],
+        "fields_by_model": {
+            "kling-v2.5-turbo-image-to-video-pro": {
+                "mode": {
+                    "enum": ["std", "pro"]
+                }
+            },
+            "kling-v2.5-turbo-text-to-video-pro": {
+                "mode": {
+                    "enum": ["std", "pro"]
+                }
+            }
+        }
+    },
     "kling/image-to-video": {
-        "models": ["kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro", "kling-v2.6", "kling-v3-turbo-image-to-video"],
+        "models": ["kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro", "kling-v2.6", "kling-v3-omni", "kling-v3-turbo-image-to-video"],
         "fields_by_model": {
             "kling-v2.1-master-image-to-video": {
                 "duration_seconds": {
@@ -666,6 +681,17 @@ CONTRACT = {
                     "enum": ["std", "pro"]
                 }
             },
+            "kling-v3-omni": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16", "1:1"]
+                },
+                "duration_seconds": {
+                    "enum": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                },
+                "output_resolution": {
+                    "enum": ["720p", "1080p", "4k"]
+                }
+            },
             "kling-v3-turbo-image-to-video": {
                 "duration_seconds": {
                     "enum": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
@@ -693,7 +719,7 @@ CONTRACT = {
         }
     },
     "kling/text-to-video": {
-        "models": ["kling-3.0", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro", "kling-v2.6", "kling-v3-turbo-text-to-video"],
+        "models": ["kling-3.0", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro", "kling-v2.6", "kling-v3-omni", "kling-v3-turbo-text-to-video"],
         "fields_by_model": {
             "kling-3.0": {
                 "aspect_ratio": {
@@ -731,6 +757,17 @@ CONTRACT = {
                 },
                 "mode": {
                     "enum": ["std", "pro"]
+                }
+            },
+            "kling-v3-omni": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16", "1:1"]
+                },
+                "duration_seconds": {
+                    "enum": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                },
+                "output_resolution": {
+                    "enum": ["720p", "1080p", "4k"]
                 }
             },
             "kling-v3-turbo-text-to-video": {
@@ -886,9 +923,44 @@ CONTRACT = {
         }
     },
     "producer/text-to-music": {
-        "models": ["fuzz-2.0"],
+        "models": ["fuzz-0.8", "fuzz-1.0", "fuzz-1.0-pro", "fuzz-1.1", "fuzz-1.1-pro", "fuzz-2.0", "fuzz-2.0-pro", "fuzz-2.0-raw"],
         "fields_by_model": {
+            "fuzz-0.8": {
+                "vocal_mode": {
+                    "enum": ["exact_lyrics", "instrumental"]
+                }
+            },
+            "fuzz-1.0": {
+                "vocal_mode": {
+                    "enum": ["exact_lyrics", "instrumental"]
+                }
+            },
+            "fuzz-1.0-pro": {
+                "vocal_mode": {
+                    "enum": ["exact_lyrics", "instrumental"]
+                }
+            },
+            "fuzz-1.1": {
+                "vocal_mode": {
+                    "enum": ["exact_lyrics", "instrumental"]
+                }
+            },
+            "fuzz-1.1-pro": {
+                "vocal_mode": {
+                    "enum": ["exact_lyrics", "instrumental"]
+                }
+            },
             "fuzz-2.0": {
+                "vocal_mode": {
+                    "enum": ["exact_lyrics", "instrumental"]
+                }
+            },
+            "fuzz-2.0-pro": {
+                "vocal_mode": {
+                    "enum": ["exact_lyrics", "instrumental"]
+                }
+            },
+            "fuzz-2.0-raw": {
                 "vocal_mode": {
                     "enum": ["exact_lyrics", "instrumental"]
                 }
