@@ -28,15 +28,17 @@ class HttpClient:
 
     def __init__(self, options: ClientOptions, *, transport: Optional[httpx.BaseTransport] = None) -> None:
         self._options = options
+        headers = {
+            "Accept": "application/json",
+            "User-Agent": constants.SDK_USER_AGENT,
+        }
+        if options.api_key:
+            headers["Authorization"] = f"Bearer {options.api_key}"
         self._client = httpx.Client(
             base_url=options.base_url,
             timeout=options.timeout,
             transport=transport,
-            headers={
-                "Authorization": f"Bearer {options.api_key}",
-                "Accept": "application/json",
-                "User-Agent": constants.SDK_USER_AGENT,
-            },
+            headers=headers,
         )
         # A bare client for direct uploads: the pre-authorized upload URL lives
         # outside the API host and must not receive the API key.
@@ -76,6 +78,9 @@ class HttpClient:
                     raise TimeoutError(str(exc))
                 except httpx.TransportError as exc:
                     raise NetworkError(str(exc))
+
+                if response.status_code == 304:
+                    return None
 
                 if response.is_success:
                     body = self._parse_body(response.text)

@@ -1,5 +1,19 @@
 # Changelog
 
+## [python/v0.3.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.0) - 2026-07-24
+
+### Added
+- Add shared Files, Account, and Pricing resources plus typed Task Billing Facts to every Python Provider Client.
+
+## [ruby/v0.2.16](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.2.16) - 2026-07-24
+
+### Added
+- Add Client#close to release SDK-owned HTTP connections.
+
+### Fixed
+- Allow Ruby applications to keep connection_pool 3.x while retaining compatibility with connection_pool 2.x.
+
+
 ## [python/v0.2.5](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.2.5), [java/v0.2.6](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.6) - 2026-07-23
 
 ### Added

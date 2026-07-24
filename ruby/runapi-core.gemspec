@@ -26,6 +26,7 @@ Dir.chdir(__dir__) do
     spec.extra_rdoc_files = ["README.md"]
         spec.require_paths = ["lib"]
 
-    spec.add_dependency "connection_pool", "~> 2.4"
+    # Keep existing 2.4 support while allowing the CI-covered 3.x API; evaluate 4.x before widening.
+    spec.add_dependency "connection_pool", ">= 2.4", "< 4"
   end
 end

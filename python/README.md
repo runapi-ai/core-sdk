@@ -10,7 +10,7 @@ pip install runapi-core
 
 ## Notes
 
-Use the core package for common client options, error classes, request helpers, file uploads, and task polling behavior that Provider Clients share. Configure it globally or per client:
+Use the core package for common client options, error classes, request helpers, file uploads, live pricing, account resources, and task polling behavior that Provider Clients share. Configure it globally or per client:
 
 ```python
 import runapi.core as runapi
@@ -63,6 +63,30 @@ print(uploaded.url)
 ```
 
 Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
+
+## Universal resources
+
+Every Provider Client exposes `files`, `account`, and `pricing` through one shared HTTP client. `pricing.list_schedules()` reads the current schedule, and `pricing.create_quote()` estimates a reservation without creating a Task. The schedule and ordinary quote calls do not require an API key; a quote that uses an existing Task as pricing context requires the key for that Task's Account.
+
+```python
+from runapi.core import RequestOptions
+from runapi.flux import FluxClient
+
+client = FluxClient(api_key="sk-...")
+schedules = client.pricing.list_schedules(
+    service="flux",
+    action="text_to_image",
+    options=RequestOptions(headers={"If-None-Match": '"previous-etag"'}),
+)
+quote = client.pricing.create_quote(
+    service="flux",
+    action="text_to_image",
+    model="flux-pro",
+    params={"prompt": "A glass observatory"},
+)
+```
+
+Task responses expose persisted billing facts at `response.billing`: `reservation`, `settlement`, and `refund` are typed objects when recorded and `None` when the historical fact is absent. These facts describe that Task and are not recalculated from the current schedule.
 
 ## License
 

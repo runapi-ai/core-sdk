@@ -34,7 +34,10 @@ class FilesClient(Resource):
 
     RESPONSE_CLASS = UploadResponse
 
-    def __init__(self, api_key: Optional[str] = None, **options: Any) -> None:
+    def __init__(self, api_key: Optional[str] = None, *, http: Any = None, **options: Any) -> None:
+        if http is not None:
+            super().__init__(http)
+            return
         resolved_api_key = auth.resolve_api_key(api_key)
         client_options = ClientOptions(api_key=resolved_api_key, **options)
         http = client_options.http_client or HttpClient(client_options)

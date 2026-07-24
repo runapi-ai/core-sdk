@@ -23,10 +23,15 @@ def resolve_api_key(explicit: Optional[str] = None) -> str:
     All sources are trimmed; blank values are treated as missing. Raises
     :class:`AuthenticationError` when no source yields a value.
     """
-    resolved = _normalize(explicit) or _normalize(config.api_key) or _normalize(os.environ.get(ENV_VAR_NAME))
+    resolved = resolve_optional_api_key(explicit)
     if not resolved:
         raise AuthenticationError(MISSING_KEY_MESSAGE)
     return resolved
+
+
+def resolve_optional_api_key(explicit: Optional[str] = None) -> Optional[str]:
+    """Resolve an API key without requiring one for public resources."""
+    return _normalize(explicit) or _normalize(config.api_key) or _normalize(os.environ.get(ENV_VAR_NAME))
 
 
 def _normalize(value: Optional[str]) -> Optional[str]:

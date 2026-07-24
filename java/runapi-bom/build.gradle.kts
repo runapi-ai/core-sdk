@@ -30,7 +30,7 @@ dependencies {
     api("ai.runapi:runapi-openai-tts:0.1.0")
     api("ai.runapi:runapi-fish-audio:0.1.1")
     api("ai.runapi:runapi-gemini-tts:0.1.0")
-    api("ai.runapi:runapi-kling:0.1.4")
+    api("ai.runapi:runapi-kling:0.1.5")
     api("ai.runapi:runapi-luma:0.1.1")
     api("ai.runapi:runapi-midjourney:0.3.0")
     api("ai.runapi:runapi-volcengine-lip-sync:0.1.1")

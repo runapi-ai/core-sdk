@@ -93,6 +93,19 @@ def test_sends_bearer_and_user_agent():
     assert captured["ua"] == constants.SDK_USER_AGENT
 
 
+def test_omits_authorization_header_without_an_api_key():
+    captured = {}
+
+    def handler(request):
+        captured["auth"] = request.headers.get("authorization")
+        return httpx.Response(200, json={})
+
+    options = ClientOptions(api_key=None, base_url="https://runapi.ai")
+    HttpClient(options, transport=httpx.MockTransport(handler)).request("get", "/api/v1/price_schedules")
+
+    assert captured["auth"] is None
+
+
 def test_sends_json_body_for_post():
     captured = {}
 

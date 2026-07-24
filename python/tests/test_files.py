@@ -50,6 +50,14 @@ def test_requires_exactly_one_source():
         client.create(file="x", source="y")
 
 
+def test_accepts_an_existing_http_client_without_resolving_auth_again():
+    fake = FakeHttp(UPLOAD)
+
+    client = FilesClient(http=fake)
+
+    assert client._http is fake
+
+
 def test_create_with_remote_source_sends_url_source_object():
     fake = FakeHttp(UPLOAD)
     client = FilesClient(api_key="k", http_client=fake)

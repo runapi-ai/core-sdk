@@ -60,6 +60,12 @@ module RunApi
         close_multipart_files(req)
       end
 
+      def close
+        @pool.shutdown do |http|
+          http.finish if http.started?
+        end
+      end
+
       # PUT bytes straight to a pre-authorized upload URL with the exact headers
       # issued for it. Skips the base URL, auth, and retries: the URL is single-use
       # and the body is not safe to replay.

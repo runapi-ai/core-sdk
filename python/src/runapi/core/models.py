@@ -263,3 +263,23 @@ class TaskResponse(BaseModel):
     id = optional(str)
     status = optional(str)
     error = optional(str)
+    billing = optional(lambda: TaskBillingFacts)
+
+
+class BillingReservation(BaseModel):
+    amount_cents = required(int)
+
+
+class BillingSettlement(BaseModel):
+    charged_amount_cents = required(int)
+    amount_micro_cents = required(int)
+
+
+class BillingRefund(BaseModel):
+    refunded_at = required(str)
+
+
+class TaskBillingFacts(BaseModel):
+    reservation = optional(BillingReservation)
+    settlement = optional(BillingSettlement)
+    refund = optional(BillingRefund)

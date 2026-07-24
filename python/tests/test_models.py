@@ -1,6 +1,6 @@
 import pytest
 
-from runapi.core import BaseModel, DynamicModel, optional, required
+from runapi.core import BaseModel, DynamicModel, TaskBillingFacts, TaskResponse, optional, required
 from runapi.core.errors import ValidationError
 
 
@@ -117,3 +117,16 @@ def test_response_headers_stay_outside_serialized_body():
     assert model.response_header("x-runapi-task-id") == "task-ref-1"
     assert model.runapi_task_id == "task-ref-1"
     assert model.to_dict() == {"id": "abc"}
+
+
+def test_task_response_coerces_typed_billing_facts_and_preserves_unknown_fields():
+    response = TaskResponse(
+        {
+            "id": "task_1",
+            "billing": {"reservation": {"amount_cents": 5}, "future_fact": "retained"},
+        }
+    )
+
+    assert isinstance(response.billing, TaskBillingFacts)
+    assert response.billing.reservation.amount_cents == 5
+    assert response.billing.future_fact == "retained"

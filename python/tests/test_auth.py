@@ -57,6 +57,10 @@ def test_raises_when_no_source():
         auth.resolve_api_key(None)
 
 
+def test_optional_resolution_returns_none_when_no_source():
+    assert auth.resolve_optional_api_key(None) is None
+
+
 def test_configure_sets_global(monkeypatch):
     config.configure(api_key="configured-key")
     assert auth.resolve_api_key(None) == "configured-key"

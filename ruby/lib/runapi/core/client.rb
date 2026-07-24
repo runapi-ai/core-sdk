@@ -17,9 +17,15 @@ module RunApi
       def initialize(api_key: nil, **options)
         @api_key = Core::Auth.resolve_api_key(api_key)
         client_options = Core::ClientOptions.new(api_key: @api_key, **options)
+        @owns_http_client = client_options.http_client.nil?
         @http = client_options.http_client || Core::HttpClient.new(client_options)
         @files = Files.new(@http)
         @account = Account.new(@http)
+      end
+
+      # Closes the SDK-created HTTP client. Injected clients remain caller-owned.
+      def close
+        @http.close if @owns_http_client
       end
 
       protected

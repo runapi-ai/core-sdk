@@ -20,6 +20,30 @@ RSpec.describe RunApi::Core::HttpClient do
     allow_any_instance_of(Net::HTTP).to receive(:start).and_return(true)
   end
 
+  describe "connection pool lifecycle" do
+    it "creates the configured connection pool" do
+      expect(ConnectionPool).to receive(:new).with(size: 5, timeout: 5).and_call_original
+
+      described_class.new(options)
+    end
+
+    it "reuses and closes its connection" do
+      response = Net::HTTPOK.new("1.1", "200", "OK")
+      response.instance_variable_set(:@body, '{"ok":true}')
+      response.instance_variable_set(:@read, true)
+      connection = instance_double(Net::HTTP, started?: true, request: response, finish: nil)
+
+      allow(client).to receive(:build_connection).and_return(connection)
+
+      2.times { client.request(:get, "/api/v1/test") }
+      client.close
+
+      expect(client).to have_received(:build_connection).once
+      expect(connection).to have_received(:request).twice
+      expect(connection).to have_received(:finish).once
+    end
+  end
+
   describe "#request" do
     it "returns parsed JSON on success" do
       stub_request(:get, "#{base}/api/v1/test")
