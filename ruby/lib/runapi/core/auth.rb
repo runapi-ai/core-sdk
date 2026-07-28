@@ -19,13 +19,18 @@ module RunApi
       # @param explicit [String, nil] API key passed directly to a client constructor.
       # @return [String] the resolved API key
       def self.resolve_api_key(explicit = nil)
-        resolved = normalize(explicit) ||
-          normalize(RunApi.respond_to?(:api_key) ? RunApi.api_key : nil) ||
-          normalize(ENV[ENV_VAR_NAME])
+        resolved = resolve_optional_api_key(explicit)
 
         raise AuthenticationError, MISSING_KEY_MESSAGE unless resolved
 
         resolved
+      end
+
+      # Resolve an API key when present without requiring one for public resources.
+      def self.resolve_optional_api_key(explicit = nil)
+        normalize(explicit) ||
+          normalize(RunApi.respond_to?(:api_key) ? RunApi.api_key : nil) ||
+          normalize(ENV[ENV_VAR_NAME])
       end
 
       def self.normalize(value)

@@ -3,7 +3,7 @@
 module RunApi
   module Core
     # Base class for every RunAPI client. Resolves the API key, builds the shared
-    # HTTP client, and exposes the Universal Resources (file upload, account) that
+    # HTTP client, and exposes the Universal Resources (file upload, account, pricing) that
     # are available on any client regardless of which model gem was required.
     #
     # Provider clients inherit from this and build their model resources from the
@@ -13,6 +13,8 @@ module RunApi
       attr_reader :files
       # @return [Account] Account info and balance operations.
       attr_reader :account
+      # @return [Pricing] Live Price Schedule lookup and Price Quote operations.
+      attr_reader :pricing
 
       def initialize(api_key: nil, **options)
         @api_key = Core::Auth.resolve_api_key(api_key)
@@ -21,6 +23,7 @@ module RunApi
         @http = client_options.http_client || Core::HttpClient.new(client_options)
         @files = Files.new(@http)
         @account = Account.new(@http)
+        @pricing = Pricing.new(@http)
       end
 
       # Closes the SDK-created HTTP client. Injected clients remain caller-owned.

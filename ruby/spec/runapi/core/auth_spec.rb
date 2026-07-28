@@ -70,4 +70,10 @@ RSpec.describe RunApi::Core::Auth do
         .to raise_error(RunApi::Core::AuthenticationError)
     end
   end
+
+  describe ".resolve_optional_api_key" do
+    it "returns nil when no source yields a value" do
+      expect(described_class.resolve_optional_api_key(nil)).to be_nil
+    end
+  end
 end

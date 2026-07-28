@@ -34,6 +34,15 @@ describe('createHttpClient', () => {
     });
   });
 
+  it('omits authorization when no API key is configured', async () => {
+    const fetchMock = vi.fn(() => Promise.resolve(jsonResponse({ ok: true })));
+    const client = createHttpClient({ maxRetries: 0, fetch: fetchMock as typeof fetch });
+
+    await client.request('GET', '/api/v1/price_schedules');
+
+    expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty('authorization');
+  });
+
   describe('fetchOptions', () => {
     it('forwards client-level fetchOptions to fetch', async () => {
       const { client, fetchMock } = clientWith({

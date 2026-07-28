@@ -16,12 +16,17 @@ function readApiKeyFromEnv(): string | undefined {
  * variable. Throws `AuthenticationError` when neither is provided.
  */
 export function resolveApiKey(options: ClientOptions): string {
-  const explicit = options.apiKey?.trim();
-  const apiKey = explicit || readApiKeyFromEnv();
+  const apiKey = resolveOptionalApiKey(options);
   if (!apiKey) {
     throw new AuthenticationError(
       `API key is required. Pass \`apiKey\` or set the \`${ENV_VAR_NAME}\` environment variable.`
     );
   }
   return apiKey;
+}
+
+/** Resolve an API key when present without requiring one for public resources. */
+export function resolveOptionalApiKey(options: ClientOptions): string | undefined {
+  const explicit = options.apiKey?.trim();
+  return explicit || readApiKeyFromEnv();
 }

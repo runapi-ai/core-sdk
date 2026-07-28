@@ -46,7 +46,7 @@ CONTRACT = {
         }
     },
     "flux-2/remix-image": {
-        "models": ["flux-2-flex-remix-image", "flux-2-pro-remix-image"],
+        "models": ["flux-2-flex-remix-image", "flux-2-max-remix-image", "flux-2-pro-remix-image"],
         "fields_by_model": {
             "flux-2-flex-remix-image": {
                 "aspect_ratio": {
@@ -54,6 +54,17 @@ CONTRACT = {
                 },
                 "output_resolution": {
                     "enum": ["1k", "2k"]
+                }
+            },
+            "flux-2-max-remix-image": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3"]
+                },
+                "output_count": {
+                    "enum": [1]
+                },
+                "output_resolution": {
+                    "enum": ["1k"]
                 }
             },
             "flux-2-pro-remix-image": {
@@ -67,7 +78,7 @@ CONTRACT = {
         }
     },
     "flux-2/text-to-image": {
-        "models": ["flux-2-flex-text-to-image", "flux-2-pro-text-to-image"],
+        "models": ["flux-2-flex-text-to-image", "flux-2-max-text-to-image", "flux-2-pro-text-to-image"],
         "fields_by_model": {
             "flux-2-flex-text-to-image": {
                 "aspect_ratio": {
@@ -75,6 +86,17 @@ CONTRACT = {
                 },
                 "output_resolution": {
                     "enum": ["1k", "2k"]
+                }
+            },
+            "flux-2-max-text-to-image": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3"]
+                },
+                "output_count": {
+                    "enum": [1]
+                },
+                "output_resolution": {
+                    "enum": ["1k"]
                 }
             },
             "flux-2-pro-text-to-image": {
@@ -648,8 +670,22 @@ CONTRACT = {
         }
     },
     "kling/image-to-video": {
-        "models": ["kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro", "kling-v2.6", "kling-v3-omni", "kling-v3-turbo-image-to-video"],
+        "models": ["kling-o1", "kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro", "kling-v2.6", "kling-v3-omni", "kling-v3-turbo-image-to-video"],
         "fields_by_model": {
+            "kling-o1": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16", "1:1"]
+                },
+                "duration_seconds": {
+                    "enum": [5]
+                },
+                "mode": {
+                    "enum": ["std", "pro"]
+                },
+                "reference_video_type": {
+                    "enum": ["base", "feature"]
+                }
+            },
             "kling-v2.1-master-image-to-video": {
                 "duration_seconds": {
                     "enum": [5, 10]
@@ -727,7 +763,7 @@ CONTRACT = {
         }
     },
     "kling/text-to-video": {
-        "models": ["kling-3.0", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro", "kling-v2.6", "kling-v3-omni", "kling-v3-turbo-text-to-video"],
+        "models": ["kling-3.0", "kling-o1", "kling-v2.1-master-text-to-video", "kling-v2.5-turbo-text-to-video-pro", "kling-v2.6", "kling-v3-omni", "kling-v3-turbo-text-to-video"],
         "fields_by_model": {
             "kling-3.0": {
                 "aspect_ratio": {
@@ -738,6 +774,20 @@ CONTRACT = {
                 },
                 "output_resolution": {
                     "enum": ["720p", "1080p", "4k"]
+                }
+            },
+            "kling-o1": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16", "1:1"]
+                },
+                "duration_seconds": {
+                    "enum": [5]
+                },
+                "mode": {
+                    "enum": ["std", "pro"]
+                },
+                "reference_video_type": {
+                    "enum": ["base", "feature"]
                 }
             },
             "kling-v2.1-master-text-to-video": {

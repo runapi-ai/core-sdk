@@ -7,7 +7,12 @@ export type {
   PollingOptions,
   TaskStatus,
   AsyncTaskStatus,
+  TaskBillingResponse,
   TaskResponse,
+  TaskBillingFacts,
+  TaskReservation,
+  TaskSettlement,
+  TaskRefund,
 } from './types';
 
 // Constants
@@ -31,7 +36,7 @@ export {
 export type { RunApiErrorOptions } from './errors';
 
 // Auth
-export { resolveApiKey } from './auth';
+export { resolveApiKey, resolveOptionalApiKey } from './auth';
 
 // HTTP Client
 export { createHttpClient } from './http';
@@ -60,6 +65,18 @@ export type { FileCreateParams, FileSource, FileUploadResponse } from './files';
 // Account
 export { Account } from './account';
 export type { AccountInfoResponse, AccountBalanceResponse } from './account';
+
+// Pricing
+export { Pricing, PricingClient } from './pricing';
+export type {
+  PriceScheduleFilters,
+  PriceSchedule,
+  PriceScheduleListResponse,
+  PriceScheduleNotModifiedResponse,
+  PriceScheduleListResult,
+  PriceQuoteParams,
+  PriceQuoteResponse,
+} from './pricing';
 
 // Base client
 export { BaseClient } from './base-client';
