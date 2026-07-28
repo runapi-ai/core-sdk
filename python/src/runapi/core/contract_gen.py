@@ -1869,6 +1869,9 @@ CONTRACT = {
                 }
             },
             "wan-2.6-flash-image-to-video": {
+                "duration_seconds": {
+                    "enum": [5, 10, 15]
+                },
                 "output_resolution": {
                     "enum": ["720p", "1080p"]
                 }

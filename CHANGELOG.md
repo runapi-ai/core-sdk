@@ -1,5 +1,23 @@
 # Changelog
 
+## [python/v0.3.2](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.2) - 2026-07-28
+
+### Changed
+- Describe and validate the documented Gemini Omni, Grok Imagine, and Topaz request fields.
+
+### Fixed
+- Carry supported Wan Flash image-to-video duration values in generated contract metadata; request defaults remain API-applied.
+
+## [java/v0.2.8](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.8) - 2026-07-28
+
+### Changed
+- Describe and validate the documented Gemini Omni, Grok Imagine, and Topaz request fields.
+
+### Fixed
+- Validate required audio and music request fields before sending requests.
+- Carry supported Wan Flash image-to-video duration values in generated contract metadata; request defaults remain API-applied.
+
+
 ## [java/v0.2.7](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.7) - 2026-07-28
 
 ### Added
