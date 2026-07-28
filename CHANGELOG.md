@@ -1,5 +1,35 @@
 # Changelog
 
+## [java/v0.2.7](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.7) - 2026-07-28
+
+### Added
+- Expose live Price Schedule, Price Quote, and typed Task Billing Facts through every Provider Client.
+- Add generated contract metadata required by Kling O1 reference-media validation.
+- Expose whether an async create response reused an idempotent task.
+
+### Changed
+- Support generated Flux 2 Max request validation metadata used by Flux 2 SDK packages.
+
+## [go/v0.2.16](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.2.16) - 2026-07-28
+
+### Added
+- Add public Pricing resources and persisted task billing facts.
+- Expose whether an async create response reused an idempotent task.
+
+## [js/v0.3.0](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.3.0), [ruby/v0.3.0](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.3.0) - 2026-07-28
+
+### Added
+- Add the universal Pricing Resource and typed Task Billing Facts to JavaScript and Ruby core SDKs.
+
+## [python/v0.3.1](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.1) - 2026-07-28
+
+### Added
+- Add generated contract metadata required by Kling O1 reference-media validation.
+
+### Changed
+- Support generated Flux 2 Max request validation metadata used by Flux 2 SDK packages.
+
+
 ## [python/v0.3.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.0) - 2026-07-24
 
 ### Added

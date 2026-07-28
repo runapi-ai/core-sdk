@@ -22,7 +22,7 @@ module RunApi
     #   )
     #
     # @!attribute [rw] api_key
-    #   @return [String] API key for authentication. Required.
+    #   @return [String, nil] API key for authenticated resources and protected Price Quotes.
     # @!attribute [rw] base_url
     #   @return [String] Base URL for API requests. Defaults to RunApi.base_url.
     # @!attribute [rw] timeout
@@ -78,6 +78,7 @@ module RunApi
       :headers,
       :timeout,
       :max_retries,
+      :allow_not_modified,
       keyword_init: true
     )
 
@@ -98,6 +99,25 @@ module RunApi
         self.poll_interval ||= Constants::TIMEOUTS[:polling_interval]
         self.max_wait ||= Constants::TIMEOUTS[:polling_max_wait]
       end
+    end
+
+    class TaskReservation < BaseModel
+      required :amount_cents, Numeric
+    end
+
+    class TaskSettlement < BaseModel
+      required :charged_amount_cents, Numeric
+      required :amount_micro_cents, Numeric
+    end
+
+    class TaskRefund < BaseModel
+      required :refunded_at, String
+    end
+
+    class TaskBillingFacts < BaseModel
+      optional :reservation, TaskReservation
+      optional :settlement, TaskSettlement
+      optional :refund, TaskRefund
     end
 
     # Typed response structure for async task operations.
@@ -122,6 +142,7 @@ module RunApi
       optional :id, String
       optional :status, String
       optional :error, String
+      optional :billing, TaskBillingFacts
     end
   end
 end

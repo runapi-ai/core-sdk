@@ -53,3 +53,22 @@ RSpec.describe RunApi::Core::PollingOptions do
     expect(opts.max_wait).to eq(60)
   end
 end
+
+RSpec.describe RunApi::Core::TaskResponse do
+  it "coerces billing facts while preserving unknown fields" do
+    task = described_class.new(
+      "status" => "failed",
+      "provider_extension" => "preserved",
+      "billing" => {
+        "reservation" => {"amount_cents" => 120},
+        "settlement" => {"charged_amount_cents" => 95, "amount_micro_cents" => 9_500_000},
+        "refund" => {"refunded_at" => "2026-07-23T00:00:00.000000Z"}
+      }
+    )
+
+    expect(task.billing).to be_a(RunApi::Core::TaskBillingFacts)
+    expect(task.billing.settlement).to be_a(RunApi::Core::TaskSettlement)
+    expect(task.billing.settlement.charged_amount_cents).to eq(95)
+    expect(task.provider_extension).to eq("preserved")
+  end
+end

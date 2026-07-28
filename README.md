@@ -22,7 +22,7 @@
 </div>
 <br/>
 
-RunAPI Core SDK contains the shared authentication, HTTP, retry, error, file upload, account, and polling primitives used by RunAPI Provider Client packages. Application code should usually install a concrete Provider Client package such as `@runapi.ai/wan`, `runapi-wan`, `runapi-ai/wan`, `github.com/runapi-ai/wan-sdk/go`, or `ai.runapi:runapi-wan`; install core packages directly only when building shared SDK infrastructure.
+RunAPI Core SDK contains the shared authentication, HTTP, retry, error, file upload, account, pricing, and polling primitives used by RunAPI Provider Client packages. Application code should usually install a concrete Provider Client package such as `@runapi.ai/wan`, `runapi-wan`, `runapi-ai/wan`, `github.com/runapi-ai/wan-sdk/go`, or `ai.runapi:runapi-wan`; install core packages directly only when building shared SDK infrastructure.
 
 ## Install
 
@@ -37,7 +37,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-core:0.2.6")
+  implementation("ai.runapi:runapi-core:0.2.7")
 }
 ```
 
@@ -47,7 +47,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-core</artifactId>
-  <version>0.2.6</version>
+  <version>0.2.7</version>
 </dependency>
 ```
 

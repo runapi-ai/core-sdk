@@ -165,6 +165,22 @@ RSpec.describe RunApi::Core::HttpClient do
 
       expect(client.request(:get, "/api/v1/test")).to eq("plain text")
     end
+
+    it "returns a response for an allowed 304 revalidation" do
+      request_options = RunApi::Core::RequestOptions.new(
+        headers: {"If-None-Match" => '"schedule-v1"'},
+        allow_not_modified: true
+      )
+      stub_request(:get, "#{base}/api/v1/price_schedules")
+        .with(headers: {"If-None-Match" => '"schedule-v1"'})
+        .to_return(status: 304, body: "", headers: {"ETag" => '"schedule-v1"'})
+
+      result = client.request(:get, "/api/v1/price_schedules", options: request_options)
+
+      expect(result).to be_a(RunApi::Core::Response)
+      expect(result.body).to eq("not_modified" => true)
+      expect(result.response_headers["ETag"]).to eq('"schedule-v1"')
+    end
   end
 
   describe "error mapping" do

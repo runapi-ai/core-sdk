@@ -3,7 +3,20 @@
 require "spec_helper"
 
 RSpec.describe RunApi::Core::Client do
-  after { RunApi.api_key = nil }
+  around do |example|
+    previous_env = ENV.delete("RUNAPI_API_KEY")
+    previous_global = RunApi.api_key
+    RunApi.api_key = nil
+
+    example.run
+  ensure
+    ENV["RUNAPI_API_KEY"] = previous_env
+    RunApi.api_key = previous_global
+  end
+
+  it "fails fast when no API key is configured" do
+    expect { described_class.new }.to raise_error(RunApi::Core::AuthenticationError, /RUNAPI_API_KEY/)
+  end
 
   describe "#close" do
     it "closes the SDK-created HTTP client" do

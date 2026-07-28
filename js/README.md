@@ -12,6 +12,30 @@ npm install @runapi.ai/core
 
 Use the core package for `ClientOptions`, common error classes, request helpers, and task polling behavior shared across JavaScript Provider Client packages. Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
 
+## Live Pricing
+
+Every Provider Client exposes `pricing`. Schedule lookup and quotes use the live API response and do not retain a local price cache.
+
+```typescript
+const schedules = await client.pricing.list({ service: 'suno' });
+const quote = await client.pricing.quote({
+  service: 'suno',
+  action: 'convert_audio',
+  params: {},
+});
+```
+
+Public schedule lookup and quotes that use only public parameters work without an API key. Pass a standard API key when a quote references an account-owned source Task.
+
+Use `PricingClient` when pricing is the only capability needed:
+
+```typescript
+import { PricingClient } from '@runapi.ai/core';
+
+const pricing = new PricingClient();
+const schedules = await pricing.list({ service: 'suno' });
+```
+
 ## Request identifiers
 
 RunAPI accepts an optional `X-Client-Request-Id` header on public API calls. Use printable ASCII values up to 512 characters. Accepted values are echoed in the response and stored with the RunAPI task for support and reconciliation.

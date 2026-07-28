@@ -14,7 +14,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-core:0.2.6")
+  implementation("ai.runapi:runapi-core:0.2.7")
 }
 ```
 
@@ -24,7 +24,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-core</artifactId>
-  <version>0.2.6</version>
+  <version>0.2.7</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ Use the BOM when multiple RunAPI Java modules are installed:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.2.6"))
+  implementation(platform("ai.runapi:runapi-bom:0.2.7"))
   implementation("ai.runapi:runapi-core")
 }
 ```
@@ -42,6 +42,7 @@ dependencies {
 - Client configuration and API key resolution through builders and environment variables.
 - Shared `RequestOptions` for timeouts, retries, headers, and polling behavior.
 - Files and account clients used by all model clients.
+- Live Price Schedule and Price Quote resources available as `client.pricing()`.
 - Strict contract validation helpers used by model packages.
 - Common error types such as `RunApiException`, `ValidationException`, and `RateLimitException`.
 
@@ -74,6 +75,31 @@ FileUploadResponse uploaded = client.files().create(
     FileCreateParams.fromPath(Paths.get("input.png"))
         .fileName("input.png")
         .build()
+);
+```
+
+## Live Pricing
+
+Every Provider Client exposes `pricing()`. Read the current schedule or request a reservation estimate before creating a task; a Price Schedule request works without an API key, while quotes that reference an account-owned source task use the configured API key.
+
+```java
+import ai.runapi.core.RequestOptions;
+import ai.runapi.core.pricing.PriceQuote;
+import ai.runapi.core.pricing.PriceScheduleResponse;
+import ai.runapi.core.pricing.PricingResource;
+import java.util.Collections;
+
+PriceScheduleResponse schedules = client.pricing().list(
+    PricingResource.PriceScheduleListParams.builder().service("flux").build()
+);
+PriceQuote quote = client.pricing().createQuote(
+    new PricingResource.PriceQuoteRequest(
+        "flux",
+        "text_to_image",
+        "flux-2-klein",
+        Collections.<String, Object>singletonMap("prompt", "A glass observatory")
+    ),
+    RequestOptions.none()
 );
 ```
 

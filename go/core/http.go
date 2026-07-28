@@ -51,6 +51,17 @@ type defaultHTTPClient struct {
 // NewHTTPClient creates the default HTTP client from the given options.
 // Returns an authentication error if no API key is provided.
 func NewHTTPClient(options ClientOptions) (HTTPClient, error) {
+	return newHTTPClient(options, true)
+}
+
+// NewPublicHTTPClient creates an HTTP client for public RunAPI resources. It
+// accepts an optional API key so callers can access public endpoints without
+// configuring credentials, while preserving credentials for protected context.
+func NewPublicHTTPClient(options ClientOptions) (HTTPClient, error) {
+	return newHTTPClient(options, false)
+}
+
+func newHTTPClient(options ClientOptions, requireAPIKey bool) (HTTPClient, error) {
 	resolved := DefaultClientOptions()
 	if options.APIKey != "" {
 		resolved.APIKey = options.APIKey
@@ -79,7 +90,7 @@ func NewHTTPClient(options ClientOptions) (HTTPClient, error) {
 	resolved.HTTPClient = options.HTTPClient
 	resolved.UserAgent = options.UserAgent
 
-	if strings.TrimSpace(resolved.APIKey) == "" {
+	if requireAPIKey && strings.TrimSpace(resolved.APIKey) == "" {
 		return nil, NewError(ErrAuthentication, "API key is required", http.StatusUnauthorized, "", nil, nil)
 	}
 	if resolved.BaseURL == "" {
@@ -186,7 +197,9 @@ func (c *defaultHTTPClient) do(ctx context.Context, method, path string, query, 
 	if req.Body != nil {
 		defer req.Body.Close()
 	}
-	req.Header.Set("Authorization", "Bearer "+c.apiKey)
+	if c.apiKey != "" {
+		req.Header.Set("Authorization", "Bearer "+c.apiKey)
+	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", c.userAgent)
 	if contentType != "" {

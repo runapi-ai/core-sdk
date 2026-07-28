@@ -1,4 +1,4 @@
-import { resolveApiKey } from './auth';
+import { resolveOptionalApiKey } from './auth';
 import {
   errorFromResponse,
   NetworkError,
@@ -22,6 +22,10 @@ import {
 export interface HttpRequestOptions extends RequestOptions {
   query?: QueryParams;
   body?: unknown;
+  /** Treat HTTP 304 as a successful conditional request result. */
+  allowNotModified?: boolean;
+  /** Internal response-header capture for resources that support HTTP revalidation. */
+  captureResponseHeaders?: Record<string, string>;
 }
 
 export interface HttpClient {
@@ -167,7 +171,7 @@ function shouldRetryRequest(method: HttpMethod, status: number | undefined): boo
 }
 
 export function createHttpClient(options: ClientOptions): HttpClient {
-  const apiKey = resolveApiKey(options);
+  const apiKey = resolveOptionalApiKey(options);
   const baseUrl = options.baseUrl ?? DEFAULT_BASE_URL;
   const clientTimeoutMs = options.timeoutMs;
   const maxRetries = options.maxRetries ?? RETRY_CONFIG.MAX_RETRIES;
@@ -186,8 +190,8 @@ export function createHttpClient(options: ClientOptions): HttpClient {
       const headers = mergeHeaders(
         {
           accept: 'application/json',
-          authorization: `Bearer ${apiKey}`,
           'user-agent': SDK_USER_AGENT,
+          ...(apiKey ? { authorization: `Bearer ${apiKey}` } : {}),
         },
         requestOptions.headers
       );
@@ -216,6 +220,14 @@ export function createHttpClient(options: ClientOptions): HttpClient {
 
           const { text, json } = await parseResponseBody(response);
 
+          if (response.status === 304 && requestOptions.allowNotModified) {
+            captureResponseHeaders(response, requestOptions.captureResponseHeaders);
+            return {
+              not_modified: true,
+              etag: response.headers.get('etag') ?? undefined,
+            } as T;
+          }
+
           if (!response.ok) {
             if (
               attempt < requestMaxRetries &&
@@ -232,6 +244,7 @@ export function createHttpClient(options: ClientOptions): HttpClient {
             throw errorFromResponse(response, text, json);
           }
 
+          captureResponseHeaders(response, requestOptions.captureResponseHeaders);
           return (json ?? text) as T;
         } catch (error) {
           cleanup();
@@ -306,4 +319,15 @@ export function createHttpClient(options: ClientOptions): HttpClient {
       }
     },
   };
+}
+
+function captureResponseHeaders(
+  response: Response,
+  target: Record<string, string> | undefined,
+): void {
+  if (!target) return;
+
+  response.headers.forEach((value, key) => {
+    target[key] = value;
+  });
 }

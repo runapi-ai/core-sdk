@@ -37,6 +37,10 @@ module RunApi
             raise NetworkError, e.message
           end
 
+          if response.is_a?(Net::HTTPNotModified) && options&.allow_not_modified
+            return Response.new(body: {"not_modified" => true}, headers: response_headers(response))
+          end
+
           if response.is_a?(Net::HTTPSuccess)
             body = parse_body(response.body)
             return nil if body.nil?
@@ -106,7 +110,7 @@ module RunApi
         klass = Net::HTTP.const_get(method.to_s.capitalize)
         req = klass.new(uri.request_uri)
 
-        req["Authorization"] = "Bearer #{@options.api_key}"
+        req["Authorization"] = "Bearer #{@options.api_key}" if @options.api_key
         req["Accept"] = "application/json"
         req["User-Agent"] = Constants::SDK_USER_AGENT
 

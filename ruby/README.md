@@ -12,6 +12,30 @@ gem install runapi-core
 
 Use the core gem for common client options, error classes, request helpers, and task polling behavior that Provider Clients share. Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
 
+## Live Pricing
+
+Every Provider Client exposes `pricing`. Schedule lookup and quotes use the live API response and do not retain a local price cache.
+
+```ruby
+schedules = client.pricing.list(service: "suno")
+quote = client.pricing.quote(
+  service: "suno",
+  action: "convert_audio",
+  params: {}
+)
+```
+
+Public schedule lookup and quotes that use only public parameters work without an API key. Pass a standard API key when a quote references an account-owned source Task.
+
+Use `PricingClient` when pricing is the only capability needed:
+
+```ruby
+require "runapi/core"
+
+pricing = RunApi::Core::PricingClient.new
+schedules = pricing.list(service: "suno")
+```
+
 ## Request Identifiers
 
 RunAPI accepts an optional `X-Client-Request-Id` header on public API calls. Use printable ASCII values up to 512 characters. Accepted values are echoed in the response and stored with the RunAPI task for support and reconciliation.
