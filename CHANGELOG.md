@@ -1,5 +1,12 @@
 # Changelog
 
+## [python/v0.3.3](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.3), [java/v0.2.9](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.9) - 2026-07-29
+
+### Removed
+- Remove seedance-v1-lite from shared Seedance contract metadata.
+  Migration: Use seedance-v1-pro or another supported Seedance model.
+
+
 ## [python/v0.3.2](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.2) - 2026-07-28
 
 ### Changed

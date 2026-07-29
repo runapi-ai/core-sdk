@@ -1136,7 +1136,7 @@ CONTRACT = {
         }
     },
     "seedance/text-to-video": {
-        "models": ["seedance-1.5-pro", "seedance-2-mini", "seedance-2.0", "seedance-2.0-fast", "seedance-v1-lite", "seedance-v1-pro", "seedance-v1-pro-fast"],
+        "models": ["seedance-1.5-pro", "seedance-2-mini", "seedance-2.0", "seedance-2.0-fast", "seedance-v1-pro", "seedance-v1-pro-fast"],
         "fields_by_model": {
             "seedance-1.5-pro": {
                 "aspect_ratio": {
@@ -1168,17 +1168,6 @@ CONTRACT = {
                 },
                 "output_resolution": {
                     "enum": ["480p", "720p"]
-                }
-            },
-            "seedance-v1-lite": {
-                "aspect_ratio": {
-                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "9:21"]
-                },
-                "duration_seconds": {
-                    "enum": [5, 10]
-                },
-                "output_resolution": {
-                    "enum": ["480p", "720p", "1080p"]
                 }
             },
             "seedance-v1-pro": {
