@@ -10,7 +10,7 @@ npm install @runapi.ai/core
 
 ## Notes
 
-Use the core package for `ClientOptions`, common error classes, request helpers, and task polling behavior shared across JavaScript Provider Client packages. Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
+Use the core package for `ClientOptions`, common error classes, request helpers, and task polling behavior shared across JavaScript Provider Client packages. Public SDK docs live at https://runapi.ai/docs/resources/sdks and the model catalog lives at https://runapi.ai/models.
 
 ## Live Pricing
 

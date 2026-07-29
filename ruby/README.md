@@ -10,7 +10,7 @@ gem install runapi-core
 
 ## Notes
 
-Use the core gem for common client options, error classes, request helpers, and task polling behavior that Provider Clients share. Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
+Use the core gem for common client options, error classes, request helpers, and task polling behavior that Provider Clients share. Public SDK docs live at https://runapi.ai/docs/resources/sdks and the model catalog lives at https://runapi.ai/models.
 
 ## Live Pricing
 

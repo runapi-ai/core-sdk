@@ -103,7 +103,7 @@ PriceQuote quote = client.pricing().createQuote(
 );
 ```
 
-Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
+Public SDK docs live at https://runapi.ai/docs/resources/sdks and the model catalog lives at https://runapi.ai/models.
 
 ## License
 

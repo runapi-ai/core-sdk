@@ -15,7 +15,7 @@ dependencies = ["httpx>=0.27"]
 
 [project.urls]
 Homepage = "https://runapi.ai/models"
-Documentation = "https://runapi.ai/docs#runapi-sdks"
+Documentation = "https://runapi.ai/docs/resources/sdks"
 Source = "https://github.com/runapi-ai/core-sdk"
 Issues = "https://github.com/runapi-ai/core-sdk/issues"
 Changelog = "https://github.com/runapi-ai/core-sdk/blob/main/CHANGELOG.md"

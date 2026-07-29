@@ -83,7 +83,7 @@ FileCreateParams upload = FileCreateParams.fromUrl("https://cdn.runapi.ai/public
 
 ## Public Links
 
-- SDK docs: https://runapi.ai/docs#runapi-sdks
+- SDK docs: https://runapi.ai/docs/resources/sdks
 - Model catalog: https://runapi.ai/models
 - Repository: https://github.com/runapi-ai/core-sdk
 

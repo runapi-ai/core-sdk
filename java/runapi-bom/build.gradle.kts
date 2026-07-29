@@ -59,7 +59,7 @@ publishing {
       pom {
         name = "RunAPI Java SDK BOM"
         description = "Bill of materials for RunAPI Java SDK artifacts."
-        url = "https://runapi.ai/docs#runapi-sdks"
+        url = "https://runapi.ai/docs/resources/sdks"
         licenses {
           license {
             name = "Apache License, Version 2.0"

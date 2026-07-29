@@ -10,7 +10,7 @@ go get github.com/runapi-ai/core-sdk/go@latest
 
 ## Notes
 
-Use the core module for client options, common error types, request helpers, and task polling behavior shared across Go Provider Client modules. Public SDK docs live at https://runapi.ai/docs#runapi-sdks and the model catalog lives at https://runapi.ai/models.
+Use the core module for client options, common error types, request helpers, and task polling behavior shared across Go Provider Client modules. Public SDK docs live at https://runapi.ai/docs/resources/sdks and the model catalog lives at https://runapi.ai/models.
 
 ## Request identifiers
 
