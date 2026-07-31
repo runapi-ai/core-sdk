@@ -1,5 +1,20 @@
 # Changelog
 
+## [python/v0.3.4](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.4), [java/v0.2.10](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.10) - 2026-07-31
+
+### Added
+- Expose generic cache-write prices separately from TTL-specific cache-write prices.
+
+### Removed
+- Remove seedance-v1-lite from shared Seedance contract metadata.
+  Migration: Use seedance-v1-pro or another supported Seedance model.
+
+## [js/v0.3.1](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.3.1), [ruby/v0.3.1](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.3.1), [go/v0.2.17](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.2.17) - 2026-07-31
+
+### Added
+- Expose generic cache-write prices separately from TTL-specific cache-write prices.
+
+
 ## [python/v0.3.3](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.3), [java/v0.2.9](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.9) - 2026-07-29
 
 ### Removed

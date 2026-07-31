@@ -19,7 +19,7 @@ Documentation = "https://runapi.ai/docs/resources/sdks"
 Source = "https://github.com/runapi-ai/core-sdk"
 Issues = "https://github.com/runapi-ai/core-sdk/issues"
 Changelog = "https://github.com/runapi-ai/core-sdk/blob/main/CHANGELOG.md"
-"Release Notes" = "https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.3"
+"Release Notes" = "https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.4"
 
 [tool.hatch.version]
 path = "src/runapi/core/version.py"

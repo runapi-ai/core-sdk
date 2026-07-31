@@ -8,7 +8,7 @@ describe('Pricing', () => {
     const http: HttpClient = { request: vi.fn(), upload: vi.fn() };
     vi.mocked(http.request).mockResolvedValueOnce({
       as_of: '2026-07-23T00:00:00.000000Z',
-      price_schedules: [],
+      price_schedules: [{ cache_write_price_per_1m_cents: 125 }],
     });
 
     const result = await new Pricing(http).list(
@@ -23,6 +23,7 @@ describe('Pricing', () => {
       captureResponseHeaders: expect.any(Object),
     }));
     expect(result.as_of).toBe('2026-07-23T00:00:00.000000Z');
+    expect(result.price_schedules[0].cache_write_price_per_1m_cents).toBe(125);
   });
 
   it('returns the ETag from a successful schedule response', async () => {

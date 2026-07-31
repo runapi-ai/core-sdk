@@ -24,6 +24,7 @@ SCHEDULE = {
     "billing_unit": "per_call",
     "billing_strategy": "flat",
     "unit_price_cents": 5,
+    "cache_write_price_per_1m_cents": 125,
     "future_field": {"preserved": True},
 }
 
@@ -45,6 +46,7 @@ def test_list_schedules_uses_live_endpoint_filters_and_revalidation_options():
 
     assert isinstance(result, PriceScheduleListResponse)
     assert result.price_schedules[0].future_field.preserved is True
+    assert result.price_schedules[0].cache_write_price_per_1m_cents == 125
     assert result.response_header("etag") == '"schedule-v2"'
     assert http.calls == [
         ("get", "/api/v1/price_schedules?service=nano_banana&action=text_to_image&model=nano-banana", None, options)

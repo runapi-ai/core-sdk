@@ -24,6 +24,7 @@ class PriceSchedule(BaseModel):
     input_price_per_1m_cents = optional(int)
     output_price_per_1m_cents = optional(int)
     cache_read_price_per_1m_cents = optional(int)
+    cache_write_price_per_1m_cents = optional(int)
     cache_write_5m_price_per_1m_cents = optional(int)
     cache_write_1h_price_per_1m_cents = optional(int)
     billing_config = optional()

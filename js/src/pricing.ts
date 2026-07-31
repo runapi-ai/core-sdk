@@ -23,6 +23,7 @@ export interface PriceSchedule {
   input_price_per_1m_cents: number | null;
   output_price_per_1m_cents: number | null;
   cache_read_price_per_1m_cents: number | null;
+  cache_write_price_per_1m_cents: number | null;
   cache_write_5m_price_per_1m_cents: number | null;
   cache_write_1h_price_per_1m_cents: number | null;
   billing_config: Record<string, unknown>;

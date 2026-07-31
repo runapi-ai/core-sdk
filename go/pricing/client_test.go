@@ -21,7 +21,7 @@ func (s *stubHTTPClient) Request(_ context.Context, method, path string, opts *c
 		s.body, s.query = opts.Body, opts.Query
 	}
 	if method == "GET" {
-		return json.RawMessage(`{"as_of":"2026-07-23T00:00:00.000000Z","price_schedules":[{"service":"suno","action":"convert_audio","model":null,"pricing_status":"available","catalog_status":"active","currency":"USD","billing_unit":"per_call","billing_strategy":"flat","unit_price_cents":10,"billing_config":{}}]}`), nil
+		return json.RawMessage(`{"as_of":"2026-07-23T00:00:00.000000Z","price_schedules":[{"service":"suno","action":"convert_audio","model":null,"pricing_status":"available","catalog_status":"active","currency":"USD","billing_unit":"per_call","billing_strategy":"flat","unit_price_cents":10,"cache_write_price_per_1m_cents":125,"billing_config":{}}]}`), nil
 	}
 	return json.RawMessage(`{"price_quote":{"service":"suno","action":"convert_audio","model":null,"pricing_status":"available","currency":"USD","reservation_amount_cents":10,"estimate_basis":"exact","as_of":"2026-07-23T00:00:00.000000Z"}}`), nil
 }
@@ -37,6 +37,9 @@ func TestListUsesPublicScheduleContract(t *testing.T) {
 	}
 	if len(response.PriceSchedules) != 1 || response.PriceSchedules[0].UnitPriceCents == nil || *response.PriceSchedules[0].UnitPriceCents != 10 {
 		t.Fatalf("unexpected response: %#v", response)
+	}
+	if response.PriceSchedules[0].CacheWritePricePer1MCents == nil || *response.PriceSchedules[0].CacheWritePricePer1MCents != 125 {
+		t.Fatalf("unexpected generic cache write price: %#v", response.PriceSchedules[0])
 	}
 }
 

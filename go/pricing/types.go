@@ -27,6 +27,7 @@ type PriceSchedule struct {
 	InputPricePer1MCents        *int64         `json:"input_price_per_1m_cents"`
 	OutputPricePer1MCents       *int64         `json:"output_price_per_1m_cents"`
 	CacheReadPricePer1MCents    *int64         `json:"cache_read_price_per_1m_cents"`
+	CacheWritePricePer1MCents   *int64         `json:"cache_write_price_per_1m_cents"`
 	CacheWrite5MPricePer1MCents *int64         `json:"cache_write_5m_price_per_1m_cents"`
 	CacheWrite1HPricePer1MCents *int64         `json:"cache_write_1h_price_per_1m_cents"`
 	BillingConfig               map[string]any `json:"billing_config"`

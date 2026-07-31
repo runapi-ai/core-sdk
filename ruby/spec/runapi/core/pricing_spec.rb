@@ -12,13 +12,19 @@ RSpec.describe RunApi::Core::Pricing do
       .with(:get, "/api/v1/price_schedules?service=kling&action=text_to_video&model=kling-3.0", options: instance_of(RunApi::Core::RequestOptions))
       .and_return({
         "as_of" => "2026-07-23T00:00:00.000000Z",
-        "price_schedules" => []
+        "price_schedules" => [{
+          "service" => "kling", "action" => "text_to_video", "model" => "kling-3.0",
+          "pricing_status" => "available", "catalog_status" => "active", "currency" => "USD",
+          "billing_unit" => "per_1k_tokens", "billing_strategy" => "flat",
+          "cache_write_price_per_1m_cents" => 125, "billing_config" => {}
+        }]
       })
 
     result = pricing.list(service: "kling", action: "text_to_video", model: "kling-3.0", options:)
 
     expect(result).to be_a(described_class::ScheduleListResponse)
     expect(result.as_of).to eq("2026-07-23T00:00:00.000000Z")
+    expect(result.price_schedules.first.cache_write_price_per_1m_cents).to eq(125)
   end
 
   it "returns a typed not-modified result for a revalidated schedule" do

@@ -21,6 +21,7 @@ module RunApi
         optional :input_price_per_1m_cents, Numeric
         optional :output_price_per_1m_cents, Numeric
         optional :cache_read_price_per_1m_cents, Numeric
+        optional :cache_write_price_per_1m_cents, Numeric
         optional :cache_write_5m_price_per_1m_cents, Numeric
         optional :cache_write_1h_price_per_1m_cents, Numeric
         required :billing_config, Hash
