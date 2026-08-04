@@ -11,7 +11,7 @@ javaPlatform {
 
 dependencies {
   constraints {
-    api("ai.runapi:runapi-core:0.2.10")
+    api("ai.runapi:runapi-core:0.2.11")
     api("ai.runapi:runapi-elevenlabs:0.1.1")
     api("ai.runapi:runapi-flux-kontext:0.1.1")
     api("ai.runapi:runapi-flux-2:0.2.0")
@@ -22,6 +22,7 @@ dependencies {
     api("ai.runapi:runapi-grok-imagine:0.1.5")
     api("ai.runapi:runapi-hailuo:0.1.1")
     api("ai.runapi:runapi-happyhorse:0.1.1")
+    api("ai.runapi:runapi-pixverse:0.1.1")
     api("ai.runapi:runapi-ideogram-v3:0.1.1")
     api("ai.runapi:runapi-imagen-4:0.1.2")
     api("ai.runapi:runapi-infinitetalk:0.1.1")
@@ -29,7 +30,7 @@ dependencies {
     api("ai.runapi:runapi-gemini-omni:0.2.2")
     api("ai.runapi:runapi-openai-tts:0.1.1")
     api("ai.runapi:runapi-fish-audio:0.1.2")
-    api("ai.runapi:runapi-gemini-tts:0.1.0")
+    api("ai.runapi:runapi-gemini-tts:0.1.1")
     api("ai.runapi:runapi-kling:0.1.6")
     api("ai.runapi:runapi-luma:0.1.1")
     api("ai.runapi:runapi-midjourney:0.3.0")
@@ -41,7 +42,7 @@ dependencies {
     api("ai.runapi:runapi-recraft:0.1.1")
     api("ai.runapi:runapi-runway:0.1.1")
     api("ai.runapi:runapi-runway-aleph:0.1.1")
-    api("ai.runapi:runapi-seedance:0.1.4")
+    api("ai.runapi:runapi-seedance:0.1.5")
     api("ai.runapi:runapi-seedream:0.1.2")
     api("ai.runapi:runapi-suno:0.2.1")
     api("ai.runapi:runapi-topaz:0.1.1")

@@ -1,5 +1,11 @@
 # Changelog
 
+## [python/v0.3.5](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.5), [java/v0.2.11](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.11) - 2026-08-04
+
+### Added
+- Register the five PixVerse V6 video actions in shared contract metadata.
+
+
 ## [python/v0.3.4](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.4), [java/v0.2.10](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.10) - 2026-07-31
 
 ### Added

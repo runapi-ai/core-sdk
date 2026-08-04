@@ -37,7 +37,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-core:0.2.10")
+  implementation("ai.runapi:runapi-core:0.2.11")
 }
 ```
 
@@ -47,7 +47,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-core</artifactId>
-  <version>0.2.10</version>
+  <version>0.2.11</version>
 </dependency>
 ```
 

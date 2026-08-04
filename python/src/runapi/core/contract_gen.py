@@ -980,6 +980,62 @@ CONTRACT = {
             "tts-1-hd": {}
         }
     },
+    "pixverse/edit-video": {
+        "models": ["pixverse-v6"],
+        "fields_by_model": {
+            "pixverse-v6": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "4:3", "1:1", "3:4", "9:16", "2:3", "3:2", "21:9"]
+                },
+                "output_resolution": {
+                    "enum": ["360p", "540p", "720p", "1080p"]
+                }
+            }
+        }
+    },
+    "pixverse/extend-video": {
+        "models": ["pixverse-v6"],
+        "fields_by_model": {
+            "pixverse-v6": {
+                "output_resolution": {
+                    "enum": ["360p", "540p", "720p", "1080p"]
+                }
+            }
+        }
+    },
+    "pixverse/image-to-video": {
+        "models": ["pixverse-v6"],
+        "fields_by_model": {
+            "pixverse-v6": {
+                "output_resolution": {
+                    "enum": ["360p", "540p", "720p", "1080p"]
+                }
+            }
+        }
+    },
+    "pixverse/text-to-video": {
+        "models": ["pixverse-v6"],
+        "fields_by_model": {
+            "pixverse-v6": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "4:3", "1:1", "3:4", "9:16", "2:3", "3:2", "21:9"]
+                },
+                "output_resolution": {
+                    "enum": ["360p", "540p", "720p", "1080p"]
+                }
+            }
+        }
+    },
+    "pixverse/transition-video": {
+        "models": ["pixverse-v6"],
+        "fields_by_model": {
+            "pixverse-v6": {
+                "output_resolution": {
+                    "enum": ["360p", "540p", "720p", "1080p"]
+                }
+            }
+        }
+    },
     "producer/text-to-music": {
         "models": ["fuzz-0.8", "fuzz-1.0", "fuzz-1.0-pro", "fuzz-1.1", "fuzz-1.1-pro", "fuzz-2.0", "fuzz-2.0-pro", "fuzz-2.0-raw"],
         "fields_by_model": {
