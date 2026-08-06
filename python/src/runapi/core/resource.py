@@ -162,8 +162,10 @@ class Resource:
     def _enum_allowed(enum: Sequence[Any], value: Any) -> bool:
         value_is_num = isinstance(value, (int, float)) and not isinstance(value, bool)
         for allowed in enum:
-            allowed_is_num = isinstance(allowed, (int, float)) and not isinstance(allowed, bool)
-            if allowed_is_num:
+            if isinstance(allowed, bool):
+                if isinstance(value, bool) and value is allowed:
+                    return True
+            elif isinstance(allowed, (int, float)):
                 if value_is_num and value == allowed:
                     return True
             elif value_is_num:

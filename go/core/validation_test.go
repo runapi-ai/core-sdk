@@ -133,3 +133,18 @@ func TestFieldPresentFalseIsPresent(t *testing.T) {
 		t.Fatalf("got %q", errMsg(err))
 	}
 }
+
+func TestBooleanEnumRequiresBooleanValue(t *testing.T) {
+	schema := map[string]any{
+		"models":          []any{"m"},
+		"fields_by_model": map[string]any{"m": map[string]any{"flag": map[string]any{"enum": []any{true, false}}}},
+	}
+	for _, value := range []bool{true, false} {
+		if err := ValidateParams(schema, map[string]any{"model": "m", "flag": value}); err != nil {
+			t.Fatalf("boolean %t should be accepted, got %v", value, err)
+		}
+	}
+	if got := errMsg(ValidateParams(schema, map[string]any{"model": "m", "flag": "true"})); got != "flag must be one of: true, false" {
+		t.Fatalf("got %q", got)
+	}
+}

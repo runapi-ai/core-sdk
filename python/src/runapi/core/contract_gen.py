@@ -1007,6 +1007,9 @@ CONTRACT = {
         "models": ["pixverse-v6"],
         "fields_by_model": {
             "pixverse-v6": {
+                "enable_audio": {
+                    "enum": [True, False]
+                },
                 "output_resolution": {
                     "enum": ["360p", "540p", "720p", "1080p"]
                 }
@@ -1019,6 +1022,9 @@ CONTRACT = {
             "pixverse-v6": {
                 "aspect_ratio": {
                     "enum": ["16:9", "4:3", "1:1", "3:4", "9:16", "2:3", "3:2", "21:9"]
+                },
+                "enable_audio": {
+                    "enum": [True, False]
                 },
                 "output_resolution": {
                     "enum": ["360p", "540p", "720p", "1080p"]
@@ -1359,6 +1365,16 @@ CONTRACT = {
             }
         }
     },
+    "suno/add-samples": {
+        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-plus", "suno-v5", "suno-v5.5"],
+        "fields_by_model": {
+            "suno-v4": {},
+            "suno-v4.5": {},
+            "suno-v4.5-plus": {},
+            "suno-v5": {},
+            "suno-v5.5": {}
+        }
+    },
     "suno/add-vocals": {
         "models": ["suno-v4.5-plus", "suno-v5"],
         "fields_by_model": {
@@ -1657,6 +1673,16 @@ CONTRACT = {
             "_": {}
         }
     },
+    "suno/remaster-audio": {
+        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-plus", "suno-v5", "suno-v5.5"],
+        "fields_by_model": {
+            "suno-v4": {},
+            "suno-v4.5": {},
+            "suno-v4.5-plus": {},
+            "suno-v5": {},
+            "suno-v5.5": {}
+        }
+    },
     "suno/replace-section": {
         "models": [],
         "fields_by_model": {
@@ -1678,6 +1704,16 @@ CONTRACT = {
                     "enum": ["separate_vocal", "split_stem", "split_stem_advanced"]
                 }
             }
+        }
+    },
+    "suno/stitch-audio": {
+        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-plus", "suno-v5", "suno-v5.5"],
+        "fields_by_model": {
+            "suno-v4": {},
+            "suno-v4.5": {},
+            "suno-v4.5-plus": {},
+            "suno-v5": {},
+            "suno-v5.5": {}
         }
     },
     "suno/text-to-music": {

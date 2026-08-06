@@ -206,6 +206,12 @@ func enumValueAllowed(enum []any, value any) bool {
 }
 
 func contractValuesEqual(expected, actual any) bool {
+	expectedBool, expectedIsBool := expected.(bool)
+	if expectedIsBool {
+		actualBool, actualIsBool := actual.(bool)
+		return actualIsBool && expectedBool == actualBool
+	}
+
 	expectedNum, expectedIsNum := toFloat(expected)
 	actualNum, actualIsNum := toFloat(actual)
 	if expectedIsNum || actualIsNum {

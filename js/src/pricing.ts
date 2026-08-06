@@ -19,7 +19,7 @@ export interface PriceSchedule {
   currency: string;
   billing_unit: string;
   billing_strategy: string;
-  unit_price_cents: number | null;
+  unit_price_cents?: number | null;
   input_price_per_1m_cents: number | null;
   output_price_per_1m_cents: number | null;
   cache_read_price_per_1m_cents: number | null;

@@ -206,6 +206,22 @@ RSpec.describe RunApi::Core::ResourceHelpers do
     end
   end
 
+  describe "#validate_contract! boolean enums" do
+    let(:schema) do
+      {
+        "models" => ["m"],
+        "fields_by_model" => {"m" => {"flag" => {"enum" => [true, false]}}}
+      }
+    end
+
+    it "accepts booleans and rejects string representations" do
+      expect { helper.send(:validate_contract!, schema, "model" => "m", "flag" => true) }.not_to raise_error
+      expect { helper.send(:validate_contract!, schema, "model" => "m", "flag" => false) }.not_to raise_error
+      expect { helper.send(:validate_contract!, schema, "model" => "m", "flag" => "true") }
+        .to raise_error(RunApi::Core::ValidationError, "flag must be one of: true, false")
+    end
+  end
+
   describe "#validate_contract! array item count constraints" do
     let(:schema) do
       {

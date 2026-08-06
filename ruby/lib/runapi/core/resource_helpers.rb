@@ -149,7 +149,9 @@ module RunApi
 
       def enum_value_allowed?(enum, value)
         enum.any? do |allowed|
-          if allowed.is_a?(Numeric)
+          if allowed == true || allowed == false
+            value == allowed
+          elsif allowed.is_a?(Numeric)
             value.is_a?(Numeric) && value == allowed
           elsif value.is_a?(Numeric)
             allowed == value

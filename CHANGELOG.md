@@ -1,5 +1,25 @@
 # Changelog
 
+## [python/v0.3.6](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.6), [java/v0.2.12](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.12) - 2026-08-06
+
+### Added
+- Register the stitching, remastering, and sampling actions in shared contract metadata.
+
+### Fixed
+- Validate the optional PixVerse enable_audio field for text-to-video and image-to-video requests.
+
+## [js/v0.3.2](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.3.2) - 2026-08-06
+
+### Fixed
+- Allow token Price Schedules to omit the flat unit price field.
+- Validate the optional PixVerse enable_audio field for text-to-video and image-to-video requests.
+
+## [ruby/v0.3.2](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.3.2), [go/v0.2.18](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.2.18) - 2026-08-06
+
+### Fixed
+- Validate the optional PixVerse enable_audio field for text-to-video and image-to-video requests.
+
+
 ## [python/v0.3.5](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.5), [java/v0.2.11](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.11) - 2026-08-04
 
 ### Added

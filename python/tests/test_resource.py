@@ -135,6 +135,16 @@ def test_validate_integer_rejects_bool_and_whole_float():
     assert _run_validate({"model": "m", "tolerance": 5}) == ""
 
 
+def test_validate_boolean_enum_requires_boolean_value():
+    schema = {"models": ["m"], "fields_by_model": {"m": {"flag": {"enum": [True, False]}}}}
+    resource = SampleResource(FakeHttp())
+
+    resource._validate_contract(schema, {"model": "m", "flag": True})
+    resource._validate_contract(schema, {"model": "m", "flag": False})
+    with pytest.raises(ValidationError, match="^flag must be one of: True, False$"):
+        resource._validate_contract(schema, {"model": "m", "flag": "true"})
+
+
 def test_validate_array_item_count_constraints():
     schema = {
         "models": ["m"],

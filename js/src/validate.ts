@@ -135,7 +135,9 @@ function enumValueAllowed(enumValues: readonly unknown[], value: unknown): boole
   const valueIsNum = typeof value === 'number';
   for (const allowed of enumValues) {
     const allowedIsNum = typeof allowed === 'number';
-    if (allowedIsNum) {
+    if (typeof allowed === 'boolean') {
+      if (typeof value === 'boolean' && value === allowed) return true;
+    } else if (allowedIsNum) {
       if (valueIsNum && value === allowed) return true;
     } else if (valueIsNum) {
       // allowed non-numeric while value is numeric never matches.

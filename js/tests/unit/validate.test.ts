@@ -75,6 +75,15 @@ describe('validateParams', () => {
     expect(() => validateParams(flagSchema, { model: 'm' })).toThrow('flag is required');
   });
 
+  it('requires boolean values for boolean enums', () => {
+    const flagSchema = { models: ['m'], fields_by_model: { m: { flag: { enum: [true, false] } } } };
+    expect(() => validateParams(flagSchema, { model: 'm', flag: true })).not.toThrow();
+    expect(() => validateParams(flagSchema, { model: 'm', flag: false })).not.toThrow();
+    expect(() => validateParams(flagSchema, { model: 'm', flag: 'true' })).toThrow(
+      'flag must be one of: true, false',
+    );
+  });
+
   it('validates functional actions with underscore fields when models is empty', () => {
     const functionalSchema = {
       models: [],
