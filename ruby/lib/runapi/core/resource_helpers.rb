@@ -163,25 +163,57 @@ module RunApi
 
       def enforce_contract_rule!(params, rule)
         conditions = rule["when"] || {}
-        return unless conditions.all? { |field, value| rule_condition_met?(params, field, value) }
+        return unless conditions.all? { |field, condition| rule_condition_met?(params, field, condition) }
 
-        context = conditions.map { |field, value| "#{field} is #{value}" }.join(" and ")
+        context = conditions.map { |field, condition| rule_condition_label(field, condition) }.join(" and ")
+        qualifier = context.empty? ? "" : " when #{context}"
+
         Array(rule["required"]).each do |field|
           next if field_present?(params, field)
 
-          raise Core::ValidationError, "#{field} is required when #{context}"
+          raise Core::ValidationError, "#{field} is required#{qualifier}"
         end
+
+        required_any = Array(rule["required_any"])
+        if required_any.any? && required_any.none? { |field| field_present?(params, field) }
+          raise Core::ValidationError, "one of #{required_any.join(", ")} is required#{qualifier}"
+        end
+
         Array(rule["forbidden"]).each do |field|
           next unless field_present?(params, field)
 
-          raise Core::ValidationError, "#{field} is not allowed when #{context}"
+          raise Core::ValidationError, "#{field} is not allowed#{qualifier}"
+        end
+
+        (rule["enum"] || {}).each do |field, allowed|
+          next unless field_present?(params, field)
+
+          value = param_value(params, field)
+          next if Array(allowed).any? { |candidate| candidate.to_s == value.to_s }
+
+          raise Core::ValidationError, "#{field} must be one of: #{Array(allowed).join(", ")}#{qualifier}"
         end
       end
 
-      def rule_condition_met?(params, field, value)
+      # A `when` entry is either `{present: true|false}` or a scalar the
+      # supplied value must equal. Rules never resolve declared defaults.
+      def rule_condition_met?(params, field, condition)
+        if condition.is_a?(Hash) && (condition.key?("present") || condition.key?(:present))
+          expected = condition["present"].nil? ? condition[:present] : condition["present"]
+          return field_present?(params, field) == (expected == true)
+        end
         return false unless param_key?(params, field)
 
-        param_value(params, field).to_s == value.to_s
+        param_value(params, field).to_s == condition.to_s
+      end
+
+      def rule_condition_label(field, condition)
+        if condition.is_a?(Hash) && (condition.key?("present") || condition.key?(:present))
+          expected = condition["present"].nil? ? condition[:present] : condition["present"]
+          return (expected == true) ? "#{field} is present" : "#{field} is absent"
+        end
+
+        "#{field} is #{condition}"
       end
 
       def field_present?(params, field)

@@ -155,22 +155,59 @@ function enforceContractRule(params: Params, rule: Record<string, any>): void {
     if (!ruleConditionMet(params, key, conditions[key])) return;
   }
 
-  const context = keys.map((key) => `${key} is ${formatValue(conditions[key])}`).join(' and ');
+  const context = keys.map((key) => ruleConditionLabel(key, conditions[key])).join(' and ');
+  const qualifier = context ? ` when ${context}` : '';
+
   for (const field of rule.required ?? []) {
     if (!fieldPresent(params, field)) {
-      throw new ValidationError(`${field} is required when ${context}`);
+      throw new ValidationError(`${field} is required${qualifier}`);
     }
   }
+
+  const requiredAny: string[] = rule.required_any ?? [];
+  if (requiredAny.length > 0 && !requiredAny.some((field) => fieldPresent(params, field))) {
+    throw new ValidationError(`one of ${requiredAny.join(', ')} is required${qualifier}`);
+  }
+
   for (const field of rule.forbidden ?? []) {
     if (fieldPresent(params, field)) {
-      throw new ValidationError(`${field} is not allowed when ${context}`);
+      throw new ValidationError(`${field} is not allowed${qualifier}`);
     }
+  }
+
+  const narrowed: Record<string, unknown[]> = rule.enum ?? {};
+  for (const field of Object.keys(narrowed)) {
+    if (!fieldPresent(params, field)) continue;
+    const allowed = narrowed[field] ?? [];
+    if (allowed.some((candidate) => String(candidate) === String(params[field]))) continue;
+    throw new ValidationError(
+      `${field} must be one of: ${allowed.map((candidate) => String(candidate)).join(', ')}${qualifier}`,
+    );
   }
 }
 
-function ruleConditionMet(params: Params, field: string, value: unknown): boolean {
+/**
+ * A `when` entry is either `{present: true|false}` or a scalar the supplied
+ * value must equal. Rules never resolve declared defaults.
+ */
+function ruleConditionMet(params: Params, field: string, condition: unknown): boolean {
+  if (isPresenceCondition(condition)) {
+    return fieldPresent(params, field) === (condition.present === true);
+  }
+
   if (!(field in params)) return false;
-  return String(params[field]) === String(value);
+  return String(params[field]) === String(condition);
+}
+
+function isPresenceCondition(condition: unknown): condition is { present: unknown } {
+  return typeof condition === 'object' && condition !== null && 'present' in condition;
+}
+
+function ruleConditionLabel(field: string, condition: unknown): string {
+  if (isPresenceCondition(condition)) {
+    return condition.present === true ? `${field} is present` : `${field} is absent`;
+  }
+  return `${field} is ${formatValue(condition)}`;
 }
 
 function fieldPresent(params: Params, field: string): boolean {

@@ -39,10 +39,41 @@ CONTRACT = {
         }
     },
     "fish-audio/text-to-speech": {
-        "models": ["s1", "s2-pro"],
+        "models": ["s1", "s2-pro", "s2.1-pro"],
         "fields_by_model": {
-            "s1": {},
-            "s2-pro": {}
+            "s1": {
+                "bitrate_kbps": {
+                    "enum": [64, 128, 192]
+                },
+                "output_format": {
+                    "enum": ["mp3", "wav"]
+                },
+                "sample_rate_hz": {
+                    "enum": [8000, 16000, 24000, 32000, 44100]
+                }
+            },
+            "s2-pro": {
+                "bitrate_kbps": {
+                    "enum": [64, 128, 192]
+                },
+                "output_format": {
+                    "enum": ["mp3", "wav"]
+                },
+                "sample_rate_hz": {
+                    "enum": [8000, 16000, 24000, 32000, 44100]
+                }
+            },
+            "s2.1-pro": {
+                "bitrate_kbps": {
+                    "enum": [64, 128, 192]
+                },
+                "output_format": {
+                    "enum": ["mp3", "wav"]
+                },
+                "sample_rate_hz": {
+                    "enum": [8000, 16000, 24000, 32000, 44100]
+                }
+            }
         }
     },
     "flux-2/remix-image": {
@@ -331,7 +362,7 @@ CONTRACT = {
                     "enum": ["1:1", "16:9", "9:16", "3:2", "2:3", "auto"]
                 },
                 "output_resolution": {
-                    "enum": ["480p", "720p"]
+                    "enum": ["480p", "720p", "1080p"]
                 }
             }
         }
@@ -373,7 +404,7 @@ CONTRACT = {
                     "enum": ["1:1", "16:9", "9:16", "3:2", "2:3", "auto"]
                 },
                 "output_resolution": {
-                    "enum": ["480p", "720p"]
+                    "enum": ["480p", "720p", "1080p"]
                 }
             }
         }
@@ -893,6 +924,35 @@ CONTRACT = {
             "midjourney-v8.1": {}
         }
     },
+    "minimax-h3/image-to-video": {
+        "models": ["minimax-h3"],
+        "fields_by_model": {
+            "minimax-h3": {
+                "duration_seconds": {
+                    "enum": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                },
+                "output_resolution": {
+                    "enum": ["768p", "2k"]
+                }
+            }
+        }
+    },
+    "minimax-h3/text-to-video": {
+        "models": ["minimax-h3"],
+        "fields_by_model": {
+            "minimax-h3": {
+                "aspect_ratio": {
+                    "enum": ["adaptive", "21:9", "16:9", "4:3", "1:1", "3:4", "9:16"]
+                },
+                "duration_seconds": {
+                    "enum": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                },
+                "output_resolution": {
+                    "enum": ["768p", "2k"]
+                }
+            }
+        }
+    },
     "nano-banana/edit-image": {
         "models": ["nano-banana-2-lite", "nano-banana-edit"],
         "fields_by_model": {
@@ -973,6 +1033,27 @@ CONTRACT = {
             "omnihuman-1.5-subject-detection": {}
         }
     },
+    "openai-transcription/speech-to-text": {
+        "models": ["gpt-transcribe", "whisper-1"],
+        "fields_by_model": {
+            "gpt-transcribe": {
+                "model": {
+                    "enum": ["gpt-transcribe"]
+                },
+                "response_format": {
+                    "enum": ["json", "text"]
+                }
+            },
+            "whisper-1": {
+                "model": {
+                    "enum": ["whisper-1"]
+                },
+                "response_format": {
+                    "enum": ["json", "text", "srt", "verbose_json", "vtt"]
+                }
+            }
+        }
+    },
     "openai-tts/text-to-speech": {
         "models": ["tts-1", "tts-1-hd"],
         "fields_by_model": {
@@ -987,6 +1068,9 @@ CONTRACT = {
                 "aspect_ratio": {
                     "enum": ["16:9", "4:3", "1:1", "3:4", "9:16", "2:3", "3:2", "21:9"]
                 },
+                "enable_audio": {
+                    "enum": [True, False]
+                },
                 "output_resolution": {
                     "enum": ["360p", "540p", "720p", "1080p"]
                 }
@@ -997,6 +1081,9 @@ CONTRACT = {
         "models": ["pixverse-v6"],
         "fields_by_model": {
             "pixverse-v6": {
+                "enable_audio": {
+                    "enum": [True, False]
+                },
                 "output_resolution": {
                     "enum": ["360p", "540p", "720p", "1080p"]
                 }
@@ -1036,6 +1123,9 @@ CONTRACT = {
         "models": ["pixverse-v6"],
         "fields_by_model": {
             "pixverse-v6": {
+                "enable_audio": {
+                    "enum": [True, False]
+                },
                 "output_resolution": {
                     "enum": ["360p", "540p", "720p", "1080p"]
                 }
@@ -1109,6 +1199,60 @@ CONTRACT = {
                 },
                 "output_format": {
                     "enum": ["png", "jpeg"]
+                }
+            }
+        }
+    },
+    "qwen-3/edit-image": {
+        "models": ["qwen-3-edit-image", "qwen-3-pro-edit-image"],
+        "fields_by_model": {
+            "qwen-3-edit-image": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "3:2", "2:3", "4:3", "3:4", "16:9", "9:16", "21:9"]
+                },
+                "output_format": {
+                    "enum": ["png", "jpeg"]
+                },
+                "output_resolution": {
+                    "enum": ["1k", "2k"]
+                }
+            },
+            "qwen-3-pro-edit-image": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "3:2", "2:3", "4:3", "3:4", "16:9", "9:16", "21:9"]
+                },
+                "output_format": {
+                    "enum": ["png", "jpeg"]
+                },
+                "output_resolution": {
+                    "enum": ["1k", "2k"]
+                }
+            }
+        }
+    },
+    "qwen-3/text-to-image": {
+        "models": ["qwen-3-pro-text-to-image", "qwen-3-text-to-image"],
+        "fields_by_model": {
+            "qwen-3-pro-text-to-image": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "3:2", "2:3", "4:3", "3:4", "16:9", "9:16", "21:9"]
+                },
+                "output_format": {
+                    "enum": ["png", "jpeg"]
+                },
+                "output_resolution": {
+                    "enum": ["1k", "2k"]
+                }
+            },
+            "qwen-3-text-to-image": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "3:2", "2:3", "4:3", "3:4", "16:9", "9:16", "21:9"]
+                },
+                "output_format": {
+                    "enum": ["png", "jpeg"]
+                },
+                "output_resolution": {
+                    "enum": ["1k", "2k"]
                 }
             }
         }

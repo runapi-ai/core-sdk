@@ -285,6 +285,13 @@ func writeMultipartBody(writer *multipart.Writer, body MultipartBody) error {
 			return NewError(ErrValidation, "failed to write multipart field", http.StatusUnprocessableEntity, "", nil, err)
 		}
 	}
+	for key, values := range body.RepeatedFields {
+		for _, value := range values {
+			if err := writer.WriteField(key, value); err != nil {
+				return NewError(ErrValidation, "failed to write repeated multipart field", http.StatusUnprocessableEntity, "", nil, err)
+			}
+		}
+	}
 	for key, file := range body.Files {
 		name := file.FileName
 		if name == "" {

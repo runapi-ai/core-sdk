@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -138,6 +139,9 @@ func TestDefaultHTTPClientSendsMultipartBody(t *testing.T) {
 		if got := r.FormValue("file_name"); got != "image.png" {
 			t.Fatalf("unexpected file_name: %s", got)
 		}
+		if got := r.MultipartForm.Value["languages[]"]; !reflect.DeepEqual(got, []string{"en", "zh"}) {
+			t.Fatalf("unexpected languages: %#v", got)
+		}
 		file, header, err := r.FormFile("file")
 		if err != nil {
 			t.Fatal(err)
@@ -158,7 +162,8 @@ func TestDefaultHTTPClientSendsMultipartBody(t *testing.T) {
 	}
 	_, err = client.Request(context.Background(), "POST", "/api/v1/files", &HTTPRequestOptions{
 		Body: MultipartBody{
-			Fields: map[string]string{"file_name": "image.png"},
+			Fields:         map[string]string{"file_name": "image.png"},
+			RepeatedFields: map[string][]string{"languages[]": {"en", "zh"}},
 			Files: map[string]MultipartFile{
 				"file": {Path: tmp.Name(), FileName: "image.png", ContentType: "image/png"},
 			},

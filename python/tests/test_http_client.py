@@ -133,7 +133,7 @@ def test_sends_multipart_without_json_content_type():
         path = handle.name
     try:
         body = MultipartBody(
-            fields={"file_name": "image.png"},
+            fields={"file_name": "image.png", "languages[]": ["en", "zh"]},
             files={"file": MultipartFile(path=path, filename="image.png", content_type="image/png")},
         )
         make_client(handler).request("post", "/api/v1/files", body=body)
@@ -142,6 +142,7 @@ def test_sends_multipart_without_json_content_type():
 
     assert captured["content_type"].startswith("multipart/form-data")
     assert b"image.png" in captured["body"]
+    assert captured["body"].count(b'name="languages[]"') == 2
     assert b"png" in captured["body"]
 
 

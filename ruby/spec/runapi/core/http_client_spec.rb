@@ -125,7 +125,7 @@ RSpec.describe RunApi::Core::HttpClient do
       tempfile.close
 
       request = client.send(:build_request, :post, URI("#{base}/api/v1/files"), RunApi::Core::MultipartBody.new(
-        fields: {file_name: "image.png"},
+        fields: {file_name: "image.png", "languages[]": ["en", "zh"]},
         files: {
           file: RunApi::Core::MultipartFile.new(
             path: tempfile.path,
@@ -141,7 +141,8 @@ RSpec.describe RunApi::Core::HttpClient do
 
       body_data = request.instance_variable_get(:@body_data)
       expect(body_data.first).to eq(["file_name", "image.png"])
-      key, file_part, options = body_data[1]
+      expect(body_data[1, 2]).to eq([["languages[]", "en"], ["languages[]", "zh"]])
+      key, file_part, options = body_data[3]
       expect(key).to eq("file")
       expect(file_part).to be_a(File)
       expect(file_part.binmode?).to be(true)

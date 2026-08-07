@@ -123,18 +123,20 @@ class HttpClient:
         self, body: Any
     ) -> Tuple[Any, Optional[Dict[str, Any]], Optional[Dict[str, Any]], List[Any]]:
         if isinstance(body, MultipartBody):
-            data = {key: str(value) for key, value in body.fields.items()}
-            files: Dict[str, Any] = {}
+            files = []
+            for key, value in body.fields.items():
+                values = value if isinstance(value, (list, tuple)) else [value]
+                files.extend((key, (None, str(item))) for item in values)
             opened: List[Any] = []
             for key, part in body.files.items():
                 handle = open(part.path, "rb")
                 opened.append(handle)
                 filename = part.filename
                 if part.content_type:
-                    files[key] = (filename, handle, part.content_type)
+                    files.append((key, (filename, handle, part.content_type)))
                 else:
-                    files[key] = (filename, handle)
-            return None, data, files, opened
+                    files.append((key, (filename, handle)))
+            return None, None, files, opened
         if body is not None:
             return body, None, None, []
         return None, None, None, []

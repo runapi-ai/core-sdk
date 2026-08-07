@@ -1,5 +1,55 @@
 # Changelog
 
+## [java/v0.3.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.3.0) - 2026-08-07
+
+### Added
+- Validate the optional multi_shots field for supported WAN 2.6 video requests.
+- Preserve repeated multipart form fields used by audio transcription requests.
+- Add generated MiniMax H3 input contract metadata.
+- Add shared request validation metadata for Qwen 3 image endpoints.
+- Add Fish Audio s2.1-pro and MP3 or WAV output constraints to shared contract metadata.
+
+### Changed
+- Update generated Grok Imagine Preview resolution and reference image constraints.
+
+### Fixed
+- Validate the 10 to 360 second custom duration range and reject controls that the selected vocal mode or model cannot honor.
+
+## [ruby/v0.3.3](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.3.3) - 2026-08-07
+
+### Added
+- Preserve repeated multipart form fields used by audio transcription requests.
+- Add Fish Audio s2.1-pro and MP3 or WAV output constraints to shared contract metadata.
+
+### Changed
+- Update generated Grok Imagine Preview resolution and reference image constraints.
+
+## [go/v0.2.19](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.2.19) - 2026-08-07
+
+### Added
+- Preserve repeated multipart form fields used by audio transcription requests.
+- Add Fish Audio s2.1-pro and MP3 or WAV output constraints to shared contract metadata.
+
+## [python/v0.4.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.4.0) - 2026-08-07
+
+### Added
+- Preserve repeated multipart form fields used by audio transcription requests.
+- Add generated MiniMax H3 input contract metadata.
+- Add shared request validation metadata for Qwen 3 image endpoints.
+- Add Fish Audio s2.1-pro and MP3 or WAV output constraints to shared contract metadata.
+
+### Changed
+- Update generated Grok Imagine Preview resolution and reference image constraints.
+
+## [js/v0.3.3](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.3.3) - 2026-08-07
+
+### Added
+- Add Fish Audio s2.1-pro and MP3 or WAV output constraints to shared contract metadata.
+
+### Changed
+- Update generated Grok Imagine Preview resolution and reference image constraints.
+
+
 ## [python/v0.3.6](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.3.6), [java/v0.2.12](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.2.12) - 2026-08-06
 
 ### Added

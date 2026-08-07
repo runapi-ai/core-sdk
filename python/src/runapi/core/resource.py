@@ -177,32 +177,65 @@ class Resource:
 
     def _enforce_rule(self, params: Dict[str, Any], rule: Dict[str, Any]) -> None:
         conditions = rule.get("when", {})
-        if not all(self._rule_condition_met(params, key, val) for key, val in conditions.items()):
+        if not all(
+            self._rule_condition_met(params, key, val) for key, val in conditions.items()
+        ):
             return
 
-        context = " and ".join(f"{key} is {val}" for key, val in conditions.items())
+        context = " and ".join(
+            self._rule_condition_label(key, val) for key, val in conditions.items()
+        )
+        qualifier = f" when {context}" if context else ""
+
         for field in rule.get("required", []):
             if not self._field_present(params, field):
-                raise ValidationError(f"{field} is required when {context}")
+                raise ValidationError(f"{field} is required{qualifier}")
+
+        required_any = rule.get("required_any", [])
+        if required_any and not any(self._field_present(params, f) for f in required_any):
+            raise ValidationError(f"one of {', '.join(required_any)} is required{qualifier}")
+
         for field in rule.get("forbidden", []):
             if self._field_present(params, field):
-                raise ValidationError(f"{field} is not allowed when {context}")
+                raise ValidationError(f"{field} is not allowed{qualifier}")
 
-    @staticmethod
-    def _rule_condition_met(params: Dict[str, Any], field: str, value: Any) -> bool:
+        for field, allowed in (rule.get("enum") or {}).items():
+            if not self._field_present(params, field):
+                continue
+            if any(str(candidate) == str(params[field]) for candidate in allowed):
+                continue
+            joined = ", ".join(str(candidate) for candidate in allowed)
+            raise ValidationError(f"{field} must be one of: {joined}{qualifier}")
+
+    def _rule_condition_met(self, params: Dict[str, Any], field: str, condition: Any) -> bool:
+        """A ``when`` entry is either ``{"present": bool}`` or a scalar the supplied
+        value must equal. Rules never resolve declared defaults."""
+        if self._is_presence_condition(condition):
+            return self._field_present(params, field) is (condition["present"] is True)
+
         if field not in params:
             return False
-        return str(params[field]) == str(value)
+        return str(params[field]) == str(condition)
 
-    def _field_present(self, params: Dict[str, Any], field: str) -> bool:
+    @staticmethod
+    def _is_presence_condition(condition: Any) -> bool:
+        return isinstance(condition, dict) and "present" in condition
+
+    def _rule_condition_label(self, field: str, condition: Any) -> str:
+        if self._is_presence_condition(condition):
+            return f"{field} is present" if condition["present"] is True else f"{field} is absent"
+        return f"{field} is {condition}"
+
+    @classmethod
+    def _field_present(cls, params: Dict[str, Any], field: str) -> bool:
         if field not in params:
             return False
         value = params[field]
         if value is False:
             return True
         if isinstance(value, (list, tuple)):
-            return any(self._present(item) for item in value)
-        return self._present(value)
+            return any(cls._present(item) for item in value)
+        return cls._present(value)
 
     @staticmethod
     def _present(value: Any) -> bool:

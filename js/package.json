@@ -3,7 +3,7 @@
   "runapi": {
     "slug": "core"
   },
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "RunAPI core SDK for JavaScript, Python, Ruby, Go, Java, and PHP",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

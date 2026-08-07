@@ -16,6 +16,8 @@ type MultipartFile struct {
 type MultipartBody struct {
 	// Fields are plain text form fields keyed by field name.
 	Fields map[string]string
+	// RepeatedFields are plain text fields whose form name occurs once per value.
+	RepeatedFields map[string][]string
 	// Files are file attachments keyed by the form field name.
 	Files map[string]MultipartFile
 }

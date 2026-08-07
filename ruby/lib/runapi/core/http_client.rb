@@ -127,7 +127,9 @@ module RunApi
 
       def multipart_parts(body)
         opened_files = []
-        field_parts = body.fields.map { |key, value| [key, value.to_s] }
+        field_parts = body.fields.flat_map do |key, value|
+          Array(value).map { |item| [key, item.to_s] }
+        end
         file_parts = body.files.map do |key, file|
           options = {filename: file.filename}
           options[:content_type] = file.content_type if file.content_type

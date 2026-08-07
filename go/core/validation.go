@@ -237,29 +237,97 @@ func enforceContractRule(params map[string]any, rule map[string]any) error {
 
 	parts := make([]string, 0, len(condKeys))
 	for _, key := range condKeys {
-		parts = append(parts, fmt.Sprintf("%s is %s", key, formatValue(conditions[key])))
+		parts = append(parts, ruleConditionLabel(key, conditions[key]))
 	}
 	context := strings.Join(parts, " and ")
+	qualifier := ""
+	if context != "" {
+		qualifier = fmt.Sprintf(" when %s", context)
+	}
 
 	for _, field := range toStringSlice(rule["required"]) {
 		if !fieldPresent(params, field) {
-			return validationError(fmt.Sprintf("%s is required when %s", field, context))
+			return validationError(fmt.Sprintf("%s is required%s", field, qualifier))
 		}
 	}
+
+	if requiredAny := toStringSlice(rule["required_any"]); len(requiredAny) > 0 {
+		satisfied := false
+		for _, field := range requiredAny {
+			if fieldPresent(params, field) {
+				satisfied = true
+				break
+			}
+		}
+		if !satisfied {
+			return validationError(fmt.Sprintf("one of %s is required%s", strings.Join(requiredAny, ", "), qualifier))
+		}
+	}
+
 	for _, field := range toStringSlice(rule["forbidden"]) {
 		if fieldPresent(params, field) {
-			return validationError(fmt.Sprintf("%s is not allowed when %s", field, context))
+			return validationError(fmt.Sprintf("%s is not allowed%s", field, qualifier))
+		}
+	}
+
+	if narrowed, ok := rule["enum"].(map[string]any); ok {
+		narrowedKeys := make([]string, 0, len(narrowed))
+		for key := range narrowed {
+			narrowedKeys = append(narrowedKeys, key)
+		}
+		sort.Strings(narrowedKeys)
+
+		for _, field := range narrowedKeys {
+			if !fieldPresent(params, field) {
+				continue
+			}
+			allowed, ok := narrowed[field].([]any)
+			if !ok || enumValueAllowed(allowed, params[field]) {
+				continue
+			}
+			return validationError(fmt.Sprintf(
+				"%s must be one of: %s%s", field, joinValues(allowed), qualifier,
+			))
 		}
 	}
 	return nil
 }
 
-func ruleConditionMet(params map[string]any, field string, value any) bool {
+// A `when` entry is either {"present": bool} or a scalar the supplied value must
+// equal. Rules never resolve declared defaults.
+func ruleConditionMet(params map[string]any, field string, condition any) bool {
+	if present, ok := presenceCondition(condition); ok {
+		return fieldPresent(params, field) == present
+	}
+
 	actual, ok := params[field]
 	if !ok {
 		return false
 	}
-	return contractValuesEqual(value, actual)
+	return contractValuesEqual(condition, actual)
+}
+
+func presenceCondition(condition any) (bool, bool) {
+	entry, ok := condition.(map[string]any)
+	if !ok {
+		return false, false
+	}
+	raw, ok := entry["present"]
+	if !ok {
+		return false, false
+	}
+	value, _ := raw.(bool)
+	return value, true
+}
+
+func ruleConditionLabel(field string, condition any) string {
+	if present, ok := presenceCondition(condition); ok {
+		if present {
+			return fmt.Sprintf("%s is present", field)
+		}
+		return fmt.Sprintf("%s is absent", field)
+	}
+	return fmt.Sprintf("%s is %s", field, formatValue(condition))
 }
 
 func fieldPresent(params map[string]any, field string) bool {
