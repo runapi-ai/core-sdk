@@ -11,7 +11,7 @@ javaPlatform {
 
 dependencies {
   constraints {
-    api("ai.runapi:runapi-core:0.3.0")
+    api("ai.runapi:runapi-core:0.4.0")
     api("ai.runapi:runapi-elevenlabs:0.1.1")
     api("ai.runapi:runapi-flux-kontext:0.1.1")
     api("ai.runapi:runapi-flux-2:0.2.0")
@@ -27,7 +27,7 @@ dependencies {
     api("ai.runapi:runapi-ideogram-v3:0.1.1")
     api("ai.runapi:runapi-imagen-4:0.1.2")
     api("ai.runapi:runapi-infinitetalk:0.1.1")
-    api("ai.runapi:runapi-omnihuman:0.1.2")
+    api("ai.runapi:runapi-omnihuman:0.1.3")
     api("ai.runapi:runapi-gemini-omni:0.2.2")
     api("ai.runapi:runapi-openai-tts:0.1.1")
     api("ai.runapi:runapi-openai-transcription:0.1.0")
@@ -47,7 +47,7 @@ dependencies {
     api("ai.runapi:runapi-runway-aleph:0.1.1")
     api("ai.runapi:runapi-seedance:0.1.5")
     api("ai.runapi:runapi-seedream:0.1.2")
-    api("ai.runapi:runapi-suno:0.2.2")
+    api("ai.runapi:runapi-suno:0.3.0")
     api("ai.runapi:runapi-topaz:0.1.1")
     api("ai.runapi:runapi-veo-3.1:0.1.2")
     api("ai.runapi:runapi-wan:0.1.3")

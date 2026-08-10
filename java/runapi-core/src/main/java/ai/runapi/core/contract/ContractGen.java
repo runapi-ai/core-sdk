@@ -1348,7 +1348,7 @@ contract.put("omnihuman/audio-to-video", new ContractAction(
                     {"mask_urls", field(maxItems(5))},
                     {"model", field()},
                     {"output_resolution", field(enumValues("720p", "1080p"))},
-                    {"prompt", field(max(Double.valueOf(1000.0)), length())},
+                    {"prompt", field(max(Double.valueOf(300.0)), length())},
                     {"seed", field()},
                     {"source_audio_url", field(required())},
                     {"source_image_url", field(required())},
@@ -1868,7 +1868,7 @@ contract.put("seedream/edit-image", new ContractAction(
                     {"model", field()},
                     {"output_count", field()},
                     {"output_format", field(enumValues("png", "jpeg"))},
-                    {"output_quality", field(required(), enumValues("basic", "high"))},
+                    {"output_quality", field(required(), enumValues("basic", "high", "ultra"))},
                     {"output_resolution", field()},
                     {"prompt", field()},
                     {"seed", field()},
@@ -1928,7 +1928,7 @@ contract.put("seedream/text-to-image", new ContractAction(
                     {"model", field()},
                     {"output_count", field()},
                     {"output_format", field(enumValues("png", "jpeg"))},
-                    {"output_quality", field(required(), enumValues("basic", "high"))},
+                    {"output_quality", field(required(), enumValues("basic", "high", "ultra"))},
                     {"output_resolution", field()},
                     {"prompt", field()},
                     {"seed", field()},
@@ -2523,6 +2523,35 @@ contract.put("suno/get-timestamped-lyrics", new ContractAction(
                     {"task_id", field(required())},
             })},
           })));
+contract.put("suno/inspire-music", new ContractAction(
+    list("suno-v4", "suno-v4.5", "suno-v4.5-plus", "suno-v5", "suno-v5.5"),
+          fieldsByModel(new Object[][] {
+            {"suno-v4", fields(new Object[][] {
+                    {"audio_urls", field(required(), minItems(1), maxItems(4))},
+                    {"callback_url", field()},
+                    {"model", field(required())},
+            })},
+            {"suno-v4.5", fields(new Object[][] {
+                    {"audio_urls", field(required(), minItems(1), maxItems(4))},
+                    {"callback_url", field()},
+                    {"model", field(required())},
+            })},
+            {"suno-v4.5-plus", fields(new Object[][] {
+                    {"audio_urls", field(required(), minItems(1), maxItems(4))},
+                    {"callback_url", field()},
+                    {"model", field(required())},
+            })},
+            {"suno-v5", fields(new Object[][] {
+                    {"audio_urls", field(required(), minItems(1), maxItems(4))},
+                    {"callback_url", field()},
+                    {"model", field(required())},
+            })},
+            {"suno-v5.5", fields(new Object[][] {
+                    {"audio_urls", field(required(), minItems(1), maxItems(4))},
+                    {"callback_url", field()},
+                    {"model", field(required())},
+            })},
+          })));
 contract.put("suno/regenerate-validation-phrase", new ContractAction(
     list(),
           fieldsByModel(new Object[][] {
@@ -2597,6 +2626,9 @@ contract.put("suno/separate-audio-stems", new ContractAction(
           rulesByModel(new Object[][] {
 {"_", rules(rule(conditions(new Object[][] {{"type", "split_stem_advanced"}}), list("stem_name"), list(), list(), narrowedEnums(new Object[][] {})))},
           })));
+  }
+
+  private static void addActions15(Map<String, ContractAction> contract) {
 contract.put("suno/stitch-audio", new ContractAction(
     list("suno-v4", "suno-v4.5", "suno-v4.5-plus", "suno-v5", "suno-v5.5"),
           fieldsByModel(new Object[][] {
@@ -2631,9 +2663,6 @@ contract.put("suno/stitch-audio", new ContractAction(
                     {"source_task_id", field(required())},
             })},
           })));
-  }
-
-  private static void addActions15(Map<String, ContractAction> contract) {
 contract.put("suno/text-to-music", new ContractAction(
     list("suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5"),
           fieldsByModel(new Object[][] {

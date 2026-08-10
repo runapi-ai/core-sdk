@@ -1416,7 +1416,7 @@ CONTRACT = {
                     "enum": ["png", "jpeg"]
                 },
                 "output_quality": {
-                    "enum": ["basic", "high"]
+                    "enum": ["basic", "high", "ultra"]
                 }
             },
             "seedream-5-pro-edit": {
@@ -1462,7 +1462,7 @@ CONTRACT = {
                     "enum": ["png", "jpeg"]
                 },
                 "output_quality": {
-                    "enum": ["basic", "high"]
+                    "enum": ["basic", "high", "ultra"]
                 }
             },
             "seedream-5-pro-text-to-image": {
@@ -1809,6 +1809,16 @@ CONTRACT = {
         "models": [],
         "fields_by_model": {
             "_": {}
+        }
+    },
+    "suno/inspire-music": {
+        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-plus", "suno-v5", "suno-v5.5"],
+        "fields_by_model": {
+            "suno-v4": {},
+            "suno-v4.5": {},
+            "suno-v4.5-plus": {},
+            "suno-v5": {},
+            "suno-v5.5": {}
         }
     },
     "suno/regenerate-validation-phrase": {

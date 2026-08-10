@@ -1,5 +1,31 @@
 # Changelog
 
+## [python/v0.5.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.5.0) - 2026-08-10
+
+### Added
+- Add shared contract constraints for Suno music inspiration requests.
+
+### Changed
+- Update generated Seedream 5 Lite output quality constraints.
+
+## [java/v0.4.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.4.0) - 2026-08-10
+
+### Breaking
+- Reject OmniHuman audio-to-video prompts over 300 characters before sending the request.
+  Migration: Upgrade the Java package and shorten OmniHuman audio-to-video prompts to 300 characters or fewer.
+
+### Added
+- Add shared contract constraints for Suno music inspiration requests.
+
+### Changed
+- Update generated Seedream 5 Lite output quality constraints.
+
+## [js/v0.3.4](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.3.4), [ruby/v0.3.4](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.3.4) - 2026-08-10
+
+### Changed
+- Update generated Seedream 5 Lite output quality constraints.
+
+
 ## [java/v0.3.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.3.0) - 2026-08-07
 
 ### Added
