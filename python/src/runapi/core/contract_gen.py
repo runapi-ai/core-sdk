@@ -1342,7 +1342,7 @@ CONTRACT = {
         }
     },
     "seedance/text-to-video": {
-        "models": ["seedance-1.5-pro", "seedance-2-mini", "seedance-2.0", "seedance-2.0-fast", "seedance-v1-pro", "seedance-v1-pro-fast"],
+        "models": ["seedance-1.5-pro", "seedance-2-mini", "seedance-2.0", "seedance-2.0-fast", "seedance-2.5", "seedance-v1-pro", "seedance-v1-pro-fast"],
         "fields_by_model": {
             "seedance-1.5-pro": {
                 "aspect_ratio": {
@@ -1376,6 +1376,20 @@ CONTRACT = {
                     "enum": ["480p", "720p"]
                 }
             },
+            "seedance-2.5": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "21:9", "auto"]
+                },
+                "duration_seconds": {
+                    "enum": [-1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+                },
+                "output_format": {
+                    "enum": ["mp4", "mov"]
+                },
+                "output_resolution": {
+                    "enum": ["480p", "720p"]
+                }
+            },
             "seedance-v1-pro": {
                 "aspect_ratio": {
                     "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "21:9"]
@@ -1393,6 +1407,19 @@ CONTRACT = {
                 },
                 "output_resolution": {
                     "enum": ["720p", "1080p"]
+                }
+            }
+        }
+    },
+    "seedream/decompose-layers": {
+        "models": ["seedream-5-pro-layer-decomposition"],
+        "fields_by_model": {
+            "seedream-5-pro-layer-decomposition": {
+                "output_format": {
+                    "enum": ["png", "jpeg"]
+                },
+                "size": {
+                    "enum": ["auto", "1K", "1.5K", "2K"]
                 }
             }
         }

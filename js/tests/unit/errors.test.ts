@@ -29,8 +29,10 @@ function buildError(
 
 describe('errorFromResponse message priority', () => {
   it('prefers error string', () => {
-    const error = buildError(400, { error: 'Bad input' });
+    const body = { error: 'Bad input', errors: { prompt: ['is required'] } };
+    const error = buildError(400, body);
     expect(error.message).toBe('Bad input');
+    expect(error.details).toEqual(body);
   });
 
   it('supports error object message', () => {
@@ -38,14 +40,9 @@ describe('errorFromResponse message priority', () => {
     expect(error.message).toBe('Bad input');
   });
 
-  it('falls back to errors array string', () => {
+  it('does not treat a legacy errors array as the Resource error summary', () => {
     const error = buildError(400, { errors: ['First error', 'Second error'] });
-    expect(error.message).toBe('First error');
-  });
-
-  it('supports errors array object message', () => {
-    const error = buildError(400, { errors: [{ message: 'Field error' }] });
-    expect(error.message).toBe('Field error');
+    expect(error.message).toBe('Bad request');
   });
 
   it('uses message field', () => {

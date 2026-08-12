@@ -621,6 +621,9 @@ contract.put("hailuo/image-to-video", new ContractAction(
                     {"prompt", field()},
                     {"prompt_optimizer", field()},
             })},
+          }),
+          rulesByModel(new Object[][] {
+{"hailuo-02-image-to-video-pro", rules(rule(conditions(new Object[][] {{"model", "hailuo-02-image-to-video-pro"}}), list(), list(), list("enable_safety_checker"), narrowedEnums(new Object[][] {})))},
           })));
 contract.put("hailuo/text-to-video", new ContractAction(
     list("hailuo-02-text-to-video-pro", "hailuo-02-text-to-video-standard"),
@@ -1750,9 +1753,12 @@ contract.put("runway/text-to-video", new ContractAction(
                     {"prompt", field(required())},
                     {"watermark", field()},
             })},
+          }),
+          rulesByModel(new Object[][] {
+{"runway", rules(rule(conditions(new Object[][] {{"first_frame_image_url", presence(false)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"first_frame_image_url", presence(true)}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})))},
           })));
 contract.put("seedance/text-to-video", new ContractAction(
-    list("seedance-1.5-pro", "seedance-2-mini", "seedance-2.0", "seedance-2.0-fast", "seedance-v1-pro", "seedance-v1-pro-fast"),
+    list("seedance-1.5-pro", "seedance-2-mini", "seedance-2.0", "seedance-2.0-fast", "seedance-2.5", "seedance-v1-pro", "seedance-v1-pro-fast"),
           fieldsByModel(new Object[][] {
             {"seedance-1.5-pro", fields(new Object[][] {
                     {"aspect_ratio", field(enumValues("1:1", "4:3", "3:4", "16:9", "9:16", "21:9"))},
@@ -1814,6 +1820,24 @@ contract.put("seedance/text-to-video", new ContractAction(
                     {"reference_video_urls", field(maxItems(3))},
                     {"web_search", field()},
             })},
+            {"seedance-2.5", fields(new Object[][] {
+                    {"aspect_ratio", field(enumValues("1:1", "4:3", "3:4", "16:9", "9:16", "21:9", "auto"))},
+                    {"callback_url", field()},
+                    {"duration_seconds", field(enumValues(Integer.valueOf(-1), Integer.valueOf(4), Integer.valueOf(5), Integer.valueOf(6), Integer.valueOf(7), Integer.valueOf(8), Integer.valueOf(9), Integer.valueOf(10), Integer.valueOf(11), Integer.valueOf(12), Integer.valueOf(13), Integer.valueOf(14), Integer.valueOf(15), Integer.valueOf(16), Integer.valueOf(17), Integer.valueOf(18), Integer.valueOf(19), Integer.valueOf(20), Integer.valueOf(21), Integer.valueOf(22), Integer.valueOf(23), Integer.valueOf(24), Integer.valueOf(25), Integer.valueOf(26), Integer.valueOf(27), Integer.valueOf(28), Integer.valueOf(29), Integer.valueOf(30)))},
+                    {"enable_safety_checker", field()},
+                    {"first_frame_image_url", field()},
+                    {"generate_audio", field()},
+                    {"last_frame_image_url", field()},
+                    {"model", field(required())},
+                    {"output_format", field(enumValues("mp4", "mov"))},
+                    {"output_resolution", field(enumValues("480p", "720p"))},
+                    {"prompt", field(required(), min(Double.valueOf(3.0)), max(Double.valueOf(30000.0)), length())},
+                    {"reference_audio_urls", field(maxItems(10))},
+                    {"reference_image_urls", field(maxItems(30))},
+                    {"reference_video_urls", field(maxItems(10))},
+                    {"return_last_frame", field()},
+                    {"web_search", field()},
+            })},
             {"seedance-v1-pro", fields(new Object[][] {
                     {"aspect_ratio", field(enumValues("1:1", "4:3", "3:4", "16:9", "9:16", "21:9"))},
                     {"callback_url", field()},
@@ -1838,13 +1862,29 @@ contract.put("seedance/text-to-video", new ContractAction(
             })},
           }),
           rulesByModel(new Object[][] {
-{"seedance-1.5-pro", rules(rule(conditions(new Object[][] {{"model", "seedance-1.5-pro"}}), list(), list(), list("first_frame_image_url", "last_frame_image_url", "reference_image_urls", "reference_video_urls", "reference_audio_urls", "web_search"), narrowedEnums(new Object[][] {})))},
-{"seedance-2-mini", rules(rule(conditions(new Object[][] {{"model", "seedance-2-mini"}}), list(), list(), list("source_image_urls", "lock_camera", "seed", "enable_safety_checker"), narrowedEnums(new Object[][] {})))},
-{"seedance-2.0", rules(rule(conditions(new Object[][] {{"model", "seedance-2.0"}}), list(), list(), list("source_image_urls", "lock_camera", "seed"), narrowedEnums(new Object[][] {})))},
-{"seedance-2.0-fast", rules(rule(conditions(new Object[][] {{"model", "seedance-2.0-fast"}}), list(), list(), list("source_image_urls", "lock_camera", "seed"), narrowedEnums(new Object[][] {})))},
-{"seedance-v1-pro", rules(rule(conditions(new Object[][] {{"model", "seedance-v1-pro"}}), list(), list(), list("source_image_urls", "last_frame_image_url", "reference_image_urls", "reference_video_urls", "reference_audio_urls", "web_search", "generate_audio"), narrowedEnums(new Object[][] {})))},
-{"seedance-v1-pro-fast", rules(rule(conditions(new Object[][] {{"model", "seedance-v1-pro-fast"}}), list(), list(), list("aspect_ratio", "source_image_urls", "lock_camera", "last_frame_image_url", "reference_image_urls", "reference_video_urls", "reference_audio_urls", "web_search", "generate_audio"), narrowedEnums(new Object[][] {})))},
+{"seedance-1.5-pro", rules(rule(conditions(new Object[][] {{"model", "seedance-1.5-pro"}}), list(), list(), list("first_frame_image_url", "last_frame_image_url", "reference_image_urls", "reference_video_urls", "reference_audio_urls", "web_search", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
+{"seedance-2-mini", rules(rule(conditions(new Object[][] {{"model", "seedance-2-mini"}}), list(), list(), list("source_image_urls", "lock_camera", "seed", "enable_safety_checker", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
+{"seedance-2.0", rules(rule(conditions(new Object[][] {{"model", "seedance-2.0"}}), list(), list(), list("source_image_urls", "lock_camera", "seed", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
+{"seedance-2.0-fast", rules(rule(conditions(new Object[][] {{"model", "seedance-2.0-fast"}}), list(), list(), list("source_image_urls", "lock_camera", "seed", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
+{"seedance-2.5", rules(rule(conditions(new Object[][] {{"first_frame_image_url", presence(true)}, {"model", "seedance-2.5"}}), list(), list(), list("reference_image_urls", "reference_video_urls", "reference_audio_urls"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"last_frame_image_url", presence(true)}, {"model", "seedance-2.5"}}), list("first_frame_image_url"), list(), list("reference_image_urls", "reference_video_urls", "reference_audio_urls"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "seedance-2.5"}}), list(), list(), list("source_image_urls", "lock_camera", "seed"), narrowedEnums(new Object[][] {})))},
+{"seedance-v1-pro", rules(rule(conditions(new Object[][] {{"model", "seedance-v1-pro"}}), list(), list(), list("source_image_urls", "last_frame_image_url", "reference_image_urls", "reference_video_urls", "reference_audio_urls", "web_search", "generate_audio", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
+{"seedance-v1-pro-fast", rules(rule(conditions(new Object[][] {{"model", "seedance-v1-pro-fast"}}), list(), list(), list("aspect_ratio", "source_image_urls", "lock_camera", "last_frame_image_url", "reference_image_urls", "reference_video_urls", "reference_audio_urls", "web_search", "generate_audio", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
           })));
+contract.put("seedream/decompose-layers", new ContractAction(
+    list("seedream-5-pro-layer-decomposition"),
+          fieldsByModel(new Object[][] {
+            {"seedream-5-pro-layer-decomposition", fields(new Object[][] {
+                    {"callback_url", field()},
+                    {"image_url", field(required())},
+                    {"model", field()},
+                    {"output_format", field(enumValues("png", "jpeg"))},
+                    {"prompt", field(max(Double.valueOf(5000.0)), length())},
+                    {"size", field(enumValues("auto", "1K", "1.5K", "2K"))},
+            })},
+          })));
+  }
+
+  private static void addActions11(Map<String, ContractAction> contract) {
 contract.put("seedream/edit-image", new ContractAction(
     list("seedream-4.5-edit", "seedream-5-lite-edit", "seedream-5-pro-edit", "seedream-v4-edit"),
           fieldsByModel(new Object[][] {
@@ -1903,9 +1943,6 @@ contract.put("seedream/edit-image", new ContractAction(
 {"seedream-5-pro-edit", rules(rule(conditions(new Object[][] {{"model", "seedream-5-pro-edit"}}), list(), list(), list("output_resolution", "output_count", "seed"), narrowedEnums(new Object[][] {})))},
 {"seedream-v4-edit", rules(rule(conditions(new Object[][] {{"model", "seedream-v4-edit"}}), list(), list(), list("output_format"), narrowedEnums(new Object[][] {})))},
           })));
-  }
-
-  private static void addActions11(Map<String, ContractAction> contract) {
 contract.put("seedream/text-to-image", new ContractAction(
     list("seedream-4.5-text-to-image", "seedream-5-lite-text-to-image", "seedream-5-pro-text-to-image", "seedream-v4-text-to-image"),
           fieldsByModel(new Object[][] {
@@ -2092,6 +2129,9 @@ contract.put("suno/check-voice", new ContractAction(
                     {"task_id", field(required())},
             })},
           })));
+  }
+
+  private static void addActions12(Map<String, ContractAction> contract) {
 contract.put("suno/convert-audio", new ContractAction(
     list(),
           fieldsByModel(new Object[][] {
@@ -2101,9 +2141,6 @@ contract.put("suno/convert-audio", new ContractAction(
                     {"task_id", field(required())},
             })},
           })));
-  }
-
-  private static void addActions12(Map<String, ContractAction> contract) {
 contract.put("suno/cover-audio", new ContractAction(
     list("suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5"),
           fieldsByModel(new Object[][] {
@@ -3021,7 +3058,7 @@ contract.put("wan/edit-video", new ContractAction(
             })},
           }),
           rulesByModel(new Object[][] {
-{"wan-2.7-edit-video", rules(rule(conditions(new Object[][] {{"model", "wan-2.7-edit-video"}}), list(), list(), list("multi_shots"), narrowedEnums(new Object[][] {})))},
+{"wan-2.7-edit-video", rules(rule(conditions(new Object[][] {{"model", "wan-2.7-edit-video"}}), list(), list(), list("multi_shots", "enable_safety_checker"), narrowedEnums(new Object[][] {})))},
           })));
   }
 

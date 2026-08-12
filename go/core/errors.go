@@ -239,9 +239,6 @@ func extractErrorMessage(body any) string {
 				return strings.TrimSpace(message)
 			}
 		}
-		if errorsList, ok := value["errors"].([]any); ok && len(errorsList) > 0 {
-			return extractErrorMessage(errorsList[0])
-		}
 	case []any:
 		if len(value) > 0 {
 			return extractErrorMessage(value[0])

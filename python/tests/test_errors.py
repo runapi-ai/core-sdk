@@ -100,9 +100,9 @@ def test_continuation_errors_preserve_codes_and_status_classification():
         assert error.code == code
 
 
-def test_extracts_message_from_errors_array():
+def test_does_not_extract_message_from_legacy_errors_array():
     error = errors.error_from_response(response(400, body='{"errors":["First error"]}'))
-    assert error.message == "First error"
+    assert error.message == "Bad request"
 
 
 def test_handles_html_error_page():
@@ -144,10 +144,9 @@ def test_service_unavailable_defaults_to_503():
     assert errors.ServiceUnavailableError().status == 503
 
 
-def test_extracts_message_from_errors_array_of_dicts():
-    # Regression: an errors-array whose elements are dicts must yield the dict's
-    # message string, not the raw dict.
+def test_resource_validation_uses_summary_and_preserves_field_errors():
     error = errors.error_from_response(
-        response(400, body='{"errors":[{"field":"prompt","message":"too long"}]}')
+        response(422, body='{"error":"Validation failed","errors":{"prompt":["too long"]}}')
     )
-    assert error.message == "too long"
+    assert error.message == "Validation failed"
+    assert error.details["errors"] == {"prompt": ["too long"]}

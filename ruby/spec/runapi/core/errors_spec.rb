@@ -103,11 +103,13 @@ RSpec.describe RunApi::Core::Error do
     end
 
     it "extracts message from JSON body with error string" do
-      body = {"error" => "Custom error message"}.to_json
+      payload = {"error" => "Custom error message", "errors" => {"prompt" => ["is required"]}}
+      body = payload.to_json
       response, = mock_response(code: 400)
       error = described_class.from_response(response, body)
 
       expect(error.message).to eq("Custom error message")
+      expect(error.details).to eq(payload)
     end
 
     it "extracts message from JSON body with nested error" do
@@ -149,12 +151,12 @@ RSpec.describe RunApi::Core::Error do
       end
     end
 
-    it "extracts message from JSON body with errors array" do
+    it "does not extract a message from a legacy errors array" do
       body = {"errors" => ["First error"]}.to_json
       response, = mock_response(code: 400)
       error = described_class.from_response(response, body)
 
-      expect(error.message).to eq("First error")
+      expect(error.message).to eq("Bad request")
     end
 
     it "handles HTML error pages" do

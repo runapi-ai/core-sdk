@@ -1,5 +1,31 @@
 # Changelog
 
+## [java/v0.4.1](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.4.1) - 2026-08-12
+
+### Added
+- Export the Seedream layer decomposition request contract for model SDK validation.
+- Add shared contract constraints for Seedance 2.5 requests.
+
+### Fixed
+- Apply the shared Runway aspect_ratio and first_frame_image_url conditional rules in Java request validation.
+- Use the Resource error summary while retaining field validation details, Structured Errors, and terminal Task failures.
+- Reject enable_safety_checker for Hailuo 02 Pro image-to-video and Wan 2.7 video edit requests.
+
+## [js/v0.3.5](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.3.5), [ruby/v0.3.5](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.3.5), [go/v0.2.20](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.2.20) - 2026-08-12
+
+### Fixed
+- Use the Resource error summary while retaining field validation details, Structured Errors, and terminal Task failures.
+
+## [python/v0.5.1](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.5.1) - 2026-08-12
+
+### Added
+- Export the Seedream layer decomposition request contract for model SDK validation.
+- Add shared contract constraints for Seedance 2.5 requests.
+
+### Fixed
+- Use the Resource error summary while retaining field validation details, Structured Errors, and terminal Task failures.
+
+
 ## [python/v0.5.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.5.0) - 2026-08-10
 
 ### Added

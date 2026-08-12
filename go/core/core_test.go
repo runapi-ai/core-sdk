@@ -10,6 +10,16 @@ import (
 	"testing"
 )
 
+type pollingTask struct {
+	id     string
+	status string
+	error  string
+}
+
+func (task pollingTask) GetID() string     { return task.id }
+func (task pollingTask) GetStatus() string { return task.status }
+func (task pollingTask) GetError() string  { return task.error }
+
 func TestErrorFromResponseMapsRateLimit(t *testing.T) {
 	response := &http.Response{StatusCode: http.StatusTooManyRequests, Header: make(http.Header)}
 	response.Header.Set("retry-after", "3")
@@ -71,6 +81,45 @@ func TestErrorFromResponsePreservesOnlyExplicitCode(t *testing.T) {
 	}
 	if missing.Code != "" {
 		t.Fatalf("expected missing code to remain empty, got %q", missing.Code)
+	}
+}
+
+func TestErrorFromResponseDoesNotUseLegacyErrorsArrayAsMessage(t *testing.T) {
+	response := &http.Response{StatusCode: http.StatusBadRequest, Header: make(http.Header)}
+	apiErr := ErrorFromResponse(response, []byte(`{"errors":["First error"]}`)).(*Error)
+
+	if apiErr.Message != "Bad request" {
+		t.Fatalf("unexpected message: %q", apiErr.Message)
+	}
+}
+
+func TestErrorFromResponseKeepsResourceValidationDetails(t *testing.T) {
+	response := &http.Response{StatusCode: http.StatusUnprocessableEntity, Header: make(http.Header)}
+	apiErr := ErrorFromResponse(response, []byte(`{"error":"Validation failed","errors":{"prompt":["is required"]}}`)).(*Error)
+
+	if apiErr.Message != "Validation failed" {
+		t.Fatalf("unexpected message: %q", apiErr.Message)
+	}
+	details := apiErr.Details.(map[string]any)
+	if !reflect.DeepEqual(details["errors"], map[string]any{"prompt": []any{"is required"}}) {
+		t.Fatalf("unexpected details: %#v", details)
+	}
+}
+
+func TestPollUntilCompleteKeepsTerminalTaskErrorString(t *testing.T) {
+	task := pollingTask{id: "task_123", status: "failed", error: "Generation failed"}
+	_, err := PollUntilComplete(
+		context.Background(),
+		func(context.Context) (pollingTask, error) { return task, nil },
+		DefaultPollingOptions(),
+	)
+	apiErr := err.(*Error)
+
+	if apiErr.Message != "Generation failed" || !IsTaskFailed(apiErr) {
+		t.Fatalf("unexpected task failure: %#v", apiErr)
+	}
+	if !reflect.DeepEqual(apiErr.Details, task) {
+		t.Fatalf("unexpected task details: %#v", apiErr.Details)
 	}
 }
 

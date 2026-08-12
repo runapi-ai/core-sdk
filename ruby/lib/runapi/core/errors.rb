@@ -146,7 +146,6 @@ module RunApi
           return nil unless body.is_a?(Hash)
 
           (body["error"].is_a?(Hash) ? body.dig("error", "message") : body["error"]) ||
-            body.dig("errors", 0) ||
             body["message"] ||
             body["detail"] ||
             body["errorMessage"] ||

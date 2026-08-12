@@ -176,21 +176,6 @@ function extractErrorMessage(body: unknown): string | undefined {
     return errorMessage;
   }
 
-  const maybeErrors = (body as { errors?: unknown }).errors;
-  if (Array.isArray(maybeErrors) && maybeErrors.length > 0) {
-    const firstString = maybeErrors.find((item) => typeof item === 'string');
-    if (typeof firstString === 'string') {
-      return firstString;
-    }
-    const firstObject = maybeErrors.find(
-      (item) => item && typeof item === 'object'
-    );
-    const objectMessage = extractMessageFromUnknown(firstObject);
-    if (objectMessage) {
-      return objectMessage;
-    }
-  }
-
   const maybeMessage = (body as { message?: unknown }).message;
   if (typeof maybeMessage === 'string' && maybeMessage.trim()) {
     return maybeMessage.trim();
@@ -277,7 +262,9 @@ export function errorFromResponse(
   const status = response.status;
   const requestId = response.headers.get('x-request-id') || undefined;
   const messageFromBody =
-    extractErrorMessage(bodyJson) || extractErrorMessage(bodyText);
+    bodyJson === undefined
+      ? extractErrorMessage(bodyText)
+      : extractErrorMessage(bodyJson);
   const message = messageFromBody || defaultMessageForStatus(status);
   const details = bodyJson ?? bodyText ?? undefined;
   const code = extractErrorCode(bodyJson);

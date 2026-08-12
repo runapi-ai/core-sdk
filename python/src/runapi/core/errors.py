@@ -270,11 +270,6 @@ def _extract_message(body: Any) -> Optional[str]:
     if message:
         return message
 
-    errors = body.get("errors")
-    if isinstance(errors, list) and errors:
-        first = errors[0]
-        return first.get("message") if isinstance(first, dict) else first
-
     return body.get("message") or body.get("detail") or body.get("errorMessage") or body.get("msg")
 
 
