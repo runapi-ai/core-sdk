@@ -621,9 +621,6 @@ contract.put("hailuo/image-to-video", new ContractAction(
                     {"prompt", field()},
                     {"prompt_optimizer", field()},
             })},
-          }),
-          rulesByModel(new Object[][] {
-{"hailuo-02-image-to-video-pro", rules(rule(conditions(new Object[][] {{"model", "hailuo-02-image-to-video-pro"}}), list(), list(), list("enable_safety_checker"), narrowedEnums(new Object[][] {})))},
           })));
 contract.put("hailuo/text-to-video", new ContractAction(
     list("hailuo-02-text-to-video-pro", "hailuo-02-text-to-video-standard"),
@@ -3058,7 +3055,7 @@ contract.put("wan/edit-video", new ContractAction(
             })},
           }),
           rulesByModel(new Object[][] {
-{"wan-2.7-edit-video", rules(rule(conditions(new Object[][] {{"model", "wan-2.7-edit-video"}}), list(), list(), list("multi_shots", "enable_safety_checker"), narrowedEnums(new Object[][] {})))},
+{"wan-2.7-edit-video", rules(rule(conditions(new Object[][] {{"model", "wan-2.7-edit-video"}}), list(), list(), list("multi_shots"), narrowedEnums(new Object[][] {})))},
           })));
   }
 

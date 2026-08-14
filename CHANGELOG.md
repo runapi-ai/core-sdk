@@ -1,5 +1,11 @@
 # Changelog
 
+## [java/v0.4.2](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.4.2) - 2026-08-14
+
+### Fixed
+- Accept enable_safety_checker for Hailuo 02 Pro image-to-video and Wan 2.7 video edit requests.
+
+
 ## [java/v0.4.1](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.4.1) - 2026-08-12
 
 ### Added
