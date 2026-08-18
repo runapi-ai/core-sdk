@@ -1,6 +1,6 @@
 # RunAPI Core Python SDK
 
-The RunAPI Core Python SDK provides shared authentication, HTTP, retry, error, and polling primitives for RunAPI model packages. Install `runapi-core` only when you are building SDK infrastructure or shared Python tooling; application code should normally install a concrete model package such as `runapi-flux-2`.
+The RunAPI Core Python SDK provides shared authentication, HTTP, retry, error, Files, Uploads, and polling primitives for RunAPI model packages. Install `runapi-core` only when you are building SDK infrastructure or shared Python tooling; application code should normally install a concrete model package such as `runapi-flux-2`.
 
 ## Install
 
@@ -61,6 +61,23 @@ remote = files.create(source="https://cdn.runapi.ai/public/samples/input.png")
 inline = files.create(source="iVBORw0KGgo...")
 print(uploaded.url)
 ```
+
+The existing `files.create()` method keeps its temporary URL behavior. Every Provider Client also exposes persistent Files and multipart Uploads:
+
+```python
+file = client.files.create_file(file="./knowledge.pdf", purpose="user_data")
+content = client.files.content(file.id)
+
+upload = client.uploads.create(
+    bytes=1048576,
+    filename="archive.bin",
+    mime_type="application/octet-stream",
+)
+part = client.uploads.add_part(upload.id, data="./archive.part-01")
+completed = client.uploads.complete(upload.id, part_ids=[part.id])
+```
+
+Use `files.list()`, `retrieve()`, and `delete_file()` for the remaining File lifecycle. See https://runapi.ai/docs/resources/files for limits and REST examples.
 
 Public SDK docs live at https://runapi.ai/docs/resources/sdks and the model catalog lives at https://runapi.ai/models.
 

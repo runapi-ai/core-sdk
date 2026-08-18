@@ -176,3 +176,45 @@ def test_create_rejects_blank_source():
         client.create(source="")
     with pytest.raises(ValueError):
         client.create(source="   ")
+
+
+def test_protocol_file_lifecycle_keeps_binary_content(tmp_path):
+    path = tmp_path / "input.bin"
+    path.write_bytes(b"\x00\xff\x01")
+    responses = iter([
+        {"id": "file_123", "object": "file", "bytes": 3, "created_at": 1,
+         "filename": "input.bin", "purpose": "user_data"},
+        {"object": "list", "data": [], "has_more": False},
+        {"id": "file_123", "object": "file", "bytes": 3, "created_at": 1,
+         "filename": "input.bin", "purpose": "user_data"},
+        {"id": "file_123", "object": "file", "deleted": True},
+    ])
+
+    class ProtocolHttp:
+        def __init__(self):
+            self.calls = []
+
+        def request(self, method, request_path, body=None, options=None):
+            self.calls.append((method, request_path, body))
+            return next(responses)
+
+        def request_bytes(self, method, request_path, options=None):
+            self.calls.append((method, request_path, None))
+            return b"\x00\xff\x01"
+
+    fake = ProtocolHttp()
+    files = FilesClient(http=fake)
+
+    created = files.create_file(path)
+    listed = files.list(limit=1, order="asc")
+    retrieved = files.retrieve("file_123")
+    content = files.content("file_123")
+    deleted = files.delete_file("file_123")
+
+    assert created.id == retrieved.id == deleted.id == "file_123"
+    assert listed.has_more is False
+    assert fake.calls[0][1] == "/v1/files"
+    assert fake.calls[1][1] == "/v1/files?limit=1&order=asc"
+    assert fake.calls[3][1] == "/v1/files/file_123/content"
+    assert fake.calls[4][0] == "delete"
+    assert content == b"\x00\xff\x01"

@@ -11,7 +11,7 @@ Dir.chdir(__dir__) do
     spec.email = ["contact@runapi.ai"]
 
     spec.summary = "RunAPI Core Ruby SDK"
-    spec.description = "The RunAPI Core Ruby SDK provides shared authentication, HTTP, retry, error, and polling primitives for RunAPI model gems. Install `runapi-core` only when you are building SDK infrastructure or shared Ruby tooling; application code should normally install a concrete model gem such as `runapi-suno`."
+    spec.description = "The RunAPI Core Ruby SDK provides shared authentication, HTTP, retry, error, Files, Uploads, and polling primitives for RunAPI model gems. Install `runapi-core` only when you are building SDK infrastructure or shared Ruby tooling; application code should normally install a concrete model gem such as `runapi-suno`."
     spec.homepage = "https://runapi.ai/models"
     spec.license = "Apache-2.0"
     spec.required_ruby_version = ">= 3.1.0"

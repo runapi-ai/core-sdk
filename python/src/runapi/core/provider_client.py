@@ -10,6 +10,7 @@ from .files import FilesClient
 from .http_client import HttpClient
 from .options import ClientOptions
 from .pricing import Pricing
+from .uploads import Uploads
 
 
 class ProviderClient:
@@ -22,3 +23,4 @@ class ProviderClient:
         self.files = FilesClient(http=self._http)
         self.account = Account(self._http)
         self.pricing = Pricing(self._http)
+        self.uploads = Uploads(self._http)

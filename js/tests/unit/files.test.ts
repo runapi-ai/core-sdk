@@ -104,4 +104,40 @@ describe('Files', () => {
     ).rejects.toThrow('Exactly one source is required');
     expect(mockHttp.request).not.toHaveBeenCalled();
   });
+
+  it('supports the OpenAI-compatible File lifecycle without changing create', async () => {
+    const fileObject = {
+      id: 'file_123', object: 'file', bytes: 3, created_at: 1,
+      filename: 'input.txt', purpose: 'user_data',
+    } as const;
+    vi.mocked(mockHttp.request)
+      .mockResolvedValueOnce(fileObject)
+      .mockResolvedValueOnce({ object: 'list', data: [fileObject], has_more: false })
+      .mockResolvedValueOnce(fileObject)
+      .mockResolvedValueOnce(Uint8Array.from([0, 255, 1]))
+      .mockResolvedValueOnce({ id: 'file_123', object: 'file', deleted: true });
+    const files = new Files(mockHttp);
+    const blob = new Blob(['abc'], { type: 'text/plain' });
+
+    await files.createFile({ file: blob, filename: 'input.txt' });
+    await files.list({ limit: 1, order: 'asc' });
+    await files.retrieve('file_123');
+    const content = await files.content('file_123');
+    await files.deleteFile('file_123');
+
+    const createBody = vi.mocked(mockHttp.request).mock.calls[0][2]?.body as FormData;
+    const uploaded = createBody.get('file') as File;
+    expect(uploaded.name).toBe('input.txt');
+    expect(uploaded.size).toBe(blob.size);
+    expect(uploaded.type).toBe(blob.type);
+    expect(createBody.get('purpose')).toBe('user_data');
+    expect(vi.mocked(mockHttp.request).mock.calls[1]).toEqual([
+      'GET', '/v1/files', { query: { limit: 1, order: 'asc' } },
+    ]);
+    expect(vi.mocked(mockHttp.request).mock.calls[3]).toEqual([
+      'GET', '/v1/files/file_123/content', { responseType: 'bytes' },
+    ]);
+    expect(Array.from(content)).toEqual([0, 255, 1]);
+    expect(vi.mocked(mockHttp.request).mock.calls[4][0]).toBe('DELETE');
+  });
 });

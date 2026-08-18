@@ -1,6 +1,6 @@
 # RunAPI Core JavaScript SDK
 
-The RunAPI Core JavaScript SDK provides shared authentication, HTTP, retry, error, and polling primitives for RunAPI JavaScript Provider Client packages. Install `@runapi.ai/core` only when you are building SDK infrastructure or shared tooling; application code should normally install a concrete package such as `@runapi.ai/suno`.
+The RunAPI Core JavaScript SDK provides shared authentication, HTTP, retry, error, Files, Uploads, and polling primitives for RunAPI JavaScript Provider Client packages. Install `@runapi.ai/core` only when you are building SDK infrastructure or shared tooling; application code should normally install a concrete package such as `@runapi.ai/suno`.
 
 ## Install
 
@@ -54,7 +54,7 @@ await client.textToImage.create(
 
 Public API responses expose `X-RunAPI-Task-Id` when a RunAPI task exists. High-level JavaScript Provider Client resource methods return parsed response bodies; use a custom transport or direct HTTP request when your integration needs raw response headers.
 
-## File Upload
+## Temporary File Upload
 
 ```typescript
 import { NanoBananaClient } from '@runapi.ai/nano-banana';
@@ -67,6 +67,28 @@ console.log(upload.url);
 
 > [!IMPORTANT]
 > Uploaded file URLs expire 1 hour after creation. Pass them to a model promptly rather than storing them for later use.
+
+## Persistent Files And Multipart Uploads
+
+The existing `files.create()` method above keeps its temporary URL behavior. Use `createFile()` for a persistent File object and `uploads` when sending one or more Parts:
+
+```typescript
+const file = await client.files.createFile({
+  file: new Blob([fileBytes], { type: 'application/pdf' }),
+  filename: 'knowledge.pdf',
+});
+const content = await client.files.content(file.id);
+
+const upload = await client.uploads.create({
+  bytes: 1048576,
+  filename: 'archive.bin',
+  mime_type: 'application/octet-stream',
+});
+const part = await client.uploads.addPart(upload.id, new Blob([partBytes]));
+const completed = await client.uploads.complete(upload.id, [part.id]);
+```
+
+Use `files.list()`, `retrieve()`, and `deleteFile()` for the remaining File lifecycle. See https://runapi.ai/docs/resources/files for limits and REST examples.
 
 ## License
 

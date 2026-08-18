@@ -22,7 +22,7 @@
 </div>
 <br/>
 
-RunAPI Core SDK contains the shared authentication, HTTP, retry, error, file upload, account, pricing, and polling primitives used by RunAPI Provider Client packages. Application code should usually install a concrete Provider Client package such as `@runapi.ai/wan`, `runapi-wan`, `runapi-ai/wan`, `github.com/runapi-ai/wan-sdk/go`, or `ai.runapi:runapi-wan`; install core packages directly only when building shared SDK infrastructure.
+RunAPI Core SDK contains the shared authentication, HTTP, retry, error, Files, Uploads, account, pricing, and polling primitives used by RunAPI Provider Client packages. Application code should usually install a concrete Provider Client package such as `@runapi.ai/wan`, `runapi-wan`, `runapi-ai/wan`, `github.com/runapi-ai/wan-sdk/go`, or `ai.runapi:runapi-wan`; install core packages directly only when building shared SDK infrastructure.
 
 ## Install
 
@@ -37,7 +37,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-core:0.4.2")
+  implementation("ai.runapi:runapi-core:0.5.0")
 }
 ```
 
@@ -47,7 +47,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-core</artifactId>
-  <version>0.4.2</version>
+  <version>0.5.0</version>
 </dependency>
 ```
 
@@ -55,7 +55,7 @@ The PHP core package is published from the split Composer repository as `runapi-
 
 ## Use Core Directly
 
-Core is normally transitive from a Provider Client package. Install it directly when you need shared Java exceptions, `RequestOptions`, files, account, or transport primitives in reusable tooling.
+Core is normally transitive from a Provider Client package. Install it directly when you need shared Java exceptions, `RequestOptions`, Files, Uploads, account, or transport primitives in reusable tooling.
 
 ```java
 import ai.runapi.core.RequestOptions;
@@ -71,6 +71,12 @@ FileCreateParams upload = FileCreateParams.fromUrl("https://cdn.runapi.ai/public
     .fileName("input.png")
     .build();
 ```
+
+## Persistent Files And Multipart Uploads
+
+Every Provider Client exposes `files` and `uploads`. The existing `files.create` method still returns a temporary URL. Use `createFile` in JavaScript, Java, and PHP, `create_file` in Python and Ruby, or `CreateFile` in Go to create a persistent File object. The Files resource also lists, retrieves, downloads, and deletes Files; the Uploads resource creates Uploads, adds Parts, completes them in order, or cancels them.
+
+See https://runapi.ai/docs/resources/files for endpoint limits and lifecycle examples.
 
 ## Repository Layout
 

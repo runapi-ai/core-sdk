@@ -1,7 +1,4 @@
-// Package files uploads local or remote media to RunAPI's temporary storage
-// so they can be referenced by URL in generation requests (e.g. image-to-video,
-// audio-to-audio). Uploaded files expire automatically after a short retention
-// period.
+// Package files manages persistent File resources and temporary URL uploads.
 package files
 
 // Source specifies a remote URL or inline base64 payload to upload.
@@ -31,4 +28,46 @@ type UploadResponse struct {
 	MIMEType  string `json:"mime_type"`
 	CreatedAt string `json:"created_at"`
 	ExpiresAt string `json:"expires_at"`
+}
+
+// File is a File resource stored for use by RunAPI requests.
+type File struct {
+	ID        string `json:"id"`
+	Object    string `json:"object"`
+	Bytes     int64  `json:"bytes"`
+	CreatedAt int64  `json:"created_at"`
+	ExpiresAt *int64 `json:"expires_at,omitempty"`
+	Filename  string `json:"filename"`
+	Purpose   string `json:"purpose"`
+}
+
+// ListResponse is a cursor-paginated collection of Files.
+type ListResponse struct {
+	Object  string `json:"object"`
+	Data    []File `json:"data"`
+	FirstID string `json:"first_id,omitempty"`
+	LastID  string `json:"last_id,omitempty"`
+	HasMore bool   `json:"has_more"`
+}
+
+// DeletedFile confirms that a File was deleted.
+type DeletedFile struct {
+	ID      string `json:"id"`
+	Object  string `json:"object"`
+	Deleted bool   `json:"deleted"`
+}
+
+// ProtocolCreateParams configures an OpenAI-compatible File upload.
+type ProtocolCreateParams struct {
+	File     string `json:"-" help:"required; local file path"`
+	FileName string `json:"-" help:"optional file name"`
+	Purpose  string `json:"-" help:"optional; defaults to user_data"`
+}
+
+// ListParams filters and paginates Files.
+type ListParams struct {
+	After   string `json:"after,omitempty" help:"cursor File id"`
+	Limit   int    `json:"limit,omitempty" help:"number of Files to return"`
+	Order   string `json:"order,omitempty" help:"asc or desc"`
+	Purpose string `json:"purpose,omitempty" help:"user_data"`
 }

@@ -1,6 +1,6 @@
 # RunAPI Core Ruby SDK
 
-The RunAPI Core Ruby SDK provides shared authentication, HTTP, retry, error, and polling primitives for RunAPI model gems. Install `runapi-core` only when you are building SDK infrastructure or shared Ruby tooling; application code should normally install a concrete model gem such as `runapi-suno`.
+The RunAPI Core Ruby SDK provides shared authentication, HTTP, retry, error, Files, Uploads, and polling primitives for RunAPI model gems. Install `runapi-core` only when you are building SDK infrastructure or shared Ruby tooling; application code should normally install a concrete model gem such as `runapi-suno`.
 
 ## Install
 
@@ -67,7 +67,7 @@ runapi_task_id = response.runapi_task_id
 runapi_task_id = response.response_headers["X-RunAPI-Task-Id"]
 ```
 
-## File Upload
+## Temporary File Upload
 
 ```ruby
 client = RunApi::NanoBanana::Client.new(api_key: ENV["RUNAPI_API_KEY"])
@@ -78,6 +78,25 @@ puts upload.url
 
 > [!IMPORTANT]
 > Uploaded file URLs expire 1 hour after creation. Pass them to a model promptly rather than storing them for later use.
+
+## Persistent Files And Multipart Uploads
+
+The existing `files.create` method above keeps its temporary URL behavior. Use `create_file` for a persistent File object and `uploads` when sending one or more Parts:
+
+```ruby
+file = client.files.create_file(file: "./knowledge.pdf")
+content = client.files.content(file.id)
+
+upload = client.uploads.create(
+  bytes: 1_048_576,
+  filename: "archive.bin",
+  mime_type: "application/octet-stream"
+)
+part = client.uploads.add_part(upload.id, data: "./archive.part-01")
+completed = client.uploads.complete(upload.id, part_ids: [part.id])
+```
+
+Use `files.list`, `retrieve`, and `delete_file` for the remaining File lifecycle. See https://runapi.ai/docs/resources/files for limits and REST examples.
 
 ## License
 

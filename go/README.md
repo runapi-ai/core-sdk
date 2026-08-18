@@ -1,6 +1,6 @@
 # RunAPI Core Go SDK
 
-The RunAPI Core Go SDK provides shared authentication, HTTP, retry, error, and polling primitives for RunAPI model Go modules. Install `github.com/runapi-ai/core-sdk/go` only when you are building SDK infrastructure or shared Go tooling; application code should normally install a concrete model module such as `github.com/runapi-ai/suno-sdk/go`.
+The RunAPI Core Go SDK provides shared authentication, HTTP, retry, error, Files, Uploads, and polling primitives for RunAPI model Go modules. Install `github.com/runapi-ai/core-sdk/go` only when you are building SDK infrastructure or shared Go tooling; application code should normally install a concrete model module such as `github.com/runapi-ai/suno-sdk/go`.
 
 ## Install
 
@@ -29,7 +29,7 @@ task, err := client.TextToMusic.Create(
 
 Public API responses expose `X-RunAPI-Task-Id` when a RunAPI task exists. High-level Go Provider Client resource methods return parsed response bodies; use a custom transport or direct HTTP request when your integration needs raw response headers.
 
-## File Upload
+## Temporary File Upload
 
 ```go
 client, _ := nanobanana.NewClient(option.WithAPIKey("sk-your-api-key"))
@@ -42,6 +42,27 @@ fmt.Println(upload.URL)
 
 > [!IMPORTANT]
 > Uploaded file URLs expire 1 hour after creation. Pass them to a model promptly rather than storing them for later use.
+
+## Persistent Files And Multipart Uploads
+
+The existing `Files.Create` method above keeps its temporary URL behavior. Use `CreateFile` for a persistent File object and `Uploads` when sending one or more Parts:
+
+```go
+file, _ := client.Files.CreateFile(context.Background(), files.ProtocolCreateParams{
+    File: "./knowledge.pdf",
+})
+content, _ := client.Files.Content(context.Background(), file.ID)
+
+upload, _ := client.Uploads.Create(context.Background(), uploads.CreateParams{
+    Bytes: 1048576, Filename: "archive.bin", MIMEType: "application/octet-stream",
+})
+part, _ := client.Uploads.AddPart(context.Background(), upload.ID, uploads.AddPartParams{
+    File: "./archive.part-01",
+})
+completed, _ := client.Uploads.Complete(context.Background(), upload.ID, []string{part.ID})
+```
+
+Use `Files.List`, `Retrieve`, and `DeleteFile` for the remaining File lifecycle. See https://runapi.ai/docs/resources/files for limits and REST examples.
 
 ## License
 

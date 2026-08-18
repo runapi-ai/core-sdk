@@ -38,6 +38,24 @@ CONTRACT = {
             "text-to-speech-turbo-v2.5": {}
         }
     },
+    "fish-audio/create-voice": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
+    "fish-audio/get-voice": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
+    "fish-audio/list-voices": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
     "fish-audio/text-to-speech": {
         "models": ["s1", "s2-pro", "s2.1-pro"],
         "fields_by_model": {

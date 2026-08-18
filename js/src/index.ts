@@ -61,6 +61,15 @@ export type { ActionSchema } from './validate';
 // Files
 export { Files } from './files';
 export type { FileCreateParams, FileSource, FileUploadResponse } from './files';
+export type {
+  DeletedFile,
+  FileList,
+  FileListParams,
+  FileObject,
+  ProtocolFileCreateParams,
+} from './files';
+export { Uploads } from './uploads';
+export type { UploadCreateParams, UploadObject, UploadPart } from './uploads';
 
 // Account
 export { Account } from './account';
