@@ -114,4 +114,38 @@ RSpec.describe RunApi::Core::Files do
       end.to raise_error(ArgumentError, /Exactly one source/)
     end
   end
+
+  describe "OpenAI-compatible File lifecycle" do
+    let(:file_object) do
+      {"id" => "file_123", "object" => "file", "bytes" => 3, "created_at" => 1,
+       "filename" => "input.bin", "purpose" => "user_data"}
+    end
+
+    it "creates, lists, retrieves, downloads, and deletes Files" do
+      tempfile = Tempfile.new("input.bin")
+      tempfile.binmode
+      tempfile.write("\x00\xff\x01".b)
+      tempfile.close
+      expect(http).to receive(:request).with(
+        :post, "/v1/files",
+        body: instance_of(RunApi::Core::MultipartBody)
+      ).and_return(file_object)
+      expect(http).to receive(:request).with(:get, "/v1/files?limit=1&order=asc")
+        .and_return({"object" => "list", "data" => [], "has_more" => false})
+      expect(http).to receive(:request).with(:get, "/v1/files/file_123").and_return(file_object)
+      expect(http).to receive(:request).with(
+        :get, "/v1/files/file_123/content", options: nil, raw: true
+      ).and_return("\x00\xff\x01".b)
+      expect(http).to receive(:request).with(:delete, "/v1/files/file_123")
+        .and_return({"id" => "file_123", "object" => "file", "deleted" => true})
+
+      expect(files.create_file(file: tempfile.path).id).to eq("file_123")
+      expect(files.list(limit: 1, order: "asc").has_more).to be(false)
+      expect(files.retrieve("file_123").filename).to eq("input.bin")
+      expect(files.content("file_123")).to eq("\x00\xff\x01".b)
+      expect(files.delete_file("file_123").deleted).to be(true)
+    ensure
+      tempfile.unlink
+    end
+  end
 end

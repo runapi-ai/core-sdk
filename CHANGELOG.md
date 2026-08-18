@@ -1,5 +1,26 @@
 # Changelog
 
+## [python/v0.6.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.6.0) - 2026-08-18
+
+### Added
+- Publish reusable voice create, list, get, and text-to-speech input contract metadata.
+- Create, list, retrieve, download, and delete persistent Files, and compose Files from multipart Uploads while preserving temporary file uploads.
+
+## [java/v0.5.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.5.0) - 2026-08-18
+
+### Added
+- Publish reusable voice create, list, get, and text-to-speech input contract metadata.
+- Create, list, retrieve, download, and delete persistent Files, and compose Files from multipart Uploads while preserving temporary file uploads.
+
+### Fixed
+- Reject Suno text-to-music auto_lyrics prompts longer than 3000 characters before creating a task.
+
+## [js/v0.4.0](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.4.0), [ruby/v0.4.0](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.4.0), [go/v0.3.0](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.3.0) - 2026-08-18
+
+### Added
+- Create, list, retrieve, download, and delete persistent Files, and compose Files from multipart Uploads while preserving temporary file uploads.
+
+
 ## [java/v0.4.2](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.4.2) - 2026-08-14
 
 ### Fixed

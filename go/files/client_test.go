@@ -12,6 +12,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/runapi-ai/core-sdk/go/core"
@@ -21,6 +22,32 @@ type stubHTTPClient struct {
 	method string
 	path   string
 	body   any
+}
+
+type protocolStub struct {
+	calls []struct {
+		method string
+		path   string
+		opts   *core.HTTPRequestOptions
+	}
+}
+
+func (s *protocolStub) Request(_ context.Context, method, path string, opts *core.HTTPRequestOptions) (json.RawMessage, error) {
+	s.calls = append(s.calls, struct {
+		method string
+		path   string
+		opts   *core.HTTPRequestOptions
+	}{method, path, opts})
+	switch {
+	case strings.HasSuffix(path, "/content"):
+		return json.RawMessage([]byte{0, 255, 1}), nil
+	case method == "DELETE":
+		return json.RawMessage(`{"id":"file_123","object":"file","deleted":true}`), nil
+	case path == protocolPath && method == "GET":
+		return json.RawMessage(`{"object":"list","data":[],"has_more":false}`), nil
+	default:
+		return json.RawMessage(`{"id":"file_123","object":"file","bytes":3,"created_at":1,"filename":"input.bin","purpose":"user_data"}`), nil
+	}
 }
 
 func (s *stubHTTPClient) Request(_ context.Context, method, path string, opts *core.HTTPRequestOptions) (json.RawMessage, error) {
@@ -177,5 +204,51 @@ func TestUploaderHasBoundedTimeout(t *testing.T) {
 	client := NewClientWithHTTP(&stubHTTPClient{})
 	if client.uploader.Timeout != core.DefaultTimeout {
 		t.Fatalf("expected uploader timeout %v, got %v", core.DefaultTimeout, client.uploader.Timeout)
+	}
+}
+
+func TestProtocolFileLifecyclePreservesBinaryContent(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "input.bin")
+	if err := os.WriteFile(path, []byte{0, 255, 1}, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	stub := &protocolStub{}
+	client := NewClientWithHTTP(stub)
+
+	created, err := client.CreateFile(context.Background(), ProtocolCreateParams{File: path})
+	if err != nil {
+		t.Fatal(err)
+	}
+	listed, err := client.List(context.Background(), ListParams{Limit: 1, Order: "asc"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	retrieved, err := client.Retrieve(context.Background(), "file_123")
+	if err != nil {
+		t.Fatal(err)
+	}
+	content, err := client.Content(context.Background(), "file_123")
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleted, err := client.DeleteFile(context.Background(), "file_123")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if created.ID != "file_123" || retrieved.Filename != "input.bin" || listed.HasMore || !deleted.Deleted {
+		t.Fatalf("unexpected responses: %#v %#v %#v %#v", created, listed, retrieved, deleted)
+	}
+	if !bytes.Equal(content, []byte{0, 255, 1}) {
+		t.Fatalf("unexpected content: %v", content)
+	}
+	if stub.calls[0].path != "/v1/files" {
+		t.Fatalf("unexpected create path: %s", stub.calls[0].path)
+	}
+	if stub.calls[1].opts.Query["limit"] != "1" || stub.calls[1].opts.Query["order"] != "asc" {
+		t.Fatalf("unexpected list query: %#v", stub.calls[1].opts.Query)
+	}
+	if stub.calls[3].path != "/v1/files/file_123/content" || stub.calls[4].method != "DELETE" {
+		t.Fatalf("unexpected lifecycle calls: %#v", stub.calls)
 	}
 }

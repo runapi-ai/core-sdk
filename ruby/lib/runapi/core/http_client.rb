@@ -12,7 +12,7 @@ module RunApi
         end
       end
 
-      def request(method, path, body: nil, options: nil)
+      def request(method, path, body: nil, options: nil, raw: false)
         uri = URI.join(@options.base_url, path)
         req = build_request(method, uri, body, options)
         max_retries = options&.max_retries || @options.max_retries
@@ -42,6 +42,8 @@ module RunApi
           end
 
           if response.is_a?(Net::HTTPSuccess)
+            return response.body if raw
+
             body = parse_body(response.body)
             return nil if body.nil?
             return body unless body.is_a?(Hash) || body.is_a?(Array)

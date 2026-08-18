@@ -22,6 +22,8 @@ import {
 export interface HttpRequestOptions extends RequestOptions {
   query?: QueryParams;
   body?: unknown;
+  /** Return a successful response body without text decoding. */
+  responseType?: 'json' | 'bytes';
   /** Treat HTTP 304 as a successful conditional request result. */
   allowNotModified?: boolean;
   /** Internal response-header capture for resources that support HTTP revalidation. */
@@ -218,8 +220,6 @@ export function createHttpClient(options: ClientOptions): HttpClient {
 
           cleanup();
 
-          const { text, json } = await parseResponseBody(response);
-
           if (response.status === 304 && requestOptions.allowNotModified) {
             captureResponseHeaders(response, requestOptions.captureResponseHeaders);
             return {
@@ -227,6 +227,13 @@ export function createHttpClient(options: ClientOptions): HttpClient {
               etag: response.headers.get('etag') ?? undefined,
             } as T;
           }
+
+          if (response.ok && requestOptions.responseType === 'bytes') {
+            captureResponseHeaders(response, requestOptions.captureResponseHeaders);
+            return new Uint8Array(await response.arrayBuffer()) as T;
+          }
+
+          const { text, json } = await parseResponseBody(response);
 
           if (!response.ok) {
             if (

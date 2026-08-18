@@ -1,7 +1,7 @@
 """RunAPI Python SDK — shared core.
 
-Configuration, errors, models, HTTP transport, polling, and the file upload
-client shared by every per-model-line package.
+Configuration, errors, models, HTTP transport, polling, Files, and Uploads
+shared by every per-model-line package.
 """
 
 from . import config, errors, polling
@@ -25,7 +25,7 @@ from .errors import (
     ValidationError,
     error_from_response,
 )
-from .files import FilesClient, UploadResponse
+from .files import DeletedFile, FileList, FileObject, FilesClient, UploadResponse
 from .http_client import HttpClient
 from .models import (
     BaseModel,
@@ -44,6 +44,7 @@ from .response import ApiResponse, ResponseHeaders
 from .resource import Resource
 from .pricing import PriceQuote, PriceQuoteResponse, PriceSchedule, PriceScheduleListResponse, Pricing, PricingClient
 from .provider_client import ProviderClient
+from .uploads import UploadObject, UploadPart, Uploads
 from .version import __version__
 
 __all__ = [
@@ -93,6 +94,12 @@ __all__ = [
     "Resource",
     "FilesClient",
     "UploadResponse",
+    "DeletedFile",
+    "FileList",
+    "FileObject",
+    "UploadObject",
+    "UploadPart",
+    "Uploads",
     "Pricing",
     "PricingClient",
     "PriceSchedule",

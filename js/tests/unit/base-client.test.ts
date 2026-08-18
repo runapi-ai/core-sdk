@@ -4,6 +4,7 @@ import { AuthenticationError } from '../../src/errors';
 import { Files } from '../../src/files';
 import { Account } from '../../src/account';
 import { Pricing } from '../../src/pricing';
+import { Uploads } from '../../src/uploads';
 
 describe('BaseClient', () => {
   it('exposes the universal resources', () => {
@@ -12,6 +13,7 @@ describe('BaseClient', () => {
     expect(client.files).toBeInstanceOf(Files);
     expect(client.account).toBeInstanceOf(Account);
     expect(client.pricing).toBeInstanceOf(Pricing);
+    expect(client.uploads).toBeInstanceOf(Uploads);
     expect(client.getApiKey()).toBe('test-key');
   });
 

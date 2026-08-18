@@ -115,6 +115,37 @@ class HttpClient:
         if not response.is_success:
             raise error_from_response(response)
 
+    def request_bytes(
+        self,
+        method: str,
+        path: str,
+        options: Optional[RequestOptions] = None,
+    ) -> bytes:
+        """Return a successful response body without text decoding."""
+        max_retries = self._options.max_retries
+        if options is not None and options.max_retries is not None:
+            max_retries = options.max_retries
+        headers = {str(key): str(value) for key, value in (options.headers or {}).items()} if options else {}
+        timeout = options.timeout if (options and options.timeout is not None) else httpx.USE_CLIENT_DEFAULT
+        method = method.upper()
+        retries = 0
+
+        while True:
+            try:
+                response = self._client.request(method, path, headers=headers, timeout=timeout)
+            except httpx.TimeoutException as exc:
+                raise TimeoutError(str(exc))
+            except httpx.TransportError as exc:
+                raise NetworkError(str(exc))
+            if response.is_success:
+                return response.content
+            error = error_from_response(response)
+            if self._retryable(method, response.status_code) and retries < max_retries:
+                retries += 1
+                time.sleep(self._retry_delay(retries, error))
+                continue
+            raise error
+
     def close(self) -> None:
         self._client.close()
         self._upload_client.close()

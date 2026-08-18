@@ -9,8 +9,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 
 	"github.com/runapi-ai/core-sdk/go/core"
 	"github.com/runapi-ai/core-sdk/go/option"
@@ -19,9 +22,9 @@ import (
 const createPath = "/api/v1/files"
 const preparePath = createPath + "/prepare"
 const confirmPath = createPath + "/confirm"
+const protocolPath = "/v1/files"
 
-// Client uploads files to RunAPI's temporary storage. The returned URLs can be
-// passed to generation endpoints that accept media inputs (images, audio, video).
+// Client manages persistent Files and temporary URL uploads.
 type Client struct {
 	http core.HTTPClient
 	// uploader sends the raw bytes to the pre-authorized upload URL, which lives
@@ -29,7 +32,7 @@ type Client struct {
 	uploader *http.Client
 }
 
-// NewClient creates a file upload client with the given options.
+// NewClient creates a Files client with the given options.
 func NewClient(opts ...option.ClientOption) (*Client, error) {
 	resolved, err := option.ResolveClientOptions(opts...)
 	if err != nil {
@@ -46,7 +49,7 @@ func NewClient(opts ...option.ClientOption) (*Client, error) {
 	return client, nil
 }
 
-// NewClientWithHTTP creates a file upload client with a pre-configured HTTP transport.
+// NewClientWithHTTP creates a Files client with a pre-configured HTTP transport.
 func NewClientWithHTTP(httpClient core.HTTPClient) *Client {
 	// Bound the direct-upload PUT with the default request timeout so it cannot
 	// hang forever when the caller's context carries no deadline. NewClient
@@ -77,6 +80,106 @@ func (c *Client) Create(ctx context.Context, params CreateParams, opts ...option
 		return nil, err
 	}
 	return core.DecodeResponse[UploadResponse](payload)
+}
+
+// CreateFile uploads an OpenAI-compatible File without changing the temporary upload Create contract.
+func (c *Client) CreateFile(ctx context.Context, params ProtocolCreateParams, opts ...option.RequestOption) (*File, error) {
+	if strings.TrimSpace(params.File) == "" {
+		return nil, core.NewError(core.ErrValidation, "file is required", http.StatusUnprocessableEntity, "", nil, nil)
+	}
+	requestOptions, _ := option.ResolveRequestOptions(opts...)
+	purpose := params.Purpose
+	if purpose == "" {
+		purpose = "user_data"
+	}
+	payload, err := c.http.Request(ctx, "POST", protocolPath, &core.HTTPRequestOptions{
+		Body: core.MultipartBody{
+			Fields: map[string]string{"purpose": purpose},
+			Files: map[string]core.MultipartFile{"file": {
+				Path: params.File, FileName: params.FileName,
+			}},
+		},
+		Headers: requestOptions.Headers,
+		Request: requestOptions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return core.DecodeResponse[File](payload)
+}
+
+// List returns Files visible to the authenticated account.
+func (c *Client) List(ctx context.Context, params ListParams, opts ...option.RequestOption) (*ListResponse, error) {
+	requestOptions, _ := option.ResolveRequestOptions(opts...)
+	query := map[string]string{}
+	if params.After != "" {
+		query["after"] = params.After
+	}
+	if params.Limit != 0 {
+		query["limit"] = strconv.Itoa(params.Limit)
+	}
+	if params.Order != "" {
+		query["order"] = params.Order
+	}
+	if params.Purpose != "" {
+		query["purpose"] = params.Purpose
+	}
+	payload, err := c.http.Request(ctx, "GET", protocolPath, &core.HTTPRequestOptions{
+		Query: query, Headers: requestOptions.Headers, Request: requestOptions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return core.DecodeResponse[ListResponse](payload)
+}
+
+// Retrieve returns File metadata.
+func (c *Client) Retrieve(ctx context.Context, fileID string, opts ...option.RequestOption) (*File, error) {
+	payload, err := c.requestFile(ctx, "GET", fileID, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return core.DecodeResponse[File](payload)
+}
+
+// Content downloads File bytes without text or JSON decoding.
+func (c *Client) Content(ctx context.Context, fileID string, opts ...option.RequestOption) ([]byte, error) {
+	requestOptions, _ := option.ResolveRequestOptions(opts...)
+	path, err := protocolFilePath(fileID)
+	if err != nil {
+		return nil, err
+	}
+	payload, err := c.http.Request(ctx, "GET", path+"/content", &core.HTTPRequestOptions{
+		Headers: requestOptions.Headers, Request: requestOptions,
+	})
+	return []byte(payload), err
+}
+
+// DeleteFile deletes a File and returns the deletion marker.
+func (c *Client) DeleteFile(ctx context.Context, fileID string, opts ...option.RequestOption) (*DeletedFile, error) {
+	payload, err := c.requestFile(ctx, "DELETE", fileID, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return core.DecodeResponse[DeletedFile](payload)
+}
+
+func (c *Client) requestFile(ctx context.Context, method, fileID string, opts ...option.RequestOption) (json.RawMessage, error) {
+	requestOptions, _ := option.ResolveRequestOptions(opts...)
+	path, err := protocolFilePath(fileID)
+	if err != nil {
+		return nil, err
+	}
+	return c.http.Request(ctx, method, path, &core.HTTPRequestOptions{
+		Headers: requestOptions.Headers, Request: requestOptions,
+	})
+}
+
+func protocolFilePath(fileID string) (string, error) {
+	if strings.TrimSpace(fileID) == "" {
+		return "", core.NewError(core.ErrValidation, "file_id is required", http.StatusUnprocessableEntity, "", nil, nil)
+	}
+	return protocolPath + "/" + url.PathEscape(fileID), nil
 }
 
 func validateCreateParams(params CreateParams) error {

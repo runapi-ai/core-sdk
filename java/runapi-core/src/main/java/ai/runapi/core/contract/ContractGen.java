@@ -120,6 +120,32 @@ contract.put("elevenlabs/text-to-speech", new ContractAction(
           rulesByModel(new Object[][] {
 {"text-to-speech-multilingual-v2", rules(rule(conditions(new Object[][] {{"model", "text-to-speech-multilingual-v2"}}), list("voice"), list(), list(), narrowedEnums(new Object[][] {})))},
           })));
+contract.put("fish-audio/create-voice", new ContractAction(
+    list(),
+          fieldsByModel(new Object[][] {
+            {"_", fields(new Object[][] {
+                    {"name", field(required())},
+                    {"source_audio_url", field(required())},
+            })},
+          })));
+contract.put("fish-audio/get-voice", new ContractAction(
+    list(),
+          fieldsByModel(new Object[][] {
+            {"_", fields(new Object[][] {
+                    {"voice_id", field(required())},
+            })},
+          })));
+contract.put("fish-audio/list-voices", new ContractAction(
+    list(),
+          fieldsByModel(new Object[][] {
+            {"_", fields(new Object[][] {
+                    {"page_number", field(min(Double.valueOf(1.0)))},
+                    {"page_size", field(min(Double.valueOf(1.0)), max(Double.valueOf(100.0)))},
+            })},
+          })));
+  }
+
+  private static void addActions1(Map<String, ContractAction> contract) {
 contract.put("fish-audio/text-to-speech", new ContractAction(
     list("s1", "s2-pro", "s2.1-pro"),
           fieldsByModel(new Object[][] {
@@ -130,6 +156,7 @@ contract.put("fish-audio/text-to-speech", new ContractAction(
                     {"references", field()},
                     {"sample_rate_hz", field(enumValues(Integer.valueOf(8000), Integer.valueOf(16000), Integer.valueOf(24000), Integer.valueOf(32000), Integer.valueOf(44100)))},
                     {"text", field(required())},
+                    {"voice_id", field()},
             })},
             {"s2-pro", fields(new Object[][] {
                     {"bitrate_kbps", field(enumValues(Integer.valueOf(64), Integer.valueOf(128), Integer.valueOf(192)))},
@@ -138,6 +165,7 @@ contract.put("fish-audio/text-to-speech", new ContractAction(
                     {"references", field()},
                     {"sample_rate_hz", field(enumValues(Integer.valueOf(8000), Integer.valueOf(16000), Integer.valueOf(24000), Integer.valueOf(32000), Integer.valueOf(44100)))},
                     {"text", field(required())},
+                    {"voice_id", field()},
             })},
             {"s2.1-pro", fields(new Object[][] {
                     {"bitrate_kbps", field(enumValues(Integer.valueOf(64), Integer.valueOf(128), Integer.valueOf(192)))},
@@ -146,6 +174,7 @@ contract.put("fish-audio/text-to-speech", new ContractAction(
                     {"references", field()},
                     {"sample_rate_hz", field(enumValues(Integer.valueOf(8000), Integer.valueOf(16000), Integer.valueOf(24000), Integer.valueOf(32000), Integer.valueOf(44100)))},
                     {"text", field(required())},
+                    {"voice_id", field()},
             })},
           }),
           rulesByModel(new Object[][] {
@@ -222,9 +251,6 @@ contract.put("flux-2/text-to-image", new ContractAction(
 {"flux-2-max-text-to-image", rules(rule(conditions(new Object[][] {{"model", "flux-2-max-text-to-image"}}), list(), list(), list("enable_safety_checker"), narrowedEnums(new Object[][] {})))},
 {"flux-2-pro-text-to-image", rules(rule(conditions(new Object[][] {{"model", "flux-2-pro-text-to-image"}}), list(), list(), list("output_count"), narrowedEnums(new Object[][] {})))},
           })));
-  }
-
-  private static void addActions1(Map<String, ContractAction> contract) {
 contract.put("flux-kontext/text-to-image", new ContractAction(
     list("flux-kontext-max", "flux-kontext-pro"),
           fieldsByModel(new Object[][] {
@@ -318,6 +344,9 @@ contract.put("gemini-omni/create-character", new ContractAction(
                     {"reference_image_url", field(required())},
             })},
           })));
+  }
+
+  private static void addActions2(Map<String, ContractAction> contract) {
 contract.put("gemini-omni/text-to-video", new ContractAction(
     list("gemini-omni-flash-preview", "gemini-omni-text-to-video"),
           fieldsByModel(new Object[][] {
@@ -387,9 +416,6 @@ contract.put("gpt-4o-image/text-to-image", new ContractAction(
                     {"source_image_urls", field(maxItems(5))},
             })},
           })));
-  }
-
-  private static void addActions2(Map<String, ContractAction> contract) {
 contract.put("gpt-image-2/edit-image", new ContractAction(
     list("gpt-image-2"),
           fieldsByModel(new Object[][] {
@@ -447,6 +473,9 @@ contract.put("grok-imagine/edit-image", new ContractAction(
                     {"source_image_url", field(required())},
             })},
           })));
+  }
+
+  private static void addActions3(Map<String, ContractAction> contract) {
 contract.put("grok-imagine/extend", new ContractAction(
     list(),
           fieldsByModel(new Object[][] {
@@ -521,9 +550,6 @@ contract.put("grok-imagine/text-to-image", new ContractAction(
                     {"prompt", field(required(), max(Double.valueOf(5000.0)), length())},
             })},
           })));
-  }
-
-  private static void addActions3(Map<String, ContractAction> contract) {
 contract.put("grok-imagine/text-to-video", new ContractAction(
     list("grok-imagine-text-to-video", "grok-imagine-video-1.5-fast", "grok-imagine-video-1.5-preview"),
           fieldsByModel(new Object[][] {
@@ -656,6 +682,9 @@ contract.put("happyhorse/edit-video", new ContractAction(
                     {"source_video_url", field(required())},
             })},
           })));
+  }
+
+  private static void addActions4(Map<String, ContractAction> contract) {
 contract.put("happyhorse/image-to-video", new ContractAction(
     list("happyhorse-1.0-i2v", "happyhorse-image-to-video"),
           fieldsByModel(new Object[][] {
@@ -752,9 +781,6 @@ contract.put("ideogram-v3/edit-image", new ContractAction(
                     {"style", field()},
             })},
           })));
-  }
-
-  private static void addActions4(Map<String, ContractAction> contract) {
 contract.put("ideogram-v3/reframe-image", new ContractAction(
     list("ideogram-v3-reframe"),
           fieldsByModel(new Object[][] {
@@ -878,6 +904,9 @@ contract.put("imagen-4/text-to-image", new ContractAction(
                     {"seed", field()},
             })},
           })));
+  }
+
+  private static void addActions5(Map<String, ContractAction> contract) {
 contract.put("infinitetalk/audio-to-video", new ContractAction(
     list("infinitetalk-from-audio"),
           fieldsByModel(new Object[][] {
@@ -939,9 +968,6 @@ contract.put("kling/extend-video", new ContractAction(
                     {"source_task_id", field(required())},
             })},
           })));
-  }
-
-  private static void addActions5(Map<String, ContractAction> contract) {
 contract.put("kling/image-to-video", new ContractAction(
     list("kling-o1", "kling-v2.1-master-image-to-video", "kling-v2.1-pro", "kling-v2.1-standard", "kling-v2.5-turbo-image-to-video-pro", "kling-v2.6", "kling-v3-omni", "kling-v3-turbo-image-to-video"),
           fieldsByModel(new Object[][] {
@@ -2710,7 +2736,7 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"negative_tags", field()},
                     {"persona_id", field()},
                     {"persona_type", field(enumValues("style", "voice"))},
-                    {"prompt", field()},
+                    {"prompt", field(max(Double.valueOf(3000.0)), length())},
                     {"style", field()},
                     {"style_weight", field()},
                     {"title", field()},
@@ -2728,7 +2754,7 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"negative_tags", field()},
                     {"persona_id", field()},
                     {"persona_type", field(enumValues("style", "voice"))},
-                    {"prompt", field()},
+                    {"prompt", field(max(Double.valueOf(3000.0)), length())},
                     {"style", field()},
                     {"style_weight", field()},
                     {"title", field()},
@@ -2746,7 +2772,7 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"negative_tags", field()},
                     {"persona_id", field()},
                     {"persona_type", field(enumValues("style", "voice"))},
-                    {"prompt", field()},
+                    {"prompt", field(max(Double.valueOf(3000.0)), length())},
                     {"style", field()},
                     {"style_weight", field()},
                     {"title", field()},
@@ -2764,7 +2790,7 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"negative_tags", field()},
                     {"persona_id", field()},
                     {"persona_type", field(enumValues("style", "voice"))},
-                    {"prompt", field()},
+                    {"prompt", field(max(Double.valueOf(3000.0)), length())},
                     {"style", field()},
                     {"style_weight", field()},
                     {"title", field()},
@@ -2782,7 +2808,7 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"negative_tags", field()},
                     {"persona_id", field()},
                     {"persona_type", field(enumValues("style", "voice"))},
-                    {"prompt", field()},
+                    {"prompt", field(max(Double.valueOf(3000.0)), length())},
                     {"style", field()},
                     {"style_weight", field()},
                     {"title", field()},
@@ -2800,7 +2826,7 @@ contract.put("suno/text-to-music", new ContractAction(
                     {"negative_tags", field()},
                     {"persona_id", field()},
                     {"persona_type", field(enumValues("style", "voice"))},
-                    {"prompt", field()},
+                    {"prompt", field(max(Double.valueOf(3000.0)), length())},
                     {"style", field()},
                     {"style_weight", field()},
                     {"title", field()},

@@ -2,7 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/ai.runapi/runapi-core)](https://central.sonatype.com/artifact/ai.runapi/runapi-core)
 
-The RunAPI Core Java SDK provides shared authentication, HTTP, retry, error, polling, file upload, account, request option, and transport primitives for RunAPI Java modules. Application code should normally install a concrete model module such as `ai.runapi:runapi-wan`; install `ai.runapi:runapi-core` directly only when building shared Java SDK tooling.
+The RunAPI Core Java SDK provides shared authentication, HTTP, retry, error, polling, Files, Uploads, account, request option, and transport primitives for RunAPI Java modules. Application code should normally install a concrete model module such as `ai.runapi:runapi-wan`; install `ai.runapi:runapi-core` directly only when building shared Java SDK tooling.
 
 ## Requirements
 
@@ -14,7 +14,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-core:0.4.2")
+  implementation("ai.runapi:runapi-core:0.5.0")
 }
 ```
 
@@ -24,7 +24,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-core</artifactId>
-  <version>0.4.2</version>
+  <version>0.5.0</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ Use the BOM when multiple RunAPI Java modules are installed:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.4.2"))
+  implementation(platform("ai.runapi:runapi-bom:0.5.0"))
   implementation("ai.runapi:runapi-core")
 }
 ```
@@ -41,7 +41,7 @@ dependencies {
 
 - Client configuration and API key resolution through builders and environment variables.
 - Shared `RequestOptions` for timeouts, retries, headers, and polling behavior.
-- Files and account clients used by all model clients.
+- Files, Uploads, and account clients used by all model clients.
 - Live Price Schedule and Price Quote resources available as `client.pricing()`.
 - Strict contract validation helpers used by model packages.
 - Common error types such as `RunApiException`, `ValidationException`, and `RateLimitException`.
@@ -59,7 +59,7 @@ RequestOptions options = RequestOptions.builder()
     .build();
 ```
 
-## File Upload
+## Temporary File Upload
 
 ```java
 import ai.runapi.core.files.FileCreateParams;
@@ -77,6 +77,25 @@ FileUploadResponse uploaded = client.files().create(
         .build()
 );
 ```
+
+## Persistent Files And Multipart Uploads
+
+The existing `files().create()` method above keeps its temporary URL behavior. Use `createFile()` for a persistent File object and `uploads()` when sending one or more Parts:
+
+```java
+FileObject file = client.files().createFile(Paths.get("knowledge.pdf"));
+byte[] content = client.files().content(file.getId());
+
+UploadObject upload = client.uploads().create(
+    1048576L, "archive.bin", "application/octet-stream"
+);
+UploadPart part = client.uploads().addPart(
+    upload.getId(), Paths.get("archive.part-01")
+);
+UploadObject completed = client.uploads().complete(upload.getId(), part.getId());
+```
+
+Use `files().list()`, `retrieve()`, and `deleteFile()` for the remaining File lifecycle. See https://runapi.ai/docs/resources/files for limits and REST examples.
 
 ## Live Pricing
 
