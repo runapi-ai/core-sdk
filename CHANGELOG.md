@@ -1,5 +1,13 @@
 # Changelog
 
+## [python/v0.7.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.7.0), [java/v0.6.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.0) - 2026-08-21
+
+### Added
+- Add generated validation metadata for Grok Imagine Image 2.0 task requests.
+- Accept 1080p output resolution for Seedance 2.5 video generation.
+- Add shared contract metadata for Kling V3 Omni reference-image and source-video editing workflows.
+
+
 ## [python/v0.6.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.6.0) - 2026-08-18
 
 ### Added
