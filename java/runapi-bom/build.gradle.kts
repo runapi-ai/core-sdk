@@ -11,7 +11,7 @@ javaPlatform {
 
 dependencies {
   constraints {
-    api("ai.runapi:runapi-core:0.5.0")
+    api("ai.runapi:runapi-core:0.6.0")
     api("ai.runapi:runapi-elevenlabs:0.1.1")
     api("ai.runapi:runapi-flux-kontext:0.1.1")
     api("ai.runapi:runapi-flux-2:0.2.0")
@@ -31,7 +31,7 @@ dependencies {
     api("ai.runapi:runapi-gemini-omni:0.2.2")
     api("ai.runapi:runapi-openai-tts:0.1.1")
     api("ai.runapi:runapi-openai-transcription:0.1.0")
-    api("ai.runapi:runapi-fish-audio:0.2.0")
+    api("ai.runapi:runapi-fish-audio:0.3.0")
     api("ai.runapi:runapi-gemini-tts:0.1.1")
     api("ai.runapi:runapi-kling:0.1.6")
     api("ai.runapi:runapi-luma:0.1.1")
