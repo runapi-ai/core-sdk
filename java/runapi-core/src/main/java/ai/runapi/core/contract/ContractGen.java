@@ -467,27 +467,31 @@ contract.put("grok-imagine/edit-image", new ContractAction(
     list("grok-imagine-edit-image", "grok-imagine-image-2-0"),
           fieldsByModel(new Object[][] {
             {"grok-imagine-edit-image", fields(new Object[][] {
+                    {"aspect_ratio", field()},
                     {"callback_url", field()},
                     {"enable_safety_checker", field()},
                     {"mask_indices", field()},
                     {"model", field(required())},
                     {"prompt", field()},
                     {"source_image_url", field(required())},
+                    {"source_image_urls", field()},
                     {"source_task_id", field()},
             })},
             {"grok-imagine-image-2-0", fields(new Object[][] {
+                    {"aspect_ratio", field(required(), enumValues("1:1", "2:3", "3:2", "16:9", "9:16", "auto"))},
                     {"callback_url", field()},
                     {"enable_safety_checker", field()},
-                    {"mask_indices", field(minItems(1))},
+                    {"mask_indices", field()},
                     {"model", field(required())},
-                    {"prompt", field(required())},
+                    {"prompt", field(max(Double.valueOf(390000.0)), length())},
                     {"source_image_url", field()},
-                    {"source_task_id", field(required())},
+                    {"source_image_urls", field(required(), minItems(1), maxItems(5))},
+                    {"source_task_id", field()},
             })},
           }),
           rulesByModel(new Object[][] {
-{"grok-imagine-edit-image", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-edit-image"}}), list(), list(), list("source_task_id", "mask_indices"), narrowedEnums(new Object[][] {})))},
-{"grok-imagine-image-2-0", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-image-2-0"}}), list(), list(), list("source_image_url", "enable_safety_checker"), narrowedEnums(new Object[][] {})))},
+{"grok-imagine-edit-image", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-edit-image"}}), list(), list(), list("source_task_id", "mask_indices", "source_image_urls", "aspect_ratio"), narrowedEnums(new Object[][] {})))},
+{"grok-imagine-image-2-0", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-image-2-0"}}), list(), list(), list("source_image_url", "source_task_id", "mask_indices", "enable_safety_checker"), narrowedEnums(new Object[][] {})))},
           })));
   }
 
@@ -559,9 +563,13 @@ contract.put("grok-imagine/segment-map", new ContractAction(
           fieldsByModel(new Object[][] {
             {"grok-imagine-image-2-0", fields(new Object[][] {
                     {"callback_url", field()},
+                    {"image_url", field()},
                     {"model", field(required())},
-                    {"source_task_id", field(required())},
+                    {"source_task_id", field()},
             })},
+          }),
+          rulesByModel(new Object[][] {
+{"grok-imagine-image-2-0", rules(rule(conditions(new Object[][] {}), list(), list("image_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"image_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"source_task_id", presence(true)}}), list(), list(), list("image_url"), narrowedEnums(new Object[][] {})))},
           })));
 contract.put("grok-imagine/text-to-image", new ContractAction(
     list("grok-imagine-image-2-0", "grok-imagine-text-to-image"),
@@ -2975,7 +2983,7 @@ contract.put("topaz/upscale-image", new ContractAction(
                     {"callback_url", field()},
                     {"model", field(required())},
                     {"source_image_url", field(required())},
-                    {"upscale_factor", field(required(), enumValues(Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(4), Integer.valueOf(8)))},
+                    {"upscale_factor", field(required(), enumValues(Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(4)))},
             })},
           })));
 contract.put("topaz/upscale-video", new ContractAction(

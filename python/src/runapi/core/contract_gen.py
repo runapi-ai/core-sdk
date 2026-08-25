@@ -341,7 +341,11 @@ CONTRACT = {
         "models": ["grok-imagine-edit-image", "grok-imagine-image-2-0"],
         "fields_by_model": {
             "grok-imagine-edit-image": {},
-            "grok-imagine-image-2-0": {}
+            "grok-imagine-image-2-0": {
+                "aspect_ratio": {
+                    "enum": ["1:1", "2:3", "3:2", "16:9", "9:16", "auto"]
+                }
+            }
         }
     },
     "grok-imagine/extend": {
@@ -2072,7 +2076,7 @@ CONTRACT = {
         "fields_by_model": {
             "topaz-upscale-image": {
                 "upscale_factor": {
-                    "enum": [1, 2, 4, 8]
+                    "enum": [1, 2, 4]
                 }
             }
         }

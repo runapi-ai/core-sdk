@@ -1,5 +1,30 @@
 # Changelog
 
+## [python/v0.7.1](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.7.1), [java/v0.6.1](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.1) - 2026-08-25
+
+### Breaking
+- Refresh generated validation metadata for Image 2.0 direct edits using source_image_urls and aspect_ratio.
+  Migration: Replace source_task_id and mask_indices with one to five source_image_urls and an aspect_ratio; prompt is optional.
+
+### Added
+- Add generated validation metadata for Grok Imagine Image 2.0 task requests.
+
+### Changed
+- Refresh generated validation metadata for public image_url segment-map inputs and deprecated source_task_id compatibility.
+
+### Fixed
+- Restrict Topaz image upscale validation to the supported 1x, 2x, and 4x factors.
+
+## [js/v0.4.1](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.4.1), [ruby/v0.4.1](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.4.1) - 2026-08-25
+
+### Breaking
+- Refresh generated validation metadata for Image 2.0 direct edits using source_image_urls and aspect_ratio.
+  Migration: Replace source_task_id and mask_indices with one to five source_image_urls and an aspect_ratio; prompt is optional.
+
+### Changed
+- Refresh generated validation metadata for public image_url segment-map inputs and deprecated source_task_id compatibility.
+
+
 ## [python/v0.7.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.7.0), [java/v0.6.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.0) - 2026-08-21
 
 ### Added
