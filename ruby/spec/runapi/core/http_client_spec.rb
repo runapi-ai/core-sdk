@@ -45,6 +45,20 @@ RSpec.describe RunApi::Core::HttpClient do
   end
 
   describe "#request" do
+    it "rejects a cross-origin absolute URL before sending credentials" do
+      expect {
+        client.request(:get, "https://attacker.example/tasks/task-1")
+      }.to raise_error(RunApi::Core::ValidationError, "Request URL must use the configured RunAPI origin")
+
+      expect(a_request(:get, "https://attacker.example/tasks/task-1")).not_to have_been_made
+    end
+
+    it "accepts an absolute URL on the configured origin" do
+      stub_request(:get, "#{base}/api/v1/tasks/task-1").to_return(status: 200, body: "{}")
+
+      expect(client.request(:get, "#{base}/api/v1/tasks/task-1")).to eq({})
+    end
+
     it "returns parsed JSON on success" do
       stub_request(:get, "#{base}/api/v1/test")
         .to_return(status: 200, body: '{"id":"123"}')
@@ -165,6 +179,20 @@ RSpec.describe RunApi::Core::HttpClient do
         .to_return(status: 200, body: "plain text")
 
       expect(client.request(:get, "/api/v1/test")).to eq("plain text")
+    end
+
+    it "keeps text, SRT, and VTT responses raw" do
+      {
+        "text/plain" => "transcript",
+        "application/x-subrip" => "1\n00:00:00,000 --> 00:00:01,000\nHello\n",
+        "text/vtt" => "WEBVTT\n\n00:00.000 --> 00:01.000\nHello\n"
+      }.each do |content_type, body|
+        path = "/api/v1/#{content_type.delete("^a-z")}"
+        stub_request(:get, "#{base}#{path}")
+          .to_return(status: 200, body:, headers: {"Content-Type" => content_type})
+
+        expect(client.request(:get, path)).to eq(body)
+      end
     end
 
     it "returns a response for an allowed 304 revalidation" do

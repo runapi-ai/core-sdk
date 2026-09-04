@@ -42,12 +42,13 @@ module RunApi
     end
 
     class Response < Hash
-      attr_reader :response_headers
+      attr_reader :response_headers, :status
 
-      def initialize(body:, headers: nil)
+      def initialize(body:, headers: nil, status: nil)
         super()
         @body = body unless body.is_a?(Hash)
         @response_headers = headers.is_a?(ResponseHeaders) ? headers : ResponseHeaders.new(headers)
+        @status = status
         update(body) if body.is_a?(Hash)
       end
 

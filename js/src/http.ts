@@ -18,6 +18,16 @@ import {
   SDK_USER_AGENT,
   TIMEOUTS,
 } from './constants';
+import {
+  buildUrl,
+  captureResponseHeaders,
+  captureResponseStatus,
+  hasHeader,
+  idempotencyKey,
+  mergeHeaders,
+  parseResponseBody,
+  prepareBody,
+} from './http-request';
 
 export interface HttpRequestOptions extends RequestOptions {
   query?: QueryParams;
@@ -28,6 +38,8 @@ export interface HttpRequestOptions extends RequestOptions {
   allowNotModified?: boolean;
   /** Internal response-header capture for resources that support HTTP revalidation. */
   captureResponseHeaders?: Record<string, string>;
+  /** Internal HTTP status capture for resources with response lifecycle branches. */
+  captureResponseStatus?: { status?: number };
 }
 
 export interface HttpClient {
@@ -45,75 +57,6 @@ export interface HttpClient {
     url: string,
     options: { headers: Record<string, string>; body: BodyInit; timeoutMs?: number; signal?: AbortSignal }
   ): Promise<void>;
-}
-
-function buildUrl(baseUrl: string, path: string, query?: QueryParams): string {
-  const normalizedBase = baseUrl.replace(/\/+$/, '');
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  const url = new URL(`${normalizedBase}${normalizedPath}`);
-
-  if (query) {
-    for (const [key, value] of Object.entries(query)) {
-      if (value === undefined || value === null) {
-        continue;
-      }
-      url.searchParams.set(key, String(value));
-    }
-  }
-
-  return url.toString();
-}
-
-function mergeHeaders(
-  base: Record<string, string>,
-  extra?: Record<string, string>
-): Record<string, string> {
-  return { ...base, ...(extra || {}) };
-}
-
-function hasHeader(headers: Record<string, string>, name: string): boolean {
-  const target = name.toLowerCase();
-  return Object.keys(headers).some((key) => key.toLowerCase() === target);
-}
-
-function isFormData(body: unknown): body is FormData {
-  return typeof FormData !== 'undefined' && body instanceof FormData;
-}
-
-function prepareBody(body: unknown, headers: Record<string, string>): BodyInit | undefined {
-  if (body === undefined || body === null) {
-    return undefined;
-  }
-
-  if (isFormData(body) || body instanceof URLSearchParams) {
-    return body as BodyInit;
-  }
-
-  if (typeof body === 'string' || body instanceof Blob || body instanceof ArrayBuffer) {
-    return body as BodyInit;
-  }
-
-  if (!hasHeader(headers, 'content-type')) {
-    headers['content-type'] = 'application/json';
-  }
-
-  return JSON.stringify(body);
-}
-
-async function parseResponseBody(response: Response): Promise<{
-  text: string | null;
-  json: unknown;
-}> {
-  const text = await response.text();
-  if (!text) {
-    return { text: null, json: undefined };
-  }
-
-  try {
-    return { text, json: JSON.parse(text) };
-  } catch {
-    return { text, json: undefined };
-  }
 }
 
 function createAbortController(
@@ -156,20 +99,12 @@ function createAbortController(
   };
 }
 
-function shouldRetryRequest(method: HttpMethod, status: number | undefined): boolean {
-  if (status === undefined) {
-    return false;
-  }
-
-  if (!isRetryableStatus(status)) {
-    return false;
-  }
-
-  if (isIdempotentMethod(method)) {
-    return true;
-  }
-
-  return false;
+function canRetryRequest(
+  method: HttpMethod,
+  status: number | undefined,
+  headers: Record<string, string>
+): boolean {
+  return status !== undefined && isRetryableStatus(status) && (isIdempotentMethod(method) || hasHeader(headers, 'idempotency-key'));
 }
 
 export function createHttpClient(options: ClientOptions): HttpClient {
@@ -198,6 +133,10 @@ export function createHttpClient(options: ClientOptions): HttpClient {
         requestOptions.headers
       );
 
+      if (method === 'POST' && !hasHeader(headers, 'idempotency-key')) {
+        headers['Idempotency-Key'] = idempotencyKey();
+      }
+
       const body = prepareBody(requestOptions.body, headers);
       const requestTimeoutMs = requestOptions.timeoutMs ?? clientTimeoutMs ?? TIMEOUTS.HTTP_REQUEST;
       const requestMaxRetries = requestOptions.maxRetries ?? maxRetries;
@@ -222,6 +161,7 @@ export function createHttpClient(options: ClientOptions): HttpClient {
 
           if (response.status === 304 && requestOptions.allowNotModified) {
             captureResponseHeaders(response, requestOptions.captureResponseHeaders);
+            captureResponseStatus(response, requestOptions.captureResponseStatus);
             return {
               not_modified: true,
               etag: response.headers.get('etag') ?? undefined,
@@ -230,6 +170,7 @@ export function createHttpClient(options: ClientOptions): HttpClient {
 
           if (response.ok && requestOptions.responseType === 'bytes') {
             captureResponseHeaders(response, requestOptions.captureResponseHeaders);
+            captureResponseStatus(response, requestOptions.captureResponseStatus);
             return new Uint8Array(await response.arrayBuffer()) as T;
           }
 
@@ -238,7 +179,7 @@ export function createHttpClient(options: ClientOptions): HttpClient {
           if (!response.ok) {
             if (
               attempt < requestMaxRetries &&
-              shouldRetryRequest(method, response.status)
+              canRetryRequest(method, response.status, headers)
             ) {
               const retryAfterMs = parseRetryAfterMs(response);
               const delayMs =
@@ -252,12 +193,13 @@ export function createHttpClient(options: ClientOptions): HttpClient {
           }
 
           captureResponseHeaders(response, requestOptions.captureResponseHeaders);
+          captureResponseStatus(response, requestOptions.captureResponseStatus);
           return (json ?? text) as T;
         } catch (error) {
           cleanup();
 
           if (timedOut()) {
-            if (attempt < requestMaxRetries && isIdempotentMethod(method)) {
+            if (attempt < requestMaxRetries && (isIdempotentMethod(method) || hasHeader(headers, 'idempotency-key'))) {
               const delayMs = getRetryDelayMs(
                 attempt,
                 retryBaseDelayMs,
@@ -278,7 +220,7 @@ export function createHttpClient(options: ClientOptions): HttpClient {
             throw error;
           }
 
-          if (attempt < requestMaxRetries && isIdempotentMethod(method)) {
+          if (attempt < requestMaxRetries && (isIdempotentMethod(method) || hasHeader(headers, 'idempotency-key'))) {
             const delayMs = getRetryDelayMs(
               attempt,
               retryBaseDelayMs,
@@ -326,15 +268,4 @@ export function createHttpClient(options: ClientOptions): HttpClient {
       }
     },
   };
-}
-
-function captureResponseHeaders(
-  response: Response,
-  target: Record<string, string> | undefined,
-): void {
-  if (!target) return;
-
-  response.headers.forEach((value, key) => {
-    target[key] = value;
-  });
 }

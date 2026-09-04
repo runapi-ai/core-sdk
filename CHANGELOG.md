@@ -1,5 +1,72 @@
 # Changelog
 
+## [python/v0.8.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.8.0) - 2026-09-04
+
+### Breaking
+- Refresh generated validation metadata for Image 2.0 direct edits using source_image_urls and aspect_ratio.
+  Migration: Replace source_task_id and mask_indices with one to five source_image_urls and an aspect_ratio; prompt is optional.
+
+### Added
+- Add generated validation metadata for Grok Imagine Image 2.0 task requests.
+- Add automatic Task polling, subscriptions, idempotency keys, opaque result locations, Retry-After handling, and content-type-aware terminal response decoding.
+
+### Changed
+- Refresh generated validation metadata for public image_url segment-map inputs and deprecated source_task_id compatibility.
+
+### Fixed
+- Restrict Topaz image upscale validation to the supported 1x, 2x, and 4x factors.
+
+## [java/v0.6.2](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.2) - 2026-09-04
+
+### Breaking
+- Refresh generated validation metadata for Image 2.0 direct edits using source_image_urls and aspect_ratio.
+  Migration: Replace source_task_id and mask_indices with one to five source_image_urls and an aspect_ratio; prompt is optional.
+
+### Added
+- Add generated validation metadata for Grok Imagine Image 2.0 task requests.
+- Add typed Java Task polling for terminal and accepted Task Result responses, including idempotency and content-type decoding.
+
+### Changed
+- Refresh generated validation metadata for public image_url segment-map inputs and deprecated source_task_id compatibility.
+- Refresh generated contract metadata for hybrid terminal and 202 Task API responses.
+- Add length limits for prompt, lyrics, style, title and range limits for style_weight, weirdness_constraint, audio_weight across Suno endpoints.
+
+### Fixed
+- Restrict Topaz image upscale validation to the supported 1x, 2x, and 4x factors.
+
+## [js/v0.4.2](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.4.2) - 2026-09-04
+
+### Breaking
+- Refresh generated validation metadata for Image 2.0 direct edits using source_image_urls and aspect_ratio.
+  Migration: Replace source_task_id and mask_indices with one to five source_image_urls and an aspect_ratio; prompt is optional.
+
+### Added
+- Add automatic idempotency keys and a reusable hybrid Task lifecycle helper for terminal or accepted requests.
+
+### Changed
+- Refresh generated validation metadata for public image_url segment-map inputs and deprecated source_task_id compatibility.
+
+## [ruby/v0.5.0](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.5.0) - 2026-09-04
+
+### Breaking
+- Refresh generated validation metadata for Image 2.0 direct edits using source_image_urls and aspect_ratio.
+  Migration: Replace source_task_id and mask_indices with one to five source_image_urls and an aspect_ratio; prompt is optional.
+
+### Added
+- Add automatic Task polling, subscriptions, idempotency keys, opaque result locations, and content-type-aware response decoding.
+
+### Changed
+- Refresh generated validation metadata for public image_url segment-map inputs and deprecated source_task_id compatibility.
+
+## [go/v0.4.0](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.4.0) - 2026-09-04
+
+### Added
+- Add response-aware hybrid Task creation, subscription, and run helpers with opaque Location, Retry-After, raw response decoding, and automatic Idempotency-Key handling.
+
+### Changed
+- Refresh generated validation metadata for public image_url segment-map inputs and deprecated source_task_id compatibility.
+
+
 ## [python/v0.7.1](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.7.1), [java/v0.6.1](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.1) - 2026-08-25
 
 ### Breaking

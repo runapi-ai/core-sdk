@@ -42,6 +42,10 @@ export { resolveApiKey, resolveOptionalApiKey } from './auth';
 export { createHttpClient } from './http';
 export type { HttpClient, HttpRequestOptions } from './http';
 
+// Hybrid task lifecycle
+export { createHybridTask, HybridTask } from './hybrid-task';
+export type { HybridTaskListener, HybridTaskOptions, HybridTaskUpdate } from './hybrid-task';
+
 // Retry (高级用户可用)
 export {
   getRetryDelayMs,

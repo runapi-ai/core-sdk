@@ -36,6 +36,20 @@ type HTTPClient interface {
 	Request(ctx context.Context, method, path string, opts *HTTPRequestOptions) (json.RawMessage, error)
 }
 
+// ResponseHTTPClient exposes the successful HTTP response metadata needed by
+// hybrid endpoints. Existing custom HTTPClient implementations remain valid.
+type ResponseHTTPClient interface {
+	HTTPClient
+	RequestWithResponse(ctx context.Context, method, path string, opts *HTTPRequestOptions) (*HTTPResponse, error)
+}
+
+// HTTPResponse is a successful RunAPI HTTP response and its public metadata.
+type HTTPResponse struct {
+	Body       json.RawMessage
+	StatusCode int
+	Header     http.Header
+}
+
 type defaultHTTPClient struct {
 	apiKey         string
 	baseURL        string
@@ -117,6 +131,14 @@ func newHTTPClient(options ClientOptions, requireAPIKey bool) (HTTPClient, error
 }
 
 func (c *defaultHTTPClient) Request(ctx context.Context, method, path string, opts *HTTPRequestOptions) (json.RawMessage, error) {
+	response, err := c.RequestWithResponse(ctx, method, path, opts)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+func (c *defaultHTTPClient) RequestWithResponse(ctx context.Context, method, path string, opts *HTTPRequestOptions) (*HTTPResponse, error) {
 	requestOptions := RequestOptions{}
 	query := map[string]string(nil)
 	headers := map[string]string(nil)
@@ -141,12 +163,12 @@ func (c *defaultHTTPClient) Request(ctx context.Context, method, path string, op
 	}
 
 	for attempt := 0; ; attempt++ {
-		payload, _, err := c.do(ctx, method, path, query, headers, body)
+		payload, response, err := c.do(ctx, method, path, query, headers, body)
 		if err == nil {
-			return payload, nil
+			return &HTTPResponse{Body: payload, StatusCode: response.StatusCode, Header: response.Header.Clone()}, nil
 		}
 
-		if !c.shouldRetry(method, attempt, maxRetries, err) {
+		if !c.shouldRetry(method, headers, attempt, maxRetries, err) {
 			return nil, err
 		}
 
@@ -327,8 +349,8 @@ func escapeQuotes(value string) string {
 	return strings.ReplaceAll(value, `"`, `\"`)
 }
 
-func (c *defaultHTTPClient) shouldRetry(method string, attempt, maxRetries int, err error) bool {
-	if attempt >= maxRetries || !IsIdempotentMethod(method) {
+func (c *defaultHTTPClient) shouldRetry(method string, headers map[string]string, attempt, maxRetries int, err error) bool {
+	if attempt >= maxRetries || !isRetryableRequest(method, headers) {
 		return false
 	}
 	if apiErr, ok := errors.AsType[*Error](err); ok {
@@ -337,10 +359,39 @@ func (c *defaultHTTPClient) shouldRetry(method string, attempt, maxRetries int, 
 	return IsNetwork(err) || IsTimeout(err)
 }
 
+func isRetryableRequest(method string, headers map[string]string) bool {
+	if IsIdempotentMethod(method) {
+		return true
+	}
+	if !strings.EqualFold(method, http.MethodPost) {
+		return false
+	}
+	for name, value := range headers {
+		if strings.EqualFold(name, "Idempotency-Key") && strings.TrimSpace(value) != "" {
+			return true
+		}
+	}
+	return false
+}
+
 func buildURL(baseURL, path string, query map[string]string) (string, error) {
-	parsed, err := url.Parse(strings.TrimRight(baseURL, "/") + "/" + strings.TrimLeft(path, "/"))
+	parsed, err := url.Parse(path)
 	if err != nil {
 		return "", err
+	}
+	if parsed.IsAbs() {
+		base, parseErr := url.Parse(baseURL)
+		if parseErr != nil {
+			return "", parseErr
+		}
+		if !sameOrigin(parsed, base) {
+			return "", fmt.Errorf("request URL must use the configured RunAPI origin")
+		}
+	} else {
+		parsed, err = url.Parse(strings.TrimRight(baseURL, "/") + "/" + strings.TrimLeft(path, "/"))
+		if err != nil {
+			return "", err
+		}
 	}
 	params := parsed.Query()
 	for key, value := range query {
@@ -350,6 +401,25 @@ func buildURL(baseURL, path string, query map[string]string) (string, error) {
 	return parsed.String(), nil
 }
 
+func sameOrigin(left, right *url.URL) bool {
+	return strings.EqualFold(left.Scheme, right.Scheme) &&
+		strings.EqualFold(left.Hostname(), right.Hostname()) &&
+		originPort(left) == originPort(right)
+}
+
+func originPort(value *url.URL) string {
+	if value.Port() != "" {
+		return value.Port()
+	}
+	if strings.EqualFold(value.Scheme, "https") {
+		return "443"
+	}
+	if strings.EqualFold(value.Scheme, "http") {
+		return "80"
+	}
+	return ""
+}
+
 // DecodeResponse unmarshals a JSON payload into T.
 func DecodeResponse[T any](payload json.RawMessage) (*T, error) {
 	if len(bytes.TrimSpace(payload)) == 0 {
@@ -357,6 +427,10 @@ func DecodeResponse[T any](payload json.RawMessage) (*T, error) {
 		return &empty, nil
 	}
 	var response T
+	if raw, ok := any(&response).(*json.RawMessage); ok {
+		*raw = append((*raw)[:0], payload...)
+		return &response, nil
+	}
 	if err := json.Unmarshal(payload, &response); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}

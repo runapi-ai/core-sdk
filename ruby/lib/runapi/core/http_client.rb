@@ -13,7 +13,10 @@ module RunApi
       end
 
       def request(method, path, body: nil, options: nil, raw: false)
-        uri = URI.join(@options.base_url, path)
+        uri = URI.parse(path)
+        uri = URI.join(@options.base_url, path) unless uri.absolute?
+        raise ValidationError, "Request URL must use the configured RunAPI origin" unless base_origin?(uri)
+
         req = build_request(method, uri, body, options)
         max_retries = options&.max_retries || @options.max_retries
         retries = 0
@@ -21,10 +24,7 @@ module RunApi
 
         loop do
           response = begin
-            @pool.with do |http|
-              http.start unless http.started?
-              http.request(req)
-            end
+            perform_request(uri, req)
           rescue *STALE_CONNECTION_ERRORS
             unless stale_retried
               stale_retried = true
@@ -44,16 +44,16 @@ module RunApi
           if response.is_a?(Net::HTTPSuccess)
             return response.body if raw
 
-            body = parse_body(response.body)
+            body = parse_body(response.body, response["content-type"])
             return nil if body.nil?
             return body unless body.is_a?(Hash) || body.is_a?(Array)
 
-            return Response.new(body:, headers: response_headers(response))
+            return Response.new(body:, headers: response_headers(response), status: response.code.to_i)
           end
 
           error = Error.from_response(response, response.body)
 
-          if retryable?(method, response.code.to_i) && retries < max_retries
+          if retryable?(method, response.code.to_i, req) && retries < max_retries
             retries += 1
             sleep(retry_delay(retries, error))
             stale_retried = false
@@ -100,12 +100,32 @@ module RunApi
 
       def build_connection
         uri = URI.parse(@options.base_url)
+        build_connection_for(uri)
+      end
+
+      def build_connection_for(uri)
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = (uri.scheme == "https")
         http.verify_mode = OpenSSL::SSL::VERIFY_PEER
         http.open_timeout = @options.timeout
         http.read_timeout = @options.timeout
         http
+      end
+
+      def perform_request(uri, request)
+        if base_origin?(uri)
+          return @pool.with do |http|
+            http.start unless http.started?
+            http.request(request)
+          end
+        end
+
+        build_connection_for(uri).start { |http| http.request(request) }
+      end
+
+      def base_origin?(uri)
+        base_uri = URI.parse(@options.base_url)
+        uri.scheme == base_uri.scheme && uri.host == base_uri.host && uri.port == base_uri.port
       end
 
       def build_request(method, uri, body, options)
@@ -154,9 +174,13 @@ module RunApi
         end
       end
 
-      def retryable?(method, status)
-        Constants::IDEMPOTENT_METHODS.include?(method.to_s.upcase) &&
+      def retryable?(method, status, request)
+        retryable_request?(method, request) &&
           Constants::RETRYABLE_STATUS_CODES.include?(status)
+      end
+
+      def retryable_request?(method, request)
+        Constants::IDEMPOTENT_METHODS.include?(method.to_s.upcase) || request["Idempotency-Key"].to_s != ""
       end
 
       def retry_delay(attempt, error)
@@ -169,8 +193,9 @@ module RunApi
         [base + jitter, @options.retry_max_delay].min
       end
 
-      def parse_body(body)
+      def parse_body(body, content_type = nil)
         return nil if body.nil? || body.empty?
+        return body if content_type && !content_type.downcase.include?("json")
 
         JSON.parse(body)
       rescue JSON::ParserError

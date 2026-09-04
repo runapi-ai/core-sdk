@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
+require "securerandom"
+require_relative "hybrid_lifecycle"
+
 module RunApi
   module Core
     module ResourceHelpers
+      include HybridLifecycle
+
       private
 
       # Performs an HTTP request and coerces JSON responses into typed model objects.
@@ -273,15 +278,6 @@ module RunApi
         completed = completed_class.from_hash(payload)
         completed.with_response_headers(response.response_headers) if response.is_a?(Core::BaseModel)
         completed
-      end
-
-      def attach_response_headers(result, headers)
-        case result
-        when Core::BaseModel
-          result.with_response_headers(headers)
-        when Array
-          result.each { |item| attach_response_headers(item, headers) }
-        end
       end
     end
   end

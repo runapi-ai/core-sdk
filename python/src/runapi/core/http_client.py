@@ -6,11 +6,12 @@ import json
 import random
 import time
 from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlsplit
 
 import httpx
 
 from . import constants
-from .errors import NetworkError, RateLimitError, TimeoutError, error_from_response
+from .errors import NetworkError, RateLimitError, TimeoutError, ValidationError, error_from_response
 from .multipart import MultipartBody
 from .options import ClientOptions, RequestOptions
 from .response import ApiResponse
@@ -51,6 +52,7 @@ class HttpClient:
         body: Any = None,
         options: Optional[RequestOptions] = None,
     ) -> Any:
+        self._validate_request_url(path)
         max_retries = self._options.max_retries
         if options is not None and options.max_retries is not None:
             max_retries = options.max_retries
@@ -75,8 +77,16 @@ class HttpClient:
                         timeout=timeout,
                     )
                 except httpx.TimeoutException as exc:
+                    if self._retryable_request(method, headers) and retries < max_retries:
+                        retries += 1
+                        time.sleep(self._retry_delay(retries, TimeoutError(str(exc))))
+                        continue
                     raise TimeoutError(str(exc))
                 except httpx.TransportError as exc:
+                    if self._retryable_request(method, headers) and retries < max_retries:
+                        retries += 1
+                        time.sleep(self._retry_delay(retries, NetworkError(str(exc))))
+                        continue
                     raise NetworkError(str(exc))
 
                 if response.status_code == 304:
@@ -87,11 +97,15 @@ class HttpClient:
                     if body is None:
                         return None
                     if isinstance(body, (dict, list)):
-                        return ApiResponse(body, response.headers)
+                        return ApiResponse(body, response.headers, status_code=response.status_code)
                     return body
 
                 error = error_from_response(response)
-                if self._retryable(method, response.status_code) and retries < max_retries:
+                if (
+                    self._retryable_request(method, headers)
+                    and response.status_code in constants.RETRYABLE_STATUS_CODES
+                    and retries < max_retries
+                ):
                     retries += 1
                     time.sleep(self._retry_delay(retries, error))
                     continue
@@ -122,6 +136,7 @@ class HttpClient:
         options: Optional[RequestOptions] = None,
     ) -> bytes:
         """Return a successful response body without text decoding."""
+        self._validate_request_url(path)
         max_retries = self._options.max_retries
         if options is not None and options.max_retries is not None:
             max_retries = options.max_retries
@@ -140,7 +155,11 @@ class HttpClient:
             if response.is_success:
                 return response.content
             error = error_from_response(response)
-            if self._retryable(method, response.status_code) and retries < max_retries:
+            if (
+                self._retryable_request(method, headers)
+                and response.status_code in constants.RETRYABLE_STATUS_CODES
+                and retries < max_retries
+            ):
                 retries += 1
                 time.sleep(self._retry_delay(retries, error))
                 continue
@@ -172,8 +191,25 @@ class HttpClient:
             return body, None, None, []
         return None, None, None, []
 
-    def _retryable(self, method: str, status: int) -> bool:
-        return method in constants.IDEMPOTENT_METHODS and status in constants.RETRYABLE_STATUS_CODES
+    def _retryable_request(self, method: str, headers: Dict[str, str]) -> bool:
+        return method in constants.IDEMPOTENT_METHODS or (
+            method == "POST"
+            and any(name.lower() == "idempotency-key" and str(value).strip() for name, value in headers.items())
+        )
+
+    def _validate_request_url(self, path: str) -> None:
+        requested = urlsplit(path)
+        if not requested.scheme and not requested.netloc:
+            return
+        configured = urlsplit(str(self._options.base_url))
+        if self._origin(requested) != self._origin(configured):
+            raise ValidationError("Request URL must use the configured RunAPI origin")
+
+    @staticmethod
+    def _origin(url: Any) -> Tuple[str, str, Optional[int]]:
+        scheme = url.scheme.lower()
+        port = url.port or ({"http": 80, "https": 443}.get(scheme))
+        return scheme, (url.hostname or "").lower(), port
 
     def _retry_delay(self, attempt: int, error: Any) -> float:
         if isinstance(error, RateLimitError) and error.retry_after and error.retry_after > 0:

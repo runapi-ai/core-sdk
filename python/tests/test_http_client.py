@@ -31,6 +31,25 @@ def test_returns_parsed_json_on_success():
     assert client.request("get", "/api/v1/test") == {"id": "123"}
 
 
+def test_rejects_cross_origin_absolute_url_before_sending_credentials():
+    requests = []
+    client = make_client(lambda request: requests.append(request) or httpx.Response(200, json={}))
+
+    with pytest.raises(errors.ValidationError, match="configured RunAPI origin"):
+        client.request("get", "https://attacker.example/tasks/task-1")
+
+    assert requests == []
+
+
+def test_accepts_absolute_url_on_configured_origin():
+    requested_urls = []
+    client = make_client(lambda request: requested_urls.append(str(request.url)) or httpx.Response(200, json={}))
+
+    client.request("get", "https://runapi.ai/api/v1/tasks/task-1")
+
+    assert requested_urls == ["https://runapi.ai/api/v1/tasks/task-1"]
+
+
 def test_keeps_response_headers_on_success():
     client = make_client(
         lambda request: httpx.Response(
@@ -196,6 +215,55 @@ def test_does_not_retry_post_on_503():
     with pytest.raises(errors.ServiceUnavailableError):
         make_client(handler).request("post", "/api/v1/test")
     assert calls["n"] == 1
+
+
+def test_retries_post_with_idempotency_key_and_reuses_the_key():
+    calls = []
+
+    def handler(request):
+        calls.append(request.headers["idempotency-key"])
+        if len(calls) == 1:
+            return httpx.Response(503, json={"error": "down"})
+        return httpx.Response(200, json={"ok": True})
+
+    assert make_client(handler).request(
+        "post",
+        "/api/v1/test",
+        body={"prompt": "hello"},
+        options=RequestOptions(headers={"Idempotency-Key": "task-key"}),
+    ) == {"ok": True}
+    assert calls == ["task-key", "task-key"]
+
+
+def test_does_not_retry_post_with_blank_idempotency_key():
+    calls = {"n": 0}
+
+    def handler(_request):
+        calls["n"] += 1
+        return httpx.Response(503, json={"error": "down"})
+
+    with pytest.raises(errors.ServiceUnavailableError):
+        make_client(handler).request(
+            "post",
+            "/api/v1/test",
+            body={"prompt": "hello"},
+            options=RequestOptions(headers={"Idempotency-Key": "  "}),
+        )
+
+    assert calls["n"] == 1
+
+
+def test_request_bytes_retries_idempotent_get():
+    calls = {"n": 0}
+
+    def handler(_request):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return httpx.Response(503, json={"error": "down"})
+        return httpx.Response(200, content=b"audio")
+
+    assert make_client(handler).request_bytes("get", "/api/v1/files/audio") == b"audio"
+    assert calls["n"] == 2
 
 
 def test_respects_retry_after(monkeypatch):

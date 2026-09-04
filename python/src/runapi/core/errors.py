@@ -204,10 +204,17 @@ def error_from_response(response: "Any") -> Error:
     Maps the status code to a specific error class and extracts the message,
     request id, response details, and (for 429) the retry-after delay.
     """
-    status = response.status_code
-    request_id = response.headers.get("x-request-id")
+    return error_from_response_data(
+        response.status_code,
+        _parse_body(response.text),
+        response.headers,
+    )
 
-    parsed_body = _parse_body(response.text)
+def error_from_response_data(status: int, body: Any, headers: Any = None) -> Error:
+    """Build a public SDK error from a stored terminal response checkpoint."""
+    response_headers = ResponseHeaders(headers)
+    request_id = response_headers.get("x-request-id")
+    parsed_body = body
     message = _extract_message(parsed_body) or DEFAULT_MESSAGES.get(status) or "Request failed"
 
     error_class = STATUS_MAP.get(status, Error)
@@ -217,10 +224,10 @@ def error_from_response(response: "Any") -> Error:
         "status": status,
         "request_id": request_id,
         "details": parsed_body,
-        "response_headers": response.headers,
+        "response_headers": response_headers,
     }
     if error_class is RateLimitError:
-        kwargs["retry_after"] = _parse_retry_after(response.headers.get("retry-after"))
+        kwargs["retry_after"] = _parse_retry_after(response_headers.get("retry-after"))
 
     return error_class(message, **kwargs)
 

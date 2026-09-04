@@ -24,6 +24,20 @@ RunAPI accepts an optional `X-Client-Request-Id` header on public API calls. Use
 
 Task-creation calls also accept an optional opaque `Idempotency-Key` up to 512 characters. Generate one value per logical task and reuse it only with identical input after an unknown result. Reusing the value with different input returns `409 Conflict`; do not derive it from `X-Client-Request-Id`.
 
+## Recovering Interrupted Requests
+
+Normal `run()` calls wait for and return the endpoint's terminal result. It also generates an `Idempotency-Key` before the initial POST when one was not supplied. If a lower-level request is interrupted after RunAPI accepted it, persist the opaque `Location` from the response and call `subscribe(location)` to recover the terminal result. Completed JSON responses keep their endpoint-specific type; text, SRT, and VTT responses return `str`.
+
+```python
+from runapi.midjourney import MidjourneyClient
+
+client = MidjourneyClient(api_key="sk-...")
+result = client.shorten_prompt.run(prompt="A detailed cinematic mountain landscape")
+
+# Persist this opaque URL after receiving 202 from a lower-level request.
+result = client.shorten_prompt.subscribe("https://runapi.ai/api/v1/tasks/task-id")
+```
+
 High-level Python Provider Client resource methods accept per-request options and keep response headers on the returned model object. This example uses the Suno Provider Client; install `runapi-suno` to run it.
 
 ```python

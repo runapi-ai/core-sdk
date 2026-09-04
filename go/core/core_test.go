@@ -39,6 +39,25 @@ func TestErrorFromResponseMapsRateLimit(t *testing.T) {
 	}
 }
 
+func TestBuildURLRejectsCrossOriginAbsoluteLocation(t *testing.T) {
+	_, err := buildURL("https://runapi.ai", "https://attacker.example/tasks/task-1", nil)
+	if err == nil {
+		t.Fatal("expected cross-origin URL to be rejected")
+	}
+}
+
+func TestBuildURLAcceptsRelativeAndSameOriginLocations(t *testing.T) {
+	for _, location := range []string{"/api/v1/tasks/task-1", "https://runapi.ai/api/v1/tasks/task-1"} {
+		resolved, err := buildURL("https://runapi.ai", location, nil)
+		if err != nil {
+			t.Fatalf("buildURL(%q): %v", location, err)
+		}
+		if resolved != "https://runapi.ai/api/v1/tasks/task-1" {
+			t.Fatalf("unexpected URL: %s", resolved)
+		}
+	}
+}
+
 func TestContinuationErrorsPreserveCodeAndClassifyByStatus(t *testing.T) {
 	tests := []struct {
 		status int

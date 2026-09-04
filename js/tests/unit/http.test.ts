@@ -23,6 +23,21 @@ function clientWith(overrides: Partial<ClientOptions> = {}) {
 }
 
 describe('createHttpClient', () => {
+  it('rejects a cross-origin absolute URL before sending credentials', async () => {
+    const { client, fetchMock } = clientWith({ baseUrl: 'https://runapi.ai' });
+
+    await expect(client.request('GET', 'https://attacker.example/tasks/task-1'))
+      .rejects.toThrow('Request URL must use the configured RunAPI origin');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('accepts an absolute URL on the configured origin', async () => {
+    const { client, fetchMock } = clientWith({ baseUrl: 'https://runapi.ai' });
+
+    await client.request('GET', 'https://runapi.ai/api/v1/tasks/task-1');
+    expect(fetchMock.mock.calls[0][0]).toBe('https://runapi.ai/api/v1/tasks/task-1');
+  });
+
   describe('custom fetch', () => {
     it('calls the provided fetch function instead of global', async () => {
       const { client, fetchMock } = clientWith();
@@ -41,6 +56,35 @@ describe('createHttpClient', () => {
     await client.request('GET', '/api/v1/price_schedules');
 
     expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty('authorization');
+  });
+
+  it('decodes a terminal response from its content type', async () => {
+    const fetchMock = vi.fn(() => Promise.resolve(new Response('{not json}', {
+      headers: { 'content-type': 'text/vtt' },
+    })));
+    const client = createHttpClient({ maxRetries: 0, fetch: fetchMock as typeof fetch });
+
+    await expect(client.request('GET', '/api/v1/transcriptions/task_1')).resolves.toBe('{not json}');
+  });
+
+  it('reuses an automatic idempotency key when retrying a POST', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 503 }))
+      .mockResolvedValueOnce(jsonResponse({ ok: true }));
+    const client = createHttpClient({
+      apiKey: 'test-key',
+      fetch: fetchMock as typeof fetch,
+      maxRetries: 1,
+      retryBaseDelayMs: 0,
+      retryMaxDelayMs: 0,
+    });
+
+    await client.request('POST', '/api/v1/test', { body: { prompt: 'retry me' } });
+
+    const firstKey = fetchMock.mock.calls[0][1].headers['Idempotency-Key'];
+    const secondKey = fetchMock.mock.calls[1][1].headers['Idempotency-Key'];
+    expect(firstKey).toEqual(expect.any(String));
+    expect(secondKey).toBe(firstKey);
   });
 
   describe('fetchOptions', () => {

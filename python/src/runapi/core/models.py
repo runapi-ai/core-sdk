@@ -266,6 +266,23 @@ class TaskResponse(BaseModel):
     billing = optional(lambda: TaskBillingFacts)
 
 
+class TaskResultResponse(BaseModel):
+    """The persisted public response checkpoint for a terminal Task."""
+
+    status = required(int)
+    content_type = required(str)
+    headers = optional(dict)
+    body = optional()
+
+
+class TaskResult(TaskResponse):
+    """The account-scoped Task Result resource returned from an opaque Location."""
+
+    id = required(str)
+    status = required(str, enum=lambda: TaskResponse.Status.ALL)
+    response = optional(lambda: TaskResultResponse)
+
+
 class BillingReservation(BaseModel):
     amount_cents = required(int)
 

@@ -35,11 +35,18 @@ class ApiResponse(dict[str, Any]):
     that index the returned JSON body keep working.
     """
 
-    def __init__(self, body: Mapping[str, Any] | Sequence[Any], headers: Optional[Mapping[str, Any]] = None) -> None:
+    def __init__(
+        self,
+        body: Mapping[str, Any] | Sequence[Any],
+        headers: Optional[Mapping[str, Any]] = None,
+        *,
+        status_code: Optional[int] = None,
+    ) -> None:
         super().__init__(body if isinstance(body, Mapping) else {})
         self.body = self if isinstance(body, Mapping) else body
         self.response_headers = headers if isinstance(headers, ResponseHeaders) else ResponseHeaders(headers)
         self.headers = self.response_headers
+        self.status_code = status_code
 
     def __getitem__(self, key: Any) -> Any:
         if self.body is not self:
