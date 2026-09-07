@@ -242,8 +242,19 @@ CONTRACT = {
         }
     },
     "gemini-omni/text-to-video": {
-        "models": ["gemini-omni-flash-preview", "gemini-omni-text-to-video"],
+        "models": ["gemini-omni-flash-1-1", "gemini-omni-flash-preview", "gemini-omni-text-to-video"],
         "fields_by_model": {
+            "gemini-omni-flash-1-1": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16"]
+                },
+                "duration_seconds": {
+                    "enum": [4, 6, 8, 10]
+                },
+                "output_resolution": {
+                    "enum": ["360p", "720p", "1080p", "4k"]
+                }
+            },
             "gemini-omni-flash-preview": {
                 "aspect_ratio": {
                     "enum": ["16:9", "9:16"]

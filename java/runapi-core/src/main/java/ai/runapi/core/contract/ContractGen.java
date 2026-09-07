@@ -341,6 +341,7 @@ contract.put("gemini-omni/create-character", new ContractAction(
           fieldsByModel(new Object[][] {
             {"gemini-omni-character", fields(new Object[][] {
                     {"audio_ids", field()},
+                    {"body_reference_image_url", field()},
                     {"character_name", field(max(Double.valueOf(210.0)), length())},
                     {"descriptions", field(required(), max(Double.valueOf(20000.0)), length())},
                     {"reference_image_url", field(required())},
@@ -350,14 +351,31 @@ contract.put("gemini-omni/create-character", new ContractAction(
 
   private static void addActions2(Map<String, ContractAction> contract) {
 contract.put("gemini-omni/text-to-video", new ContractAction(
-    list("gemini-omni-flash-preview", "gemini-omni-text-to-video"),
+    list("gemini-omni-flash-1-1", "gemini-omni-flash-preview", "gemini-omni-text-to-video"),
           fieldsByModel(new Object[][] {
+            {"gemini-omni-flash-1-1", fields(new Object[][] {
+                    {"aspect_ratio", field(enumValues("16:9", "9:16"))},
+                    {"audio_ids", field(maxItems(3))},
+                    {"callback_url", field()},
+                    {"character_ids", field(maxItems(3))},
+                    {"duration_seconds", field(required(), enumValues(Integer.valueOf(4), Integer.valueOf(6), Integer.valueOf(8), Integer.valueOf(10)))},
+                    {"first_frame_image_url", field()},
+                    {"last_frame_image_url", field()},
+                    {"model", field()},
+                    {"output_resolution", field(enumValues("360p", "720p", "1080p", "4k"))},
+                    {"prompt", field(required(), max(Double.valueOf(20000.0)), length())},
+                    {"reference_image_urls", field(maxItems(7))},
+                    {"seed", field(min(Double.valueOf(0.0)), max(Double.valueOf(2147483647.0)))},
+                    {"video_list", field(maxItems(1))},
+            })},
             {"gemini-omni-flash-preview", fields(new Object[][] {
                     {"aspect_ratio", field(enumValues("16:9", "9:16"))},
                     {"audio_ids", field()},
                     {"callback_url", field()},
                     {"character_ids", field()},
                     {"duration_seconds", field()},
+                    {"first_frame_image_url", field()},
+                    {"last_frame_image_url", field()},
                     {"model", field()},
                     {"output_resolution", field(enumValues("720p"))},
                     {"prompt", field(required(), max(Double.valueOf(20000.0)), length())},
@@ -371,6 +389,8 @@ contract.put("gemini-omni/text-to-video", new ContractAction(
                     {"callback_url", field()},
                     {"character_ids", field(maxItems(3))},
                     {"duration_seconds", field(required(), enumValues(Integer.valueOf(4), Integer.valueOf(6), Integer.valueOf(8), Integer.valueOf(10)))},
+                    {"first_frame_image_url", field()},
+                    {"last_frame_image_url", field()},
                     {"model", field()},
                     {"output_resolution", field(enumValues("720p", "1080p", "4k"))},
                     {"prompt", field(required(), max(Double.valueOf(20000.0)), length())},
@@ -380,7 +400,9 @@ contract.put("gemini-omni/text-to-video", new ContractAction(
             })},
           }),
           rulesByModel(new Object[][] {
-{"gemini-omni-flash-preview", rules(rule(conditions(new Object[][] {{"model", "gemini-omni-flash-preview"}}), list(), list(), list("reference_image_urls", "audio_ids", "video_list", "character_ids", "duration_seconds", "seed"), narrowedEnums(new Object[][] {})))},
+{"gemini-omni-flash-1-1", rules(rule(conditions(new Object[][] {{"first_frame_image_url", presence(true)}, {"model", "gemini-omni-flash-1-1"}}), list(), list(), list("reference_image_urls", "audio_ids", "video_list", "character_ids"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"last_frame_image_url", presence(true)}, {"model", "gemini-omni-flash-1-1"}}), list("first_frame_image_url"), list(), list(), narrowedEnums(new Object[][] {})))},
+{"gemini-omni-flash-preview", rules(rule(conditions(new Object[][] {{"model", "gemini-omni-flash-preview"}}), list(), list(), list("reference_image_urls", "audio_ids", "video_list", "character_ids", "first_frame_image_url", "last_frame_image_url", "duration_seconds", "seed"), narrowedEnums(new Object[][] {})))},
+{"gemini-omni-text-to-video", rules(rule(conditions(new Object[][] {{"model", "gemini-omni-text-to-video"}}), list(), list(), list("first_frame_image_url", "last_frame_image_url"), narrowedEnums(new Object[][] {})))},
           })));
 contract.put("gemini-tts/text-to-speech", new ContractAction(
     list("gemini-2.5-pro-tts", "gemini-3.1-flash-tts"),
@@ -1026,8 +1048,8 @@ contract.put("kling/edit-video", new ContractAction(
             })},
           }),
           rulesByModel(new Object[][] {
-{"kling-v3-omni-edit", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})))},
-{"kling-v3-omni-reference", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})))},
+{"kling-v3-omni-edit", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})))},
+{"kling-v3-omni-reference", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})))},
           })));
 contract.put("kling/extend-video", new ContractAction(
     list("kling-v2.5-turbo-image-to-video-pro", "kling-v2.5-turbo-text-to-video-pro"),
@@ -2158,6 +2180,7 @@ contract.put("suno/add-samples", new ContractAction(
                     {"callback_url", field()},
                     {"end_seconds", field(required(), min(Double.valueOf(0.0)))},
                     {"model", field(required())},
+                    {"prompt", field()},
                     {"start_seconds", field(required(), min(Double.valueOf(0.0)))},
             })},
             {"suno-v4.5", fields(new Object[][] {
@@ -2165,6 +2188,7 @@ contract.put("suno/add-samples", new ContractAction(
                     {"callback_url", field()},
                     {"end_seconds", field(required(), min(Double.valueOf(0.0)))},
                     {"model", field(required())},
+                    {"prompt", field()},
                     {"start_seconds", field(required(), min(Double.valueOf(0.0)))},
             })},
             {"suno-v4.5-plus", fields(new Object[][] {
@@ -2172,6 +2196,7 @@ contract.put("suno/add-samples", new ContractAction(
                     {"callback_url", field()},
                     {"end_seconds", field(required(), min(Double.valueOf(0.0)))},
                     {"model", field(required())},
+                    {"prompt", field()},
                     {"start_seconds", field(required(), min(Double.valueOf(0.0)))},
             })},
             {"suno-v5", fields(new Object[][] {
@@ -2179,6 +2204,7 @@ contract.put("suno/add-samples", new ContractAction(
                     {"callback_url", field()},
                     {"end_seconds", field(required(), min(Double.valueOf(0.0)))},
                     {"model", field(required())},
+                    {"prompt", field()},
                     {"start_seconds", field(required(), min(Double.valueOf(0.0)))},
             })},
             {"suno-v5.5", fields(new Object[][] {
@@ -2186,6 +2212,7 @@ contract.put("suno/add-samples", new ContractAction(
                     {"callback_url", field()},
                     {"end_seconds", field(required(), min(Double.valueOf(0.0)))},
                     {"model", field(required())},
+                    {"prompt", field()},
                     {"start_seconds", field(required(), min(Double.valueOf(0.0)))},
             })},
           })));

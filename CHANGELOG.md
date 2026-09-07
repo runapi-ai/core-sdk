@@ -1,5 +1,20 @@
 # Changelog
 
+## [python/v0.8.1](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.8.1) - 2026-09-07
+
+### Added
+- Add generated validation metadata for Gemini Omni Flash 1.1 video requests and frame controls.
+
+## [java/v0.6.3](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.3) - 2026-09-07
+
+### Added
+- Add generated validation metadata for Gemini Omni Flash 1.1 video requests and frame controls.
+- Include the optional full-body character reference field in generated Java contract metadata.
+
+### Fixed
+- Add optional prompt validation for Suno add samples requests.
+
+
 ## [python/v0.8.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.8.0) - 2026-09-04
 
 ### Breaking
