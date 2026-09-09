@@ -112,7 +112,16 @@ func TestErrorFromResponseDoesNotUseLegacyErrorsArrayAsMessage(t *testing.T) {
 	}
 }
 
-func TestErrorFromResponseKeepsResourceValidationDetails(t *testing.T) {
+func TestErrorFromResponseReadsRunAPIErrorString(t *testing.T) {
+	response := &http.Response{StatusCode: http.StatusBadRequest, Header: make(http.Header)}
+	apiErr := ErrorFromResponse(response, []byte(`{"error":"Bad input"}`)).(*Error)
+
+	if apiErr.Message != "Bad input" {
+		t.Fatalf("unexpected message: %q", apiErr.Message)
+	}
+}
+
+func TestErrorFromResponseReadsValidationSummaryAndKeepsFieldErrors(t *testing.T) {
 	response := &http.Response{StatusCode: http.StatusUnprocessableEntity, Header: make(http.Header)}
 	apiErr := ErrorFromResponse(response, []byte(`{"error":"Validation failed","errors":{"prompt":["is required"]}}`)).(*Error)
 

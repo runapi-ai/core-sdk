@@ -28,10 +28,21 @@ function buildError(
 }
 
 describe('errorFromResponse message priority', () => {
-  it('prefers error string', () => {
-    const body = { error: 'Bad input', errors: { prompt: ['is required'] } };
+  it('reads the RunAPI error string envelope', () => {
+    const body = { error: 'Bad input' };
     const error = buildError(400, body);
     expect(error.message).toBe('Bad input');
+    expect(error.details).toEqual(body);
+  });
+
+  it('reads the validation summary and preserves field errors', () => {
+    const body = {
+      error: 'Validation failed',
+      errors: { prompt: ['is required'] },
+    };
+    const error = buildError(422, body);
+
+    expect(error.message).toBe('Validation failed');
     expect(error.details).toEqual(body);
   });
 

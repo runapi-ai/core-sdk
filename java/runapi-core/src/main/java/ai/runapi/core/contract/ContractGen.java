@@ -1471,7 +1471,7 @@ contract.put("nano-banana/text-to-image", new ContractAction(
                     {"output_format", field(enumValues("png", "jpeg", "jpg"))},
                     {"output_resolution", field(enumValues("1k", "2k", "4k"))},
                     {"prompt", field()},
-                    {"reference_image_urls", field()},
+                    {"reference_image_urls", field(maxItems(8))},
             })},
           }),
           rulesByModel(new Object[][] {
@@ -2001,7 +2001,7 @@ contract.put("seedance/text-to-video", new ContractAction(
 {"seedance-2-mini", rules(rule(conditions(new Object[][] {{"model", "seedance-2-mini"}}), list(), list(), list("source_image_urls", "lock_camera", "seed", "enable_safety_checker", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
 {"seedance-2.0", rules(rule(conditions(new Object[][] {{"model", "seedance-2.0"}}), list(), list(), list("source_image_urls", "lock_camera", "seed", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
 {"seedance-2.0-fast", rules(rule(conditions(new Object[][] {{"model", "seedance-2.0-fast"}}), list(), list(), list("source_image_urls", "lock_camera", "seed", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
-{"seedance-2.5", rules(rule(conditions(new Object[][] {{"first_frame_image_url", presence(true)}, {"model", "seedance-2.5"}}), list(), list(), list("reference_image_urls", "reference_video_urls", "reference_audio_urls"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"last_frame_image_url", presence(true)}, {"model", "seedance-2.5"}}), list("first_frame_image_url"), list(), list("reference_image_urls", "reference_video_urls", "reference_audio_urls"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "seedance-2.5"}}), list(), list(), list("source_image_urls", "lock_camera", "seed"), narrowedEnums(new Object[][] {})))},
+{"seedance-2.5", rules(rule(conditions(new Object[][] {{"first_frame_image_url", presence(true)}, {"model", "seedance-2.5"}}), list(), list(), list("reference_image_urls", "reference_video_urls", "reference_audio_urls"), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}})), rule(conditions(new Object[][] {{"last_frame_image_url", presence(true)}, {"model", "seedance-2.5"}}), list("first_frame_image_url"), list(), list("reference_image_urls", "reference_video_urls", "reference_audio_urls"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "seedance-2.5"}}), list(), list(), list("source_image_urls", "lock_camera", "seed"), narrowedEnums(new Object[][] {})))},
 {"seedance-v1-pro", rules(rule(conditions(new Object[][] {{"model", "seedance-v1-pro"}}), list(), list(), list("source_image_urls", "last_frame_image_url", "reference_image_urls", "reference_video_urls", "reference_audio_urls", "web_search", "generate_audio", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
 {"seedance-v1-pro-fast", rules(rule(conditions(new Object[][] {{"model", "seedance-v1-pro-fast"}}), list(), list(), list("aspect_ratio", "source_image_urls", "lock_camera", "last_frame_image_url", "reference_image_urls", "reference_video_urls", "reference_audio_urls", "web_search", "generate_audio", "return_last_frame", "output_format"), narrowedEnums(new Object[][] {})))},
           })));

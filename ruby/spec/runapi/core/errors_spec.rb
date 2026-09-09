@@ -103,12 +103,21 @@ RSpec.describe RunApi::Core::Error do
     end
 
     it "extracts message from JSON body with error string" do
-      payload = {"error" => "Custom error message", "errors" => {"prompt" => ["is required"]}}
+      payload = {"error" => "Custom error message"}
       body = payload.to_json
       response, = mock_response(code: 400)
       error = described_class.from_response(response, body)
 
       expect(error.message).to eq("Custom error message")
+      expect(error.details).to eq(payload)
+    end
+
+    it "extracts the validation summary and preserves field errors" do
+      payload = {"error" => "Validation failed", "errors" => {"prompt" => ["is required"]}}
+      response, = mock_response(code: 422)
+      error = described_class.from_response(response, payload.to_json)
+
+      expect(error.message).to eq("Validation failed")
       expect(error.details).to eq(payload)
     end
 

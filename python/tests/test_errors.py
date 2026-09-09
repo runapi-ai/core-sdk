@@ -144,9 +144,12 @@ def test_service_unavailable_defaults_to_503():
     assert errors.ServiceUnavailableError().status == 503
 
 
-def test_resource_validation_uses_summary_and_preserves_field_errors():
+def test_resource_validation_reads_summary_and_preserves_field_errors():
     error = errors.error_from_response(
-        response(422, body='{"error":"Validation failed","errors":{"prompt":["too long"]}}')
+        response(
+            422,
+            body='{"error":"Validation failed","errors":{"prompt":["too long"]}}',
+        )
     )
     assert error.message == "Validation failed"
     assert error.details["errors"] == {"prompt": ["too long"]}
