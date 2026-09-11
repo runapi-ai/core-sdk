@@ -296,6 +296,48 @@ CONTRACT = {
             }
         }
     },
+    "gpt-image-2.5/edit-image": {
+        "models": ["gpt-image-2.5-flare", "gpt-image-2.5-sunburst"],
+        "fields_by_model": {
+            "gpt-image-2.5-flare": {
+                "aspect_ratio": {
+                    "enum": ["auto", "1:1", "3:2", "2:3", "4:3", "3:4", "5:4", "4:5", "16:9", "9:16", "2:1", "1:2", "3:1", "1:3", "21:9", "9:21"]
+                },
+                "output_resolution": {
+                    "enum": ["1k", "2k", "4k"]
+                }
+            },
+            "gpt-image-2.5-sunburst": {
+                "aspect_ratio": {
+                    "enum": ["auto", "1:1", "3:2", "2:3", "4:3", "3:4", "5:4", "4:5", "16:9", "9:16", "2:1", "1:2", "3:1", "1:3", "21:9", "9:21"]
+                },
+                "output_resolution": {
+                    "enum": ["1k", "2k", "4k"]
+                }
+            }
+        }
+    },
+    "gpt-image-2.5/text-to-image": {
+        "models": ["gpt-image-2.5-flare", "gpt-image-2.5-sunburst"],
+        "fields_by_model": {
+            "gpt-image-2.5-flare": {
+                "aspect_ratio": {
+                    "enum": ["auto", "1:1", "3:2", "2:3", "4:3", "3:4", "5:4", "4:5", "16:9", "9:16", "2:1", "1:2", "3:1", "1:3", "21:9", "9:21"]
+                },
+                "output_resolution": {
+                    "enum": ["1k", "2k", "4k"]
+                }
+            },
+            "gpt-image-2.5-sunburst": {
+                "aspect_ratio": {
+                    "enum": ["auto", "1:1", "3:2", "2:3", "4:3", "3:4", "5:4", "4:5", "16:9", "9:16", "2:1", "1:2", "3:1", "1:3", "21:9", "9:21"]
+                },
+                "output_resolution": {
+                    "enum": ["1k", "2k", "4k"]
+                }
+            }
+        }
+    },
     "gpt-image-2/edit-image": {
         "models": ["gpt-image-2"],
         "fields_by_model": {

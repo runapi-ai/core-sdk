@@ -440,6 +440,52 @@ contract.put("gpt-4o-image/text-to-image", new ContractAction(
                     {"source_image_urls", field(maxItems(5))},
             })},
           })));
+contract.put("gpt-image-2.5/edit-image", new ContractAction(
+    list("gpt-image-2.5-flare", "gpt-image-2.5-sunburst"),
+          fieldsByModel(new Object[][] {
+            {"gpt-image-2.5-flare", fields(new Object[][] {
+                    {"aspect_ratio", field(enumValues("auto", "1:1", "3:2", "2:3", "4:3", "3:4", "5:4", "4:5", "16:9", "9:16", "2:1", "1:2", "3:1", "1:3", "21:9", "9:21"))},
+                    {"callback_url", field()},
+                    {"model", field()},
+                    {"output_resolution", field(enumValues("1k", "2k", "4k"))},
+                    {"prompt", field(required())},
+                    {"source_image_urls", field(required(), maxItems(16))},
+            })},
+            {"gpt-image-2.5-sunburst", fields(new Object[][] {
+                    {"aspect_ratio", field(enumValues("auto", "1:1", "3:2", "2:3", "4:3", "3:4", "5:4", "4:5", "16:9", "9:16", "2:1", "1:2", "3:1", "1:3", "21:9", "9:21"))},
+                    {"callback_url", field()},
+                    {"model", field()},
+                    {"output_resolution", field(enumValues("1k", "2k", "4k"))},
+                    {"prompt", field(required())},
+                    {"source_image_urls", field(required(), maxItems(16))},
+            })},
+          }),
+          rulesByModel(new Object[][] {
+{"gpt-image-2.5-flare", rules(rule(conditions(new Object[][] {{"aspect_ratio", "1:1"}, {"output_resolution", "4k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", "auto"}, {"output_resolution", "4k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", presence(false)}, {"output_resolution", "4k"}}), list(), list(), list("output_resolution"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", "auto"}, {"output_resolution", "2k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", presence(false)}, {"output_resolution", "2k"}}), list(), list(), list("output_resolution"), narrowedEnums(new Object[][] {})))},
+{"gpt-image-2.5-sunburst", rules(rule(conditions(new Object[][] {{"aspect_ratio", "1:1"}, {"output_resolution", "4k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", "auto"}, {"output_resolution", "4k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", presence(false)}, {"output_resolution", "4k"}}), list(), list(), list("output_resolution"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", "auto"}, {"output_resolution", "2k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", presence(false)}, {"output_resolution", "2k"}}), list(), list(), list("output_resolution"), narrowedEnums(new Object[][] {})))},
+          })));
+contract.put("gpt-image-2.5/text-to-image", new ContractAction(
+    list("gpt-image-2.5-flare", "gpt-image-2.5-sunburst"),
+          fieldsByModel(new Object[][] {
+            {"gpt-image-2.5-flare", fields(new Object[][] {
+                    {"aspect_ratio", field(enumValues("auto", "1:1", "3:2", "2:3", "4:3", "3:4", "5:4", "4:5", "16:9", "9:16", "2:1", "1:2", "3:1", "1:3", "21:9", "9:21"))},
+                    {"callback_url", field()},
+                    {"model", field()},
+                    {"output_resolution", field(enumValues("1k", "2k", "4k"))},
+                    {"prompt", field(required())},
+            })},
+            {"gpt-image-2.5-sunburst", fields(new Object[][] {
+                    {"aspect_ratio", field(enumValues("auto", "1:1", "3:2", "2:3", "4:3", "3:4", "5:4", "4:5", "16:9", "9:16", "2:1", "1:2", "3:1", "1:3", "21:9", "9:21"))},
+                    {"callback_url", field()},
+                    {"model", field()},
+                    {"output_resolution", field(enumValues("1k", "2k", "4k"))},
+                    {"prompt", field(required())},
+            })},
+          }),
+          rulesByModel(new Object[][] {
+{"gpt-image-2.5-flare", rules(rule(conditions(new Object[][] {{"aspect_ratio", "1:1"}, {"output_resolution", "4k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", "auto"}, {"output_resolution", "4k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", presence(false)}, {"output_resolution", "4k"}}), list(), list(), list("output_resolution"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", "auto"}, {"output_resolution", "2k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", presence(false)}, {"output_resolution", "2k"}}), list(), list(), list("output_resolution"), narrowedEnums(new Object[][] {})))},
+{"gpt-image-2.5-sunburst", rules(rule(conditions(new Object[][] {{"aspect_ratio", "1:1"}, {"output_resolution", "4k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", "auto"}, {"output_resolution", "4k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", presence(false)}, {"output_resolution", "4k"}}), list(), list(), list("output_resolution"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", "auto"}, {"output_resolution", "2k"}}), list(), list(), list("aspect_ratio"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"aspect_ratio", presence(false)}, {"output_resolution", "2k"}}), list(), list(), list("output_resolution"), narrowedEnums(new Object[][] {})))},
+          })));
 contract.put("gpt-image-2/edit-image", new ContractAction(
     list("gpt-image-2"),
           fieldsByModel(new Object[][] {
@@ -475,6 +521,9 @@ contract.put("gpt-image/edit-image", new ContractAction(
                     {"source_image_urls", field(required())},
             })},
           })));
+  }
+
+  private static void addActions3(Map<String, ContractAction> contract) {
 contract.put("gpt-image/text-to-image", new ContractAction(
     list("gpt-image-1.5"),
           fieldsByModel(new Object[][] {
@@ -516,9 +565,6 @@ contract.put("grok-imagine/edit-image", new ContractAction(
 {"grok-imagine-edit-image", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-edit-image"}}), list(), list(), list("source_task_id", "mask_indices", "source_image_urls", "aspect_ratio"), narrowedEnums(new Object[][] {})))},
 {"grok-imagine-image-2-0", rules(rule(conditions(new Object[][] {{"model", "grok-imagine-image-2-0"}}), list(), list(), list("source_image_url", "source_task_id", "mask_indices", "enable_safety_checker"), narrowedEnums(new Object[][] {})))},
           })));
-  }
-
-  private static void addActions3(Map<String, ContractAction> contract) {
 contract.put("grok-imagine/extend", new ContractAction(
     list(),
           fieldsByModel(new Object[][] {
@@ -667,6 +713,9 @@ contract.put("grok-imagine/upscale-image", new ContractAction(
                     {"source_task_id", field(required())},
             })},
           })));
+  }
+
+  private static void addActions4(Map<String, ContractAction> contract) {
 contract.put("hailuo/image-to-video", new ContractAction(
     list("hailuo-02-image-to-video-pro", "hailuo-02-image-to-video-standard", "hailuo-2.3-image-to-video-pro", "hailuo-2.3-image-to-video-standard"),
           fieldsByModel(new Object[][] {
@@ -735,9 +784,6 @@ contract.put("hailuo/text-to-video", new ContractAction(
                     {"prompt_optimizer", field()},
             })},
           })));
-  }
-
-  private static void addActions4(Map<String, ContractAction> contract) {
 contract.put("happyhorse/edit-video", new ContractAction(
     list("happyhorse-edit-video"),
           fieldsByModel(new Object[][] {
@@ -900,6 +946,9 @@ contract.put("ideogram-v3/remix-image", new ContractAction(
                     {"style_reference_image_urls", field()},
             })},
           })));
+  }
+
+  private static void addActions5(Map<String, ContractAction> contract) {
 contract.put("ideogram-v3/text-to-image", new ContractAction(
     list("ideogram-v3-character", "ideogram-v3-text-to-image"),
           fieldsByModel(new Object[][] {
@@ -943,9 +992,6 @@ contract.put("imagen-4/remix-image", new ContractAction(
                     {"source_image_urls", field(required(), minItems(1), maxItems(8))},
             })},
           })));
-  }
-
-  private static void addActions5(Map<String, ContractAction> contract) {
 contract.put("imagen-4/text-to-image", new ContractAction(
     list("imagen-4", "imagen-4-fast", "imagen-4-ultra"),
           fieldsByModel(new Object[][] {
@@ -1048,8 +1094,8 @@ contract.put("kling/edit-video", new ContractAction(
             })},
           }),
           rulesByModel(new Object[][] {
-{"kling-v3-omni-edit", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})))},
-{"kling-v3-omni-reference", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})))},
+{"kling-v3-omni-edit", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})))},
+{"kling-v3-omni-reference", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})))},
           })));
 contract.put("kling/extend-video", new ContractAction(
     list("kling-v2.5-turbo-image-to-video-pro", "kling-v2.5-turbo-text-to-video-pro"),
