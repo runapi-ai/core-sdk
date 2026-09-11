@@ -1,5 +1,11 @@
 # Changelog
 
+## [python/v0.8.2](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.8.2), [java/v0.6.5](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.5) - 2026-09-11
+
+### Added
+- Add GPT Image 2.5 Flare and Sunburst request contracts to shared SDK metadata.
+
+
 ## [java/v0.6.4](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.4) - 2026-09-09
 
 ### Changed

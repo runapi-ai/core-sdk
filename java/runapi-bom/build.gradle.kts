@@ -11,13 +11,14 @@ javaPlatform {
 
 dependencies {
   constraints {
-    api("ai.runapi:runapi-core:0.6.4")
+    api("ai.runapi:runapi-core:0.6.5")
     api("ai.runapi:runapi-elevenlabs:0.1.1")
     api("ai.runapi:runapi-flux-kontext:0.1.1")
     api("ai.runapi:runapi-flux-2:0.2.0")
     api("ai.runapi:runapi-flux:0.1.0")
     api("ai.runapi:runapi-gpt-image:0.1.1")
     api("ai.runapi:runapi-gpt-image-2:0.1.1")
+    api("ai.runapi:runapi-gpt-image-2.5:0.1.1")
     api("ai.runapi:runapi-gpt-4o-image:0.1.1")
     api("ai.runapi:runapi-grok-imagine:0.1.8")
     api("ai.runapi:runapi-hailuo:0.1.1")
