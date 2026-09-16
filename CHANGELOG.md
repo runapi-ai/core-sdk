@@ -1,5 +1,21 @@
 # Changelog
 
+## [java/v0.6.6](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.6) - 2026-09-16
+
+### Added
+- Add Suno V6 model variants to generated core SDK contract metadata.
+- Add the validation contracts for the Suno persona, voice, style-expansion, timestamped-lyrics, audio-export, music-visualization, and music-from-sample capabilities.
+
+### Changed
+- Refresh generated shared contract metadata used by model SDK validation.
+
+## [python/v0.8.3](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.8.3) - 2026-09-16
+
+### Added
+- Add Suno V6 model variants to generated core SDK contract metadata.
+- Add the validation contracts for the Suno persona, voice, style-expansion, timestamped-lyrics, audio-export, music-visualization, and music-from-sample capabilities.
+
+
 ## [python/v0.8.2](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.8.2), [java/v0.6.5](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.5) - 2026-09-11
 
 ### Added

@@ -1686,6 +1686,12 @@ CONTRACT = {
             }
         }
     },
+    "suno/audio-exports": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
     "suno/blend-lyrics": {
         "models": [],
         "fields_by_model": {
@@ -1711,7 +1717,7 @@ CONTRACT = {
         }
     },
     "suno/cover-audio": {
-        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5"],
+        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5", "suno-v6", "suno-v6-mini", "suno-v6-wild"],
         "fields_by_model": {
             "suno-v4": {
                 "persona_type": {
@@ -1769,6 +1775,39 @@ CONTRACT = {
                 }
             },
             "suno-v5.5": {
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                },
+                "vocal_mode": {
+                    "enum": ["auto_lyrics", "exact_lyrics", "instrumental"]
+                }
+            },
+            "suno-v6": {
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                },
+                "vocal_mode": {
+                    "enum": ["auto_lyrics", "exact_lyrics", "instrumental"]
+                }
+            },
+            "suno-v6-mini": {
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                },
+                "vocal_mode": {
+                    "enum": ["auto_lyrics", "exact_lyrics", "instrumental"]
+                }
+            },
+            "suno-v6-wild": {
                 "persona_type": {
                     "enum": ["style", "voice"]
                 },
@@ -1782,7 +1821,7 @@ CONTRACT = {
         }
     },
     "suno/create-mashup": {
-        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5"],
+        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5", "suno-v6", "suno-v6-mini", "suno-v6-wild"],
         "fields_by_model": {
             "suno-v4": {
                 "persona_type": {
@@ -1840,6 +1879,39 @@ CONTRACT = {
                 }
             },
             "suno-v5.5": {
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                },
+                "vocal_mode": {
+                    "enum": ["auto_lyrics", "exact_lyrics", "instrumental"]
+                }
+            },
+            "suno-v6": {
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                },
+                "vocal_mode": {
+                    "enum": ["auto_lyrics", "exact_lyrics", "instrumental"]
+                }
+            },
+            "suno-v6-mini": {
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                },
+                "vocal_mode": {
+                    "enum": ["auto_lyrics", "exact_lyrics", "instrumental"]
+                }
+            },
+            "suno-v6-wild": {
                 "persona_type": {
                     "enum": ["style", "voice"]
                 },
@@ -1853,7 +1925,7 @@ CONTRACT = {
         }
     },
     "suno/extend-music": {
-        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5"],
+        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5", "suno-v6", "suno-v6-mini", "suno-v6-wild"],
         "fields_by_model": {
             "suno-v4": {
                 "parameter_mode": {
@@ -1911,6 +1983,39 @@ CONTRACT = {
                 }
             },
             "suno-v5.5": {
+                "parameter_mode": {
+                    "enum": ["source", "custom"]
+                },
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                }
+            },
+            "suno-v6": {
+                "parameter_mode": {
+                    "enum": ["source", "custom"]
+                },
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                }
+            },
+            "suno-v6-mini": {
+                "parameter_mode": {
+                    "enum": ["source", "custom"]
+                },
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                }
+            },
+            "suno-v6-wild": {
                 "parameter_mode": {
                     "enum": ["source", "custom"]
                 },
@@ -1973,6 +2078,28 @@ CONTRACT = {
             "suno-v5.5": {}
         }
     },
+    "suno/music-from-sample": {
+        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-plus", "suno-v5", "suno-v5.5"],
+        "fields_by_model": {
+            "suno-v4": {},
+            "suno-v4.5": {},
+            "suno-v4.5-plus": {},
+            "suno-v5": {},
+            "suno-v5.5": {}
+        }
+    },
+    "suno/music-visualizations": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
+    "suno/personas": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
     "suno/regenerate-validation-phrase": {
         "models": [],
         "fields_by_model": {
@@ -1994,7 +2121,7 @@ CONTRACT = {
         "fields_by_model": {
             "_": {
                 "model": {
-                    "enum": ["suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5"]
+                    "enum": ["suno-v6", "suno-v6-wild", "suno-v6-mini", "suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5"]
                 }
             }
         }
@@ -2022,8 +2149,14 @@ CONTRACT = {
             "suno-v5.5": {}
         }
     },
+    "suno/style-expansions": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
     "suno/text-to-music": {
-        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5"],
+        "models": ["suno-v4", "suno-v4.5", "suno-v4.5-all", "suno-v4.5-plus", "suno-v5", "suno-v5.5", "suno-v6", "suno-v6-mini", "suno-v6-wild"],
         "fields_by_model": {
             "suno-v4": {
                 "persona_type": {
@@ -2090,6 +2223,39 @@ CONTRACT = {
                 "vocal_mode": {
                     "enum": ["auto_lyrics", "exact_lyrics", "instrumental"]
                 }
+            },
+            "suno-v6": {
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                },
+                "vocal_mode": {
+                    "enum": ["auto_lyrics", "exact_lyrics", "instrumental"]
+                }
+            },
+            "suno-v6-mini": {
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                },
+                "vocal_mode": {
+                    "enum": ["auto_lyrics", "exact_lyrics", "instrumental"]
+                }
+            },
+            "suno-v6-wild": {
+                "persona_type": {
+                    "enum": ["style", "voice"]
+                },
+                "vocal_gender": {
+                    "enum": ["male", "female"]
+                },
+                "vocal_mode": {
+                    "enum": ["auto_lyrics", "exact_lyrics", "instrumental"]
+                }
             }
         }
     },
@@ -2108,6 +2274,12 @@ CONTRACT = {
             }
         }
     },
+    "suno/timestamped-lyrics": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
+        }
+    },
     "suno/visualize-music": {
         "models": [],
         "fields_by_model": {
@@ -2122,6 +2294,12 @@ CONTRACT = {
                     "enum": ["en", "zh", "es", "fr", "pt", "de", "ja", "ko", "hi", "ru"]
                 }
             }
+        }
+    },
+    "suno/voices": {
+        "models": [],
+        "fields_by_model": {
+            "_": {}
         }
     },
     "topaz/upscale-image": {
