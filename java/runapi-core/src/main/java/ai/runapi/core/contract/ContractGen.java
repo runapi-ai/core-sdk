@@ -1097,8 +1097,8 @@ contract.put("kling/edit-video", new ContractAction(
             })},
           }),
           rulesByModel(new Object[][] {
-{"kling-v3-omni-edit", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})))},
-{"kling-v3-omni-reference", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})))},
+{"kling-v3-omni-edit", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-edit"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})))},
+{"kling-v3-omni-reference", rules(rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(false)}, {"source_video_url", presence(false)}}), list(), list("source_video_url", "source_task_id"), list(), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_video_url", presence(true)}}), list(), list(), list("source_task_id"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"source_task_id", presence(true)}}), list(), list(), list("source_video_url"), narrowedEnums(new Object[][] {})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(false)}, {"source_task_id", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("auto")}, {"duration_seconds", values(Integer.valueOf(5))}, {"enable_sound", values(false)}})), rule(conditions(new Object[][] {{"model", "kling-v3-omni-reference"}, {"reference_image_urls", presence(true)}, {"source_video_url", presence(true)}}), list("aspect_ratio"), list(), list(), narrowedEnums(new Object[][] {{"aspect_ratio", values("16:9", "9:16", "1:1")}, {"enable_sound", values(false)}})))},
           })));
 contract.put("kling/extend-video", new ContractAction(
     list("kling-v2.5-turbo-image-to-video-pro", "kling-v2.5-turbo-text-to-video-pro"),
@@ -3045,30 +3045,35 @@ contract.put("suno/remaster-audio", new ContractAction(
                     {"callback_url", field()},
                     {"model", field(required())},
                     {"source_task_id", field(required())},
+                    {"variation_category", field(enumValues("subtle", "normal", "high"))},
             })},
             {"suno-v4.5", fields(new Object[][] {
                     {"audio_id", field(required())},
                     {"callback_url", field()},
                     {"model", field(required())},
                     {"source_task_id", field(required())},
+                    {"variation_category", field(enumValues("subtle", "normal", "high"))},
             })},
             {"suno-v4.5-plus", fields(new Object[][] {
                     {"audio_id", field(required())},
                     {"callback_url", field()},
                     {"model", field(required())},
                     {"source_task_id", field(required())},
+                    {"variation_category", field(enumValues("subtle", "normal", "high"))},
             })},
             {"suno-v5", fields(new Object[][] {
                     {"audio_id", field(required())},
                     {"callback_url", field()},
                     {"model", field(required())},
                     {"source_task_id", field(required())},
+                    {"variation_category", field(enumValues("subtle", "normal", "high"))},
             })},
             {"suno-v5.5", fields(new Object[][] {
                     {"audio_id", field(required())},
                     {"callback_url", field()},
                     {"model", field(required())},
                     {"source_task_id", field(required())},
+                    {"variation_category", field(enumValues("subtle", "normal", "high"))},
             })},
           })));
 contract.put("suno/replace-section", new ContractAction(
@@ -3419,6 +3424,18 @@ contract.put("topaz/upscale-video", new ContractAction(
                     {"upscale_factor", field(enumValues(Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(4)))},
             })},
           })));
+contract.put("typesafe/system-one", new ContractAction(
+    list("jev-latest"),
+          fieldsByModel(new Object[][] {
+            {"jev-latest", fields(new Object[][] {
+                    {"model", field(required(), enumValues("jev-latest"))},
+                    {"questions", field(required())},
+                    {"state", field(required())},
+            })},
+          })));
+  }
+
+  private static void addActions21(Map<String, ContractAction> contract) {
 contract.put("veo-3-1/extend-video", new ContractAction(
     list(),
           fieldsByModel(new Object[][] {
@@ -3430,9 +3447,6 @@ contract.put("veo-3-1/extend-video", new ContractAction(
                     {"watermark", field()},
             })},
           })));
-  }
-
-  private static void addActions21(Map<String, ContractAction> contract) {
 contract.put("veo-3-1/text-to-video", new ContractAction(
     list("veo-3.1", "veo-3.1-fast", "veo-3.1-lite"),
           fieldsByModel(new Object[][] {

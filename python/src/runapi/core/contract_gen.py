@@ -2109,11 +2109,31 @@ CONTRACT = {
     "suno/remaster-audio": {
         "models": ["suno-v4", "suno-v4.5", "suno-v4.5-plus", "suno-v5", "suno-v5.5"],
         "fields_by_model": {
-            "suno-v4": {},
-            "suno-v4.5": {},
-            "suno-v4.5-plus": {},
-            "suno-v5": {},
-            "suno-v5.5": {}
+            "suno-v4": {
+                "variation_category": {
+                    "enum": ["subtle", "normal", "high"]
+                }
+            },
+            "suno-v4.5": {
+                "variation_category": {
+                    "enum": ["subtle", "normal", "high"]
+                }
+            },
+            "suno-v4.5-plus": {
+                "variation_category": {
+                    "enum": ["subtle", "normal", "high"]
+                }
+            },
+            "suno-v5": {
+                "variation_category": {
+                    "enum": ["subtle", "normal", "high"]
+                }
+            },
+            "suno-v5.5": {
+                "variation_category": {
+                    "enum": ["subtle", "normal", "high"]
+                }
+            }
         }
     },
     "suno/replace-section": {
@@ -2318,6 +2338,16 @@ CONTRACT = {
             "topaz-upscale-video": {
                 "upscale_factor": {
                     "enum": [1, 2, 4]
+                }
+            }
+        }
+    },
+    "typesafe/system-one": {
+        "models": ["jev-latest"],
+        "fields_by_model": {
+            "jev-latest": {
+                "model": {
+                    "enum": ["jev-latest"]
                 }
             }
         }

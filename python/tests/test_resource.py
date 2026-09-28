@@ -91,10 +91,8 @@ INT_SCHEMA = {
     "fields_by_model": {
         "m": {
             "duration_int": {"type": "integer", "min": 4, "max": 12},
-            "tolerance": {"type": "integer"},
-        }
-    },
-}
+            "tolerance": {"type": "integer"}}
+    }}
 
 
 def _run_validate(params):
@@ -130,10 +128,8 @@ def test_validate_functional_action_uses_underscore_fields():
         "fields_by_model": {
             "_": {
                 "prompt": {"required": True},
-                "mode": {"enum": ["fast", "quality"]},
-            }
-        },
-    }
+                "mode": {"enum": ["fast", "quality"]}}
+        }}
     resource._validate_contract(schema, {"prompt": "hello", "mode": "fast"})
     with pytest.raises(ValidationError, match="prompt is required"):
         resource._validate_contract(schema, {"mode": "fast"})
@@ -164,10 +160,8 @@ def test_validate_array_item_count_constraints():
         "models": ["m"],
         "fields_by_model": {
             "m": {
-                "reference_image_urls": {"min_items": 1, "max_items": 3},
-            }
-        },
-    }
+                "reference_image_urls": {"min_items": 1, "max_items": 3}}
+        }}
     resource = SampleResource(FakeHttp())
 
     with pytest.raises(ValidationError, match="^reference_image_urls must be an array$"):
@@ -187,8 +181,7 @@ def test_validate_contract_runs_rules_before_field_requirements():
     schema = {
         "models": ["m"],
         "rules": [{"when": {"model": "m"}, "forbidden": ["source_task_id"]}],
-        "fields_by_model": {"m": {"source_image_urls": {"required": True}}},
-    }
+        "fields_by_model": {"m": {"source_image_urls": {"required": True}}}}
     resource = SampleResource(FakeHttp())
     with pytest.raises(ValidationError, match="source_task_id is not allowed when model is m"):
         resource._validate_contract(schema, {"model": "m", "source_task_id": "src_1"})
@@ -196,7 +189,7 @@ def test_validate_contract_runs_rules_before_field_requirements():
 
 def test_poll_recoerces_to_completed_class():
     resource = SampleResource(FakeHttp())
-    response = TaskResponse({"id": "1", "status": "completed", "images": [{"url": "u"}]})
+    response = TaskResponse({"id": "1", "status": "completed", "usage": {"cost": 0.05}, "images": [{"url": "u"}]})
     result = resource._poll_until_complete(lambda: response, PollingOptions(poll_interval=0, max_wait=1))
     assert isinstance(result, CompletedResponse)
     assert result.images[0].url == "u"
@@ -215,14 +208,12 @@ def test_run_hybrid_uses_opaque_location_and_decodes_completed_json(monkeypatch)
         ApiResponse(
             {
                 "id": "task_1",
-                "status": "completed",
+                "status": "completed", "usage": {"cost": 0.05},
                 "response": {
                     "status": 200,
                     "content_type": "application/json",
                     "headers": {"Location": "https://runapi.ai/result"},
-                    "body": {"id": "task_1", "status": "completed", "prompts": ["short prompt"]},
-                },
-            }
+                    "body": {"id": "task_1", "status": "completed", "usage": {"cost": 0.05}, "prompts": ["short prompt"]}}}
         ),
     )
 
@@ -234,8 +225,7 @@ def test_run_hybrid_uses_opaque_location_and_decodes_completed_json(monkeypatch)
     assert [call[:2] for call in http.calls] == [
         ("post", "/shorten"),
         ("get", "https://runapi.ai/api/v1/tasks/task_1"),
-        ("get", "https://runapi.ai/api/v1/tasks/task_1"),
-    ]
+        ("get", "https://runapi.ai/api/v1/tasks/task_1")]
     assert slept == [3.0, 2.0]
 
 
@@ -248,7 +238,7 @@ def test_run_hybrid_honors_http_date_retry_after(monkeypatch):
     http = FakeHttp(
         ApiResponse({"id": "task_1", "status": "processing"}, {"Location": "/api/v1/tasks/task_1", "Retry-After": initial_retry_after}, status_code=202),
         ApiResponse({"id": "task_1", "status": "processing"}, {"Retry-After": polling_retry_after}),
-        ApiResponse({"id": "task_1", "status": "completed", "response": {"status": 200, "content_type": "application/json", "headers": {}, "body": {"id": "task_1", "status": "completed", "prompts": ["short prompt"]}}}),
+        ApiResponse({"id": "task_1", "status": "completed", "usage": {"cost": 0.05}, "response": {"status": 200, "content_type": "application/json", "headers": {}, "body": {"id": "task_1", "status": "completed", "usage": {"cost": 0.05}, "prompts": ["short prompt"]}}}),
     )
 
     HybridResource(http)._run_hybrid("post", "/shorten", {"prompt": "long"})
@@ -273,14 +263,12 @@ def test_run_hybrid_follows_a_real_http_stub_and_reuses_generated_key(monkeypatc
             200,
             json={
                 "id": "task_1",
-                "status": "completed",
+                "status": "completed", "usage": {"cost": 0.05},
                 "response": {
                     "status": 200,
                     "content_type": "application/json",
                     "headers": {},
-                    "body": {"id": "task_1", "status": "completed", "prompts": ["short prompt"]},
-                },
-            },
+                    "body": {"id": "task_1", "status": "completed", "usage": {"cost": 0.05}, "prompts": ["short prompt"]}}},
         )
 
     http = HttpClient(
@@ -383,14 +371,12 @@ def test_subscribe_returns_text_srt_and_vtt_without_coercing_to_bytes(monkeypatc
         ApiResponse(
             {
                 "id": "task_text",
-                "status": "completed",
+                "status": "completed", "usage": {"cost": 0.05},
                 "response": {
                     "status": 200,
                     "content_type": "text/vtt; charset=utf-8",
                     "headers": {},
-                    "body": "WEBVTT\n\n00:00.000 --> 00:01.000\nHello",
-                },
-            }
+                    "body": "WEBVTT\n\n00:00.000 --> 00:01.000\nHello"}}
         )
     )
 
@@ -410,9 +396,7 @@ def test_subscribe_maps_failed_task_checkpoint_to_public_error(monkeypatch):
                     "status": 422,
                     "content_type": "application/json",
                     "headers": {},
-                    "body": {"error": "Prompt rejected"},
-                },
-            }
+                    "body": {"error": "Prompt rejected"}}}
         )
     )
 

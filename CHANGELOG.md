@@ -1,5 +1,28 @@
 # Changelog
 
+## [python/v0.9.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.9.0), [java/v0.7.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.7.0) - 2026-09-28
+
+### Added
+- Add typesafe/system-one and jev-latest to generated core contract metadata.
+- Return usage.cost as a float USD amount on completed async Task query and webhook envelopes.
+
+### Changed
+- Add remaster_audio variation_category and updated Live delegation descriptions to generated core contract metadata.
+
+### Removed
+- Remove the public Task billing object from Task envelopes.
+  Migration: Read usage.cost on completed Task envelopes. Create, processing, and failed envelopes omit usage.
+
+## [js/v0.4.3](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.4.3), [ruby/v0.5.1](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.5.1), [go/v0.4.1](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.4.1) - 2026-09-28
+
+### Added
+- Return usage.cost as a float USD amount on completed async Task query and webhook envelopes.
+
+### Removed
+- Remove the public Task billing object from Task envelopes.
+  Migration: Read usage.cost on completed Task envelopes. Create, processing, and failed envelopes omit usage.
+
+
 ## [java/v0.6.6](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.6.6) - 2026-09-16
 
 ### Added

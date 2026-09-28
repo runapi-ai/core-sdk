@@ -1,6 +1,6 @@
 import pytest
 
-from runapi.core import BaseModel, DynamicModel, TaskBillingFacts, TaskResponse, optional, required
+from runapi.core import BaseModel, DynamicModel, TaskResult, TaskResponse, TaskUsage, optional, required
 from runapi.core.errors import ValidationError
 
 
@@ -34,7 +34,7 @@ def test_required_field_missing_raises():
 
 
 def test_item_and_dot_access():
-    model = Sample({"id": "abc", "status": "completed"})
+    model = Sample({"id": "abc", "status": "completed", "usage": {"cost": 0.05}})
     assert model["id"] == "abc"
     assert model.status == "completed"
 
@@ -45,8 +45,7 @@ def test_coerces_nested_hashes_and_arrays():
             "id": "abc",
             "meta": {"count": 2},
             "items": [{"name": "first"}],
-            "extra_field": {"nested": True},
-        }
+            "extra_field": {"nested": True}}
     )
     assert isinstance(model.meta, DynamicModel)
     assert model.meta.count == 2
@@ -70,8 +69,8 @@ def test_to_dict_serializes_recursively():
 
 
 def test_equality_with_dict():
-    model = Sample({"id": "abc", "status": "completed"})
-    assert model == {"id": "abc", "status": "completed"}
+    model = Sample({"id": "abc", "status": "completed", "usage": {"cost": 0.05}})
+    assert model == {"id": "abc", "status": "completed", "usage": {"cost": 0.05}}
 
 
 def test_optional_absent_field_is_none():
@@ -119,14 +118,32 @@ def test_response_headers_stay_outside_serialized_body():
     assert model.to_dict() == {"id": "abc"}
 
 
-def test_task_response_coerces_typed_billing_facts_and_preserves_unknown_fields():
+def test_task_response_coerces_typed_usage_and_preserves_unknown_fields():
     response = TaskResponse(
         {
             "id": "task_1",
-            "billing": {"reservation": {"amount_cents": 5}, "future_fact": "retained"},
-        }
+            "status": "completed",
+            "usage": {"cost": 0.05, "future_fact": "retained"}}
     )
 
-    assert isinstance(response.billing, TaskBillingFacts)
-    assert response.billing.reservation.amount_cents == 5
-    assert response.billing.future_fact == "retained"
+    assert isinstance(response.usage, TaskUsage)
+    assert response.usage.cost == 0.05
+    assert response.usage.future_fact == "retained"
+
+
+def test_task_result_preserves_public_status_constants_without_task_usage():
+    assert [
+        TaskResult.Status.PENDING,
+        TaskResult.Status.PROCESSING,
+        TaskResult.Status.COMPLETED,
+        TaskResult.Status.FAILED,
+    ] == ["pending", "processing", "completed", "failed"]
+
+    result = TaskResult({"id": "task_1", "status": TaskResult.Status.COMPLETED})
+    assert result.status == "completed"
+    assert "usage" not in result.to_dict()
+    with pytest.raises(AttributeError):
+        _ = result.usage
+
+    with pytest.raises(ValidationError, match="Invalid status"):
+        TaskResult({"id": "task_1", "status": "unknown"})

@@ -117,7 +117,7 @@ quote = client.pricing.create_quote(
 )
 ```
 
-Task responses expose persisted billing facts at `response.billing`: `reservation`, `settlement`, and `refund` are typed objects when recorded and `None` when the historical fact is absent. These facts describe that Task and are not recalculated from the current schedule.
+Completed Task query and webhook envelopes expose `usage.cost` as a float USD amount for that Task. Create, processing, and failed envelopes omit `usage`. The value is the recorded settlement for that Task and is never recalculated from the current price schedule.
 
 ## License
 

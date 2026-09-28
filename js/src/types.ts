@@ -100,48 +100,27 @@ export type TaskStatus = 'pending' | 'processing' | 'completed' | 'failed';
 export type AsyncTaskStatus = Exclude<TaskStatus, 'pending'>;
 
 /**
- * Persisted billing facts included in every task-based media response.
- * Create responses do not always have a status, so they use this separately
- * from TaskResponse.
+ * RunAPI-owned cost for a completed Task envelope.
+ * Create, processing, and failed responses omit this field.
  */
-export interface TaskBillingResponse {
-  /**
-   * Persisted billing facts for this Task. Older or incomplete responses may
-   * omit this field; once present, unavailable individual facts are `null`.
-   */
-  billing?: TaskBillingFacts;
+export interface TaskUsage {
+  /** Settled Task cost in USD. */
+  cost: number;
 }
 
 /**
  * Response structure for async task operations.
  * Specific API methods extend this with additional fields.
  */
-export interface TaskResponse extends TaskBillingResponse {
+export interface TaskResponse {
   /** Task ID for tracking and retrieval. */
   id?: string;
   /** Current task status. */
   status: TaskStatus | string;
   /** Error message if task failed. */
   error?: string;
+  /** Settled cost in USD. Present only on completed Task envelopes. */
+  usage?: TaskUsage;
   /** Additional task-specific fields. */
   [key: string]: unknown;
-}
-
-export interface TaskBillingFacts {
-  reservation: TaskReservation | null;
-  settlement: TaskSettlement | null;
-  refund: TaskRefund | null;
-}
-
-export interface TaskReservation {
-  amount_cents: number;
-}
-
-export interface TaskSettlement {
-  charged_amount_cents: number;
-  amount_micro_cents: number;
-}
-
-export interface TaskRefund {
-  refunded_at: string;
 }

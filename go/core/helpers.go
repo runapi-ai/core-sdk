@@ -13,7 +13,6 @@ import (
 
 // TaskCreateResponse is the response returned when an async task is created.
 type TaskCreateResponse struct {
-	TaskBillingFacts
 	// ID is the task ID for tracking and retrieval.
 	ID string `json:"id"`
 	// Status is the initial task status, typically "processing".
@@ -48,36 +47,9 @@ type hybridTaskResult struct {
 	} `json:"response"`
 }
 
-// TaskBillingFacts contains the persisted billing facts for a task. Each fact
-// is nil when it was not recorded, including tasks created before billing facts
-// were persisted; a recorded zero is represented by a non-nil fact with
-// zero-valued amounts.
-type TaskBillingFacts struct {
-	Billing *TaskBilling `json:"billing"`
-}
-
-// TaskBilling contains persisted reservation, settlement, and refund facts.
-type TaskBilling struct {
-	Reservation *Reservation `json:"reservation"`
-	Settlement  *Settlement  `json:"settlement"`
-	Refund      *Refund      `json:"refund"`
-}
-
-// Reservation is the accepted task's estimated charge in cents.
-type Reservation struct {
-	AmountCents int64 `json:"amount_cents"`
-}
-
-// Settlement is the final task charge. AmountMicroCents preserves sub-cent
-// precision and ChargedAmountCents is the amount drained from balance.
-type Settlement struct {
-	ChargedAmountCents int64 `json:"charged_amount_cents"`
-	AmountMicroCents   int64 `json:"amount_micro_cents"`
-}
-
-// Refund records when a task charge was reversed in UTC RFC 3339 form.
-type Refund struct {
-	RefundedAt string `json:"refunded_at"`
+// TaskUsage is the RunAPI-owned cost on a completed Task envelope.
+type TaskUsage struct {
+	Cost float64 `json:"cost"`
 }
 
 // GetID returns the task ID assigned by the server.

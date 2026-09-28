@@ -101,23 +101,8 @@ module RunApi
       end
     end
 
-    class TaskReservation < BaseModel
-      required :amount_cents, Numeric
-    end
-
-    class TaskSettlement < BaseModel
-      required :charged_amount_cents, Numeric
-      required :amount_micro_cents, Numeric
-    end
-
-    class TaskRefund < BaseModel
-      required :refunded_at, String
-    end
-
-    class TaskBillingFacts < BaseModel
-      optional :reservation, TaskReservation
-      optional :settlement, TaskSettlement
-      optional :refund, TaskRefund
+    class TaskUsage < BaseModel
+      required :cost, Numeric
     end
 
     # Typed response structure for async task operations.
@@ -129,6 +114,8 @@ module RunApi
     #   @return [String, nil] Current task status.
     # @!attribute [r] error
     #   @return [String, nil] Error message if task failed.
+    # @!attribute [r] usage
+    #   @return [TaskUsage, nil] Settled cost in USD on completed Task envelopes.
     class TaskResponse < BaseModel
       module Status
         PENDING = "pending"
@@ -142,7 +129,7 @@ module RunApi
       optional :id, String
       optional :status, String
       optional :error, String
-      optional :billing, TaskBillingFacts
+      optional :usage, TaskUsage
     end
   end
 end

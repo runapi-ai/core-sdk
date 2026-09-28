@@ -1,34 +1,26 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import type { TaskBillingFacts, TaskBillingResponse, TaskRefund, TaskReservation, TaskResponse, TaskSettlement } from '../../src/types';
+import type { TaskResponse, TaskUsage } from '../../src/types';
 
-describe('TaskResponse billing facts', () => {
-  it('keeps legacy task responses source-compatible when billing is absent', () => {
+describe('TaskResponse usage', () => {
+  it('omits usage on processing envelopes', () => {
     const task: TaskResponse = {
-      id: 'task-legacy',
-      status: 'processing',
-    };
+      id: 'task-processing',
+      status: 'processing'};
 
-    expectTypeOf<TaskBillingResponse>().toEqualTypeOf<{
-      billing?: TaskBillingFacts;
+    expectTypeOf<TaskUsage>().toEqualTypeOf<{
+      cost: number;
     }>();
-    expect(task.billing).toBeUndefined();
+    expect(task.usage).toBeUndefined();
   });
 
-  it('represents explicit null facts and unknown fields', () => {
+  it('carries usage.cost on completed envelopes and preserves unknown fields', () => {
     const task: TaskResponse = {
       id: 'task-1',
-      status: 'failed',
+      status: 'completed',
       provider_extension: 'preserved',
-      billing: { reservation: null, settlement: null, refund: null },
-    };
+      usage: { cost: 0.05 }};
 
-    expectTypeOf<TaskBillingFacts>().toEqualTypeOf<{
-      reservation: TaskReservation | null;
-      settlement: TaskSettlement | null;
-      refund: TaskRefund | null;
-    }>();
-
-    expect(task.billing?.settlement).toBeNull();
+    expect(task.usage?.cost).toBe(0.05);
     expect(task.provider_extension).toBe('preserved');
   });
 });

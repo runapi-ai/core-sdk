@@ -263,7 +263,7 @@ class TaskResponse(BaseModel):
     id = optional(str)
     status = optional(str)
     error = optional(str)
-    billing = optional(lambda: TaskBillingFacts)
+    usage = optional(lambda: TaskUsage)
 
 
 class TaskResultResponse(BaseModel):
@@ -275,28 +275,16 @@ class TaskResultResponse(BaseModel):
     body = optional()
 
 
-class TaskResult(TaskResponse):
+class TaskResult(BaseModel):
     """The account-scoped Task Result resource returned from an opaque Location."""
 
+    Status = TaskResponse.Status
+
     id = required(str)
-    status = required(str, enum=lambda: TaskResponse.Status.ALL)
+    status = required(str, enum=lambda: TaskResult.Status.ALL)
+    error = optional(str)
     response = optional(lambda: TaskResultResponse)
 
 
-class BillingReservation(BaseModel):
-    amount_cents = required(int)
-
-
-class BillingSettlement(BaseModel):
-    charged_amount_cents = required(int)
-    amount_micro_cents = required(int)
-
-
-class BillingRefund(BaseModel):
-    refunded_at = required(str)
-
-
-class TaskBillingFacts(BaseModel):
-    reservation = optional(BillingReservation)
-    settlement = optional(BillingSettlement)
-    refund = optional(BillingRefund)
+class TaskUsage(BaseModel):
+    cost = required(float)

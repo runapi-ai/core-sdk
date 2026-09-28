@@ -7,12 +7,8 @@ export type {
   PollingOptions,
   TaskStatus,
   AsyncTaskStatus,
-  TaskBillingResponse,
   TaskResponse,
-  TaskBillingFacts,
-  TaskReservation,
-  TaskSettlement,
-  TaskRefund,
+  TaskUsage,
 } from './types';
 
 // Constants

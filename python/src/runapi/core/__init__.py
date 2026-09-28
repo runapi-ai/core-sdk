@@ -29,14 +29,11 @@ from .files import DeletedFile, FileList, FileObject, FilesClient, UploadRespons
 from .http_client import HttpClient
 from .models import (
     BaseModel,
-    BillingRefund,
-    BillingReservation,
-    BillingSettlement,
     DynamicModel,
-    TaskBillingFacts,
     TaskResult,
     TaskResultResponse,
     TaskResponse,
+    TaskUsage,
     optional,
     required,
 )
@@ -86,10 +83,7 @@ __all__ = [
     "TaskResponse",
     "TaskResult",
     "TaskResultResponse",
-    "BillingReservation",
-    "BillingSettlement",
-    "BillingRefund",
-    "TaskBillingFacts",
+    "TaskUsage",
     "required",
     "optional",
     "MultipartBody",
