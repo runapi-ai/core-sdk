@@ -2459,6 +2459,9 @@ CONTRACT = {
                 }
             },
             "wan-2.5-image-to-video": {
+                "duration_seconds": {
+                    "enum": [5, 10]
+                },
                 "output_resolution": {
                     "enum": ["720p", "1080p"]
                 }
@@ -2523,6 +2526,9 @@ CONTRACT = {
                 }
             },
             "wan-2.5-text-to-video": {
+                "duration_seconds": {
+                    "enum": [5, 10]
+                },
                 "output_resolution": {
                     "enum": ["720p", "1080p"]
                 }

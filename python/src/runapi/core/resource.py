@@ -227,7 +227,7 @@ class Resource:
 
         enum = rules.get("enum")
         if enum is not None and not self._enum_allowed(enum, value):
-            raise ValidationError(f"{field} must be one of: {', '.join(str(option) for option in enum)}")
+            raise ValidationError(f"{field} must be one of: {', '.join(self._message_value(option) for option in enum)}")
 
         if rules.get("type") == "integer":
             self._validate_integer(field, value, rules)
@@ -318,8 +318,9 @@ class Resource:
         ):
             return
 
+        # Sorted so the message matches every other SDK; Go maps have no declaration order.
         context = " and ".join(
-            self._rule_condition_label(key, val) for key, val in conditions.items()
+            self._rule_condition_label(key, conditions[key]) for key in sorted(conditions)
         )
         qualifier = f" when {context}" if context else ""
 
@@ -335,12 +336,14 @@ class Resource:
             if self._field_present(params, field):
                 raise ValidationError(f"{field} is not allowed{qualifier}")
 
-        for field, allowed in (rule.get("enum") or {}).items():
+        narrowed = rule.get("enum") or {}
+        for field in sorted(narrowed):
+            allowed = narrowed[field]
             if not self._field_present(params, field):
                 continue
             if any(str(candidate) == str(params[field]) for candidate in allowed):
                 continue
-            joined = ", ".join(str(candidate) for candidate in allowed)
+            joined = ", ".join(self._message_value(candidate) for candidate in allowed)
             raise ValidationError(f"{field} must be one of: {joined}{qualifier}")
 
     def _rule_condition_met(self, params: Dict[str, Any], field: str, condition: Any) -> bool:
@@ -360,7 +363,14 @@ class Resource:
     def _rule_condition_label(self, field: str, condition: Any) -> str:
         if self._is_presence_condition(condition):
             return f"{field} is present" if condition["present"] is True else f"{field} is absent"
-        return f"{field} is {condition}"
+        return f"{field} is {self._message_value(condition)}"
+
+    @staticmethod
+    def _message_value(value: Any) -> str:
+        """Render booleans as JSON does (``false``) to match the other SDKs."""
+        if isinstance(value, bool):
+            return "true" if value else "false"
+        return str(value)
 
     @classmethod
     def _field_present(cls, params: Dict[str, Any], field: str) -> bool:

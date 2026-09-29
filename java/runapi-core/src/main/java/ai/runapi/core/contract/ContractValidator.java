@@ -170,13 +170,17 @@ public final class ContractValidator {
         }
       }
 
-      for (Map.Entry<String, List<Object>> entry : rule.getNarrowedEnums().entrySet()) {
-        Object value = params.get(entry.getKey());
-        if (isBlank(value) || containsEnumValue(entry.getValue(), value)) {
+      // Sorted like the condition keys so the first reported field matches every SDK.
+      Map<String, List<Object>> narrowedEnums = rule.getNarrowedEnums();
+      List<String> narrowedFields = new ArrayList<String>(narrowedEnums.keySet());
+      Collections.sort(narrowedFields);
+      for (String field : narrowedFields) {
+        Object value = params.get(field);
+        List<Object> allowed = narrowedEnums.get(field);
+        if (isBlank(value) || containsEnumValue(allowed, value)) {
           continue;
         }
-        throw new ValidationException(
-            entry.getKey() + " must be one of: " + join(entry.getValue()) + qualifier);
+        throw new ValidationException(field + " must be one of: " + join(allowed) + qualifier);
       }
     }
   }
@@ -220,8 +224,8 @@ public final class ContractValidator {
   }
 
   private static String conditionDescription(Map<String, Object> conditions) {
-    // Sort condition keys so multi-condition rule messages are identical across SDKs
-    // (Go/JS/Python all sort), not dependent on map iteration order.
+    // Sort condition keys so multi-condition rule messages are identical across SDKs,
+    // not dependent on map iteration order.
     List<String> keys = new ArrayList<String>(conditions.keySet());
     Collections.sort(keys);
     StringBuilder builder = new StringBuilder();

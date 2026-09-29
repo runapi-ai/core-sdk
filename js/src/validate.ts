@@ -150,7 +150,8 @@ function enumValueAllowed(enumValues: readonly unknown[], value: unknown): boole
 
 function enforceContractRule(params: Params, rule: Record<string, any>): void {
   const conditions: Record<string, unknown> = rule.when ?? {};
-  const keys = Object.keys(conditions);
+  // Sorted so the message matches every other SDK; Go maps have no declaration order.
+  const keys = Object.keys(conditions).sort();
   for (const key of keys) {
     if (!ruleConditionMet(params, key, conditions[key])) return;
   }
@@ -176,7 +177,7 @@ function enforceContractRule(params: Params, rule: Record<string, any>): void {
   }
 
   const narrowed: Record<string, unknown[]> = rule.enum ?? {};
-  for (const field of Object.keys(narrowed)) {
+  for (const field of Object.keys(narrowed).sort()) {
     if (!fieldPresent(params, field)) continue;
     const allowed = narrowed[field] ?? [];
     if (allowed.some((candidate) => String(candidate) === String(params[field]))) continue;
