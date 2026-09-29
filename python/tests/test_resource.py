@@ -151,7 +151,7 @@ def test_validate_boolean_enum_requires_boolean_value():
 
     resource._validate_contract(schema, {"model": "m", "flag": True})
     resource._validate_contract(schema, {"model": "m", "flag": False})
-    with pytest.raises(ValidationError, match="^flag must be one of: True, False$"):
+    with pytest.raises(ValidationError, match="^flag must be one of: true, false$"):
         resource._validate_contract(schema, {"model": "m", "flag": "true"})
 
 

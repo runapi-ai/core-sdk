@@ -1,5 +1,28 @@
 # Changelog
 
+## [java/v0.8.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.8.0) - 2026-09-29
+
+### Changed
+- Require output_resolution for Wan 2.5 and Kling 3.0 motion control, audio for Wan 2.6 Flash edit, and duration_seconds for sound effects, add the Kling 2.6 sound-mode and Hailuo 2.3 1080p duration rules, and record server defaults for optional media fields, in generated core contract metadata.
+- Generated core contract metadata accepts only duration_seconds 5 or 10 for wan-2.5-image-to-video and wan-2.5-text-to-video.
+
+### Fixed
+- Contract rule validation messages list their conditions and narrowed enum fields in field-name order and write booleans as true/false, matching the other RunAPI SDKs.
+
+## [python/v0.9.1](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.9.1) - 2026-09-29
+
+### Changed
+- Generated core contract metadata accepts only duration_seconds 5 or 10 for wan-2.5-image-to-video and wan-2.5-text-to-video.
+
+### Fixed
+- Contract rule validation messages list their conditions and narrowed enum fields in field-name order and write booleans as true/false, matching the other RunAPI SDKs.
+
+## [js/v0.4.4](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.4.4), [ruby/v0.5.2](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.5.2) - 2026-09-29
+
+### Fixed
+- Contract rule validation messages list their conditions and narrowed enum fields in field-name order and write booleans as true/false, matching the other RunAPI SDKs.
+
+
 ## [python/v0.9.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.9.0), [java/v0.7.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.7.0) - 2026-09-28
 
 ### Added

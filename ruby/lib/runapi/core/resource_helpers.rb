@@ -170,7 +170,9 @@ module RunApi
         conditions = rule["when"] || {}
         return unless conditions.all? { |field, condition| rule_condition_met?(params, field, condition) }
 
-        context = conditions.map { |field, condition| rule_condition_label(field, condition) }.join(" and ")
+        # Sorted so the message matches every other SDK; Go maps have no declaration order.
+        context = conditions.sort_by { |field, _| field.to_s }
+          .map { |field, condition| rule_condition_label(field, condition) }.join(" and ")
         qualifier = context.empty? ? "" : " when #{context}"
 
         Array(rule["required"]).each do |field|
@@ -190,7 +192,7 @@ module RunApi
           raise Core::ValidationError, "#{field} is not allowed#{qualifier}"
         end
 
-        (rule["enum"] || {}).each do |field, allowed|
+        (rule["enum"] || {}).sort_by { |field, _| field.to_s }.each do |field, allowed|
           next unless field_present?(params, field)
 
           value = param_value(params, field)
