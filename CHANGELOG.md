@@ -1,5 +1,56 @@
 # Changelog
 
+## [js/v0.5.0](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.5.0) - 2026-09-30
+
+### Changed
+- Send request parameters to the service without local validation. Model ids and parameter values the service supports work without an SDK upgrade; static types and enum constants remain for completion.
+  Migration: Invalid parameters now fail with the validation error built from the service's 400 response, including its status and message, instead of a validation error raised locally before the request. The error type is unchanged: `ValidationError` in JavaScript, Python, and Ruby, `ValidationException` in Java and PHP, and `ErrValidation` in Go.
+
+### Removed
+- Remove the `validateParams` export and the `ActionSchema` type.
+  Migration: Send parameters directly; the service validates them.
+
+## [ruby/v0.6.0](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.6.0) - 2026-09-30
+
+### Changed
+- Send request parameters to the service without local validation. Model ids and parameter values the service supports work without an SDK upgrade; static types and enum constants remain for completion.
+  Migration: Invalid parameters now fail with the validation error built from the service's 400 response, including its status and message, instead of a validation error raised locally before the request. The error type is unchanged: `ValidationError` in JavaScript, Python, and Ruby, `ValidationException` in Java and PHP, and `ErrValidation` in Go.
+
+## [go/v0.5.0](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.5.0) - 2026-09-30
+
+### Changed
+- Send request parameters to the service without local validation. Model ids and parameter values the service supports work without an SDK upgrade; static types and enum constants remain for completion.
+  Migration: Invalid parameters now fail with the validation error built from the service's 400 response, including its status and message, instead of a validation error raised locally before the request. The error type is unchanged: `ValidationError` in JavaScript, Python, and Ruby, `ValidationException` in Java and PHP, and `ErrValidation` in Go.
+
+### Removed
+- Remove `core.ValidateParams`.
+  Migration: Upgrade every RunAPI model module together with core; model modules released before this version do not compile against it.
+
+## [python/v0.10.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.10.0) - 2026-09-30
+
+### Changed
+- Send request parameters to the service without local validation. Model ids and parameter values the service supports work without an SDK upgrade; static types and enum constants remain for completion.
+  Migration: Invalid parameters now fail with the validation error built from the service's 400 response, including its status and message, instead of a validation error raised locally before the request. The error type is unchanged: `ValidationError` in JavaScript, Python, and Ruby, `ValidationException` in Java and PHP, and `ErrValidation` in Go.
+
+### Removed
+- Remove `runapi.core.CONTRACT` and the `Resource._validate_contract` and `Resource._validate_optional` hooks.
+  Migration: Upgrade every installed RunAPI model package together with core; model packages released before this version call the removed hooks and fail with `AttributeError`.
+
+## [java/v0.9.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.9.0) - 2026-09-30
+
+### Changed
+- Send request parameters to the service without local validation. Model ids and parameter values the service supports work without an SDK upgrade; static types and enum constants remain for completion.
+  Migration: Invalid parameters now fail with the validation error built from the service's 400 response, including its status and message, instead of a validation error raised locally before the request. The error type is unchanged: `ValidationError` in JavaScript, Python, and Ruby, `ValidationException` in Java and PHP, and `ErrValidation` in Go.
+
+### Removed
+- Remove the `ai.runapi.core.contract` package, including `ContractGen` and `ContractValidator`.
+  Migration: Upgrade every RunAPI model artifact together with core; model artifacts released before this version fail with `NoClassDefFoundError` or `NoSuchMethodError`.
+- Remove the unused name argument from `ParamSupport.list` and `ParamSupport.maps`.
+  Migration: Pass only the collection; copying, null handling, and immutability are unchanged.
+- Remove the `ParamSupport` validation helpers `requireNonBlank`, `requireNonBlankTrim`, `validationInput`, `requiredStrings`, and `requiredList`.
+  Migration: Send parameters directly; the service validates them.
+
+
 ## [java/v0.8.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.8.0) - 2026-09-29
 
 ### Changed

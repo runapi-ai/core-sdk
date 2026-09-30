@@ -166,11 +166,14 @@ func TestCreateFromFileUploadsDirectly(t *testing.T) {
 	}
 }
 
-func TestCreateRejectsMissingSourceBeforeRequest(t *testing.T) {
+func TestCreateRejectsFileAndSourceBeforeRequest(t *testing.T) {
 	stub := &stubHTTPClient{}
 	client := NewClientWithHTTP(stub)
 
-	_, err := client.Create(context.Background(), CreateParams{})
+	_, err := client.Create(context.Background(), CreateParams{
+		File:   "testdata/image.png",
+		Source: Source{Type: "url", URL: "https://cdn.runapi.ai/public/samples/mask.png"},
+	})
 	if err == nil {
 		t.Fatal("expected validation error")
 	}
@@ -179,18 +182,11 @@ func TestCreateRejectsMissingSourceBeforeRequest(t *testing.T) {
 	}
 }
 
-func TestCreateRejectsMultipleSourcesBeforeRequest(t *testing.T) {
+func TestRetrieveRejectsBlankIDBeforeRequest(t *testing.T) {
 	stub := &stubHTTPClient{}
 	client := NewClientWithHTTP(stub)
 
-	_, err := client.Create(context.Background(), CreateParams{
-		File: "testdata/image.png",
-		Source: Source{
-			Type: "url",
-			URL:  "https://cdn.runapi.ai/public/samples/mask.png",
-		},
-	})
-	if err == nil {
+	if _, err := client.Retrieve(context.Background(), " "); err == nil {
 		t.Fatal("expected validation error")
 	}
 	if stub.method != "" {

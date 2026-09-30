@@ -58,13 +58,12 @@ func NewClientWithHTTP(httpClient core.HTTPClient) *Client {
 }
 
 // Create uploads a file and returns its temporary URL for use in generation
-// requests. The file can come from a local path (uploaded straight to storage),
-// a remote URL, or an inline base64 payload -- see [CreateParams] for the mutual
-// exclusivity constraint.
+// requests. A local File uses direct storage upload; otherwise the Source
+// request is submitted to the service. File and Source are mutually exclusive.
 func (c *Client) Create(ctx context.Context, params CreateParams, opts ...option.RequestOption) (*UploadResponse, error) {
 	requestOptions, _ := option.ResolveRequestOptions(opts...)
-	if err := validateCreateParams(params); err != nil {
-		return nil, err
+	if params.File != "" && params.Source.Type != "" {
+		return nil, core.NewError(core.ErrValidation, "Exactly one source is required: file or source", http.StatusUnprocessableEntity, "", nil, nil)
 	}
 
 	if params.File != "" {
@@ -180,20 +179,6 @@ func protocolFilePath(fileID string) (string, error) {
 		return "", core.NewError(core.ErrValidation, "file_id is required", http.StatusUnprocessableEntity, "", nil, nil)
 	}
 	return protocolPath + "/" + url.PathEscape(fileID), nil
-}
-
-func validateCreateParams(params CreateParams) error {
-	sourceCount := 0
-	if params.File != "" {
-		sourceCount++
-	}
-	if params.Source.Type != "" {
-		sourceCount++
-	}
-	if sourceCount == 1 {
-		return nil
-	}
-	return core.NewError(core.ErrValidation, "Exactly one source is required: file or source", http.StatusUnprocessableEntity, "", nil, nil)
 }
 
 type prepareResponse struct {

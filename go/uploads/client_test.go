@@ -65,3 +65,15 @@ func TestLifecycleUsesCanonicalPathsAndBodies(t *testing.T) {
 		t.Fatalf("unexpected completion body: %#v", complete)
 	}
 }
+
+func TestCancelRejectsBlankIDBeforeRequest(t *testing.T) {
+	stub := &stubHTTP{}
+	client := NewClientWithHTTP(stub)
+
+	if _, err := client.Cancel(context.Background(), ""); err == nil {
+		t.Fatal("expected validation error")
+	}
+	if len(stub.methods) != 0 {
+		t.Fatalf("expected no request, got %v %v", stub.methods, stub.paths)
+	}
+}

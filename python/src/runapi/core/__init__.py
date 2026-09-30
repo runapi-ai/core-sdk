@@ -8,7 +8,6 @@ from . import config, errors, polling
 from .auth import resolve_api_key, resolve_optional_api_key
 from .account import Account, AccountBalanceResponse, AccountInfoResponse, AccountRecord
 from .config import configure
-from .contract_gen import CONTRACT
 from .errors import (
     AuthenticationError,
     ConflictError,
@@ -52,7 +51,6 @@ __all__ = [
     "configure",
     "errors",
     "polling",
-    "CONTRACT",
     "resolve_api_key",
     "resolve_optional_api_key",
     "Account",

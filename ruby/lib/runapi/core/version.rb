@@ -2,7 +2,7 @@
 
 module RunApi
   module Core
-    VERSION = "0.5.2"
+    VERSION = "0.6.0"
   end
 
   VERSION = Core::VERSION

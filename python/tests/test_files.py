@@ -3,8 +3,6 @@ import hashlib
 import os
 import tempfile
 
-import pytest
-
 from runapi.core import FilesClient
 
 
@@ -39,15 +37,6 @@ UPLOAD = {
     "created_at": "2026-01-01T00:00:00Z",
     "expires_at": "2026-01-08T00:00:00Z",
 }
-
-
-def test_requires_exactly_one_source():
-    fake = FakeHttp(UPLOAD)
-    client = FilesClient(api_key="k", http_client=fake)
-    with pytest.raises(ValueError):
-        client.create()
-    with pytest.raises(ValueError):
-        client.create(file="x", source="y")
 
 
 def test_accepts_an_existing_http_client_without_resolving_auth_again():
@@ -167,15 +156,6 @@ def test_create_with_pathlib_path_keeps_full_path():
     _, _, prepare_body = fake.calls[0]
     assert prepare_body["checksum"] == base64.b64encode(hashlib.md5(b"png").digest()).decode("ascii")
     assert fake.uploads[0][2] == b"png"
-
-
-def test_create_rejects_blank_source():
-    # Regression: a blank source must fail locally, not POST an empty body.
-    client = FilesClient(api_key="k", http_client=FakeHttp(UPLOAD))
-    with pytest.raises(ValueError):
-        client.create(source="")
-    with pytest.raises(ValueError):
-        client.create(source="   ")
 
 
 def test_protocol_file_lifecycle_keeps_binary_content(tmp_path):

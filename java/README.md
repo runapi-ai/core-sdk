@@ -14,7 +14,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-core:0.8.0")
+  implementation("ai.runapi:runapi-core:0.9.0")
 }
 ```
 
@@ -24,7 +24,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-core</artifactId>
-  <version>0.8.0</version>
+  <version>0.9.0</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ Use the BOM when multiple RunAPI Java modules are installed:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.8.0"))
+  implementation(platform("ai.runapi:runapi-bom:0.9.0"))
   implementation("ai.runapi:runapi-core")
 }
 ```
@@ -43,7 +43,7 @@ dependencies {
 - Shared `RequestOptions` for timeouts, retries, headers, and polling behavior.
 - Files, Uploads, and account clients used by all model clients.
 - Live Price Schedule and Price Quote resources available as `client.pricing()`.
-- Strict contract validation helpers used by model packages.
+- Request parameter validation is performed by the service; unsupported inputs return API errors with the service message.
 - Common error types such as `RunApiException`, `ValidationException`, and `RateLimitException`.
 
 ## Request Identifiers And Safe Task Creation

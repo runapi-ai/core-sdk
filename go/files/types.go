@@ -9,9 +9,10 @@ type Source struct {
 	Data string `json:"data,omitempty" help:"required when type is base64"`
 }
 
-// CreateParams configures a file upload. Exactly one source must be provided:
-// either File (a local path, sent as multipart form data) or Source (a remote
-// URL or base64 payload, sent as JSON). Supplying both or neither is an error.
+// CreateParams configures a file upload. File selects a local path uploaded
+// directly to storage; otherwise Source is sent as JSON for a remote URL or
+// base64 upload. Supplying both is an error; the service validates the
+// submitted source.
 type CreateParams struct {
 	File     string `json:"-" help:"local file path for multipart upload"`
 	Source   Source `json:"source,omitempty" help:"JSON source object for URL or base64 upload"`
