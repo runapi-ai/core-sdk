@@ -50,6 +50,8 @@ type hybridTaskResult struct {
 // TaskUsage is the RunAPI-owned cost on a completed Task envelope.
 type TaskUsage struct {
 	Cost float64 `json:"cost"`
+	// GeneratedImages includes the base image and decomposed layers when reported.
+	GeneratedImages *int `json:"generated_images,omitempty"`
 }
 
 // GetID returns the task ID assigned by the server.

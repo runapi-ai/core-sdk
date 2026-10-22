@@ -288,3 +288,4 @@ class TaskResult(BaseModel):
 
 class TaskUsage(BaseModel):
     cost = required(float)
+    generated_images = optional(int)

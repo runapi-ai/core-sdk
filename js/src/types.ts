@@ -106,6 +106,8 @@ export type AsyncTaskStatus = Exclude<TaskStatus, 'pending'>;
 export interface TaskUsage {
   /** Settled Task cost in USD. */
   cost: number;
+  /** Delivered image count, including the base image and decomposed layers. */
+  generated_images?: number;
 }
 
 /**

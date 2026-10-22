@@ -1,5 +1,25 @@
 # Changelog
 
+## [java/v0.10.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.10.0) - 2026-10-22
+
+### Added
+- Manage the runapi-qwen-2.1 module version in the Java BOM.
+- Add generated HeyGen Video input contract metadata.
+- Expose the optional generated_images field in completed task usage.
+- Add the Vidu SDK version constraint to the Java BOM.
+
+## [python/v0.10.1](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.10.1) - 2026-10-22
+
+### Added
+- Add generated HeyGen Video input contract metadata.
+- Expose the optional generated_images field in completed task usage.
+
+## [js/v0.5.1](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.5.1), [ruby/v0.6.1](https://github.com/runapi-ai/core-sdk/releases/tag/ruby%2Fv0.6.1), [go/v0.5.1](https://github.com/runapi-ai/core-sdk/releases/tag/go%2Fv0.5.1) - 2026-10-22
+
+### Added
+- Expose the optional generated_images field in completed task usage.
+
+
 ## [js/v0.5.0](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.5.0) - 2026-09-30
 
 ### Changed

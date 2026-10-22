@@ -9,6 +9,7 @@ describe('TaskResponse usage', () => {
 
     expectTypeOf<TaskUsage>().toEqualTypeOf<{
       cost: number;
+      generated_images?: number;
     }>();
     expect(task.usage).toBeUndefined();
   });
@@ -18,9 +19,10 @@ describe('TaskResponse usage', () => {
       id: 'task-1',
       status: 'completed',
       provider_extension: 'preserved',
-      usage: { cost: 0.05 }};
+      usage: { cost: 0.05, generated_images: 2 }};
 
     expect(task.usage?.cost).toBe(0.05);
+    expect(task.usage?.generated_images).toBe(2);
     expect(task.provider_extension).toBe('preserved');
   });
 });

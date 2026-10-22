@@ -103,6 +103,7 @@ module RunApi
 
     class TaskUsage < BaseModel
       required :cost, Numeric
+      optional :generated_images, Integer
     end
 
     # Typed response structure for async task operations.
