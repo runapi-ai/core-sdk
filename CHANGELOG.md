@@ -1,5 +1,11 @@
 # Changelog
 
+## [js/v0.5.2](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.5.2) - 2026-10-28
+
+### Changed
+- Update development test tooling to Vitest 4.1.11 with Vite 6.4.4.
+
+
 ## [java/v0.10.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.10.0) - 2026-10-22
 
 ### Added
