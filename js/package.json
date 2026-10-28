@@ -3,7 +3,7 @@
   "runapi": {
     "slug": "core"
   },
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "RunAPI core SDK for JavaScript, Python, Ruby, Go, Java, and PHP",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -36,11 +36,11 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/coverage-v8": "^4.1.11",
     "msw": "^2.3.0",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
-    "vitest": "^1.6.0"
+    "vitest": "^4.1.11"
   },
   "publishConfig": {
     "access": "public"
