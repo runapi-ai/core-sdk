@@ -11,7 +11,7 @@ javaPlatform {
 
 dependencies {
   constraints {
-    api("ai.runapi:runapi-core:0.10.0")
+    api("ai.runapi:runapi-core:0.11.0")
     api("ai.runapi:runapi-elevenlabs:0.2.0")
     api("ai.runapi:runapi-flux-kontext:0.2.0")
     api("ai.runapi:runapi-flux-2:0.3.0")
@@ -23,8 +23,9 @@ dependencies {
     api("ai.runapi:runapi-grok-imagine:0.2.0")
     api("ai.runapi:runapi-hailuo:0.2.0")
     api("ai.runapi:runapi-minimax-h3:0.2.1")
+    api("ai.runapi:runapi-muse-video:0.1.0")
     api("ai.runapi:runapi-heygen-video:0.1.0")
-    api("ai.runapi:runapi-vidu:0.1.0")
+    api("ai.runapi:runapi-vidu:0.1.1")
     api("ai.runapi:runapi-happyhorse:0.2.0")
     api("ai.runapi:runapi-pixverse:0.2.0")
     api("ai.runapi:runapi-ideogram-v3:0.2.0")
@@ -40,7 +41,7 @@ dependencies {
     api("ai.runapi:runapi-luma:0.2.0")
     api("ai.runapi:runapi-midjourney:0.4.0")
     api("ai.runapi:runapi-volcengine-lip-sync:0.2.0")
-    api("ai.runapi:runapi-nano-banana:0.2.0")
+    api("ai.runapi:runapi-nano-banana:0.3.0")
     api("ai.runapi:runapi-qwen-2:0.2.0")
     api("ai.runapi:runapi-qwen-2.1:0.1.0")
     api("ai.runapi:runapi-qwen-3:0.2.0")

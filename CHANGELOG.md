@@ -1,5 +1,25 @@
 # Changelog
 
+## [java/v0.11.0](https://github.com/runapi-ai/core-sdk/releases/tag/java%2Fv0.11.0) - 2026-10-29
+
+### Added
+- Add Muse Video text-to-video and image-to-video requests to the Java SDK.
+
+## [js/v0.5.3](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.5.3) - 2026-10-29
+
+### Changed
+- Refresh JavaScript and Python SDK dependency locks to versions without known high or critical advisories.
+
+## [python/v0.11.0](https://github.com/runapi-ai/core-sdk/releases/tag/python%2Fv0.11.0) - 2026-10-29
+
+### Breaking
+- Require Python 3.10 or newer across all Python SDK packages.
+  Migration: Upgrade the Python runtime to 3.10 or newer before installing or upgrading RunAPI Python SDK packages.
+
+### Changed
+- Refresh JavaScript and Python SDK dependency locks to versions without known high or critical advisories.
+
+
 ## [js/v0.5.2](https://github.com/runapi-ai/core-sdk/releases/tag/js%2Fv0.5.2) - 2026-10-28
 
 ### Changed

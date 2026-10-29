@@ -2,6 +2,13 @@
 
 The RunAPI Core Python SDK provides shared authentication, HTTP, retry, error, Files, Uploads, and polling primitives for RunAPI model packages. Install `runapi-core` only when you are building SDK infrastructure or shared Python tooling; application code should normally install a concrete model package such as `runapi-flux-2`.
 
+All RunAPI Python SDK packages require Python 3.10 or newer. The development
+workspace lockfile pins versions for this repository; downstream projects
+resolve dependencies from package metadata.
+
+Before upgrading to `runapi-core` 0.11 or newer, upgrade Python 3.9 applications
+to Python 3.10 or newer.
+
 ## Install
 
 ```bash
